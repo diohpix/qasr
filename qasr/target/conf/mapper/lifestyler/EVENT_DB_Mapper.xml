@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/EVENT_DB">
+	<select id="EVENT_META_SELECT" resultType="hashmap">
+	<![CDATA[
+		select   promotionid  id, title ,startdate,finishDate ,listimage photo,  linkurl   
+		from  OnlineBusinessPromotion.dbo.PromotionMaster with(NOLOCK) where promotionID = #{PROMOTIONID}
+	]]>
+	</select>
+	<select id="EVENT_TOP30_META_SELECT" resultType="hashmap">
+ 	<![CDATA[
+		select TOP 15  promotionid  id, title ,startdate,finishDate ,listimage photo,  linkurl   
+		from  OnlineBusinessPromotion.dbo.PromotionMaster with(NOLOCK) order by promotionid desc
+	]]>
+	</select>
+</mapper>

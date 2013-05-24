@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/INME_COMMENT">
+ 	<select id="LIST_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 	select cc.regDate rd, cc.userId uid, commentId cid ,comment c ,userName un,photoUrl p , pocuserName, pocprofilePhoto,pocUserId,snsName 
+ 	from comment cc left outer join user u on cc.userid=u.userid where contentId=#{CNTID}  order by  commentid desc  limit #{LIMIT} offset #{OFFSET}
+    	]]>
+    	<!-- M:GET -->
+    	<!-- Q:ARTIST_NM=이승철 -->
+    	<!-- D:아티스트 정보  -->
+    
+    </select>
+    <select id="USER_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select userName un ,photoUrl p from user where userId=#{uid}  
+    	
+    	]]>
+    	<!-- M:GET -->
+    	<!-- Q:ARTIST_NM=이승철 -->
+    	<!-- D:아티스트 정보  -->
+    </select>
+    <select id="COMMENT_USER_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select a.userid userId,b.userName ,b.photoUrl, 'contact' type from comment a, user b  where contentid=#{CNTID} and a.userid=b.userid    group by 1
+    	
+    	]]>
+    	<!-- M:GET -->
+    	<!-- Q:ARTIST_NM=이승철 -->
+    	<!-- D:아티스트 정보  -->
+    </select>
+    <select id="COUNT_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select commentCount from contentCount where contentid=#{CNTID}
+    	
+    	]]>
+    	<!-- M:GET -->
+    	<!-- Q:ARTIST_NM=이승철 -->
+    	<!-- D:아티스트 정보  -->
+    </select>
+     <select id="COMMENT_ALL_SELECT" resultType="hashmap">
+ 	<![CDATA[
+	 	select cc.regDate rd, cc.userId uid, commentId cid ,comment c ,userName un,photoUrl p , pocuserName, pocprofilePhoto,pocUserId,snsName 
+ 	from comment cc left outer join user u on cc.userid=u.userid where contentId=#{CNTID}  order by  commentid asc  
+    	]]>
+    </select>
+</mapper>

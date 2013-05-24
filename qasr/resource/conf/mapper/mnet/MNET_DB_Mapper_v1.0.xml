@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/MNET_DB">
+    <select id="ALBUM_SELECT" resultType="hashmap">
+    <![CDATA[
+        select albumid,albumname, albumsaledate saledate, albumsrvgenname genre,albumreview review ,albumartname artistname ,albumartid artistid , albumRepSongName titlesong , albumRepSongid titlesongid  
+        from T_SM_ALBUM  with(NOLOCK) where albumid=#{ALBUMID}
+    ]]>
+    </select>
+    <select id="ARTIST_SELECT" resultType="hashmap">
+    <![CDATA[
+    	 select artid  artistid,  artName artistname, artTypeName job, artType, artdebutdate debutdate,artbirthday birthday 
+    	 from T_SM_ARTIST  with(NOLOCK) where artid=#{ARTISTID}
+   	]]>
+    </select>
+    <select id="SONG_SELECT" resultType="hashmap">
+    <![CDATA[
+    	 select songid  ,a.albumid,a.albumname,a.songname ,a.songartname artist ,a.songartid artistid,a.albumsaledate saledate,srvgenName genre ,b.albumreview review, srvGenID genre_cd 
+    	 from T_SM_SONG a with(NOLOCK), T_SM_ALBUM b   with(NOLOCK) where a.songid=#{SONGID}  and a.albumid=b.albumid
+    ]]> 	
+    </select>
+    <select id="MV_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select MV_ID mvid, mv_title title, release_ymd reldate,running_time runtime, mv_intro intro ,artist_nms artistname, artist_ids artisid, song_id songid ,img_id  imageid  
+    	from MNET.dbo.MT_MV  with(NOLOCK) where MV_ID=#{MVID}
+  	]]> 	
+    </select>
+    
+    <select id="PROGRAM_SELECT" resultType="hashmap">
+    <![CDATA[
+        select program_id programid,  program_title title, on_air_flg onair, broad_start_ymd starttime, broad_end_ymd endtime,program_intro summary ,img_id photo   , a.broad1 schedule , 'mnet' channelName
+    from MNET.dbo.VT_PROGRAM a  with(NOLOCK)  where a.program_id=#{PROGRAMID}
+    ]]>
+    </select>
+	<select id="CHANNEL_PROGRAM_LIST_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select TOP ${TOP} programid,title,photo,onair ,summary from(
+    		select ROW_NUMBER() OVER(ORDER BY program_id desc) as rownum , program_title title,program_id programid, img_id photo, on_air_flg onair ,program_intro summary
+    	from MNET.dbo.vt_program  with(nolock)   where on_air_flg=#{ONAIR} and display_flg='Y' and broad_end_ymd is null and channel_cd=#{CHANNELCODE} and   broad_start_ymd is not null
+    	) z where rownum > #{OFFSET}
+    ]]>
+    </select>
+	<select id="CHANNEL_PROGRAM_ALL_LIST_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select TOP ${TOP} programid,title,photo,onair,summary from(
+    		select ROW_NUMBER() OVER(ORDER BY program_id desc) as rownum , program_title title,program_id programid, img_id photo, on_air_flg onair ,program_intro summary 
+    	from MNET.dbo.vt_program  with(nolock)   where  display_flg='Y' and broad_end_ymd is null and channel_cd=#{CHANNELCODE} and   broad_start_ymd is not null
+    	) z where rownum > #{OFFSET}
+    ]]>
+    </select>
+	    
+    <select id="VOD_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select TOP ${TOP}  vodid,  photo, title ,channelName from(
+			select ROW_NUMBER() OVER(ORDER BY clip_id desc) as rownum ,   clip_id vodid, img_id photo,clip_title title, 'MNET'  channelName 
+			from MNET.dbo.VT_PROGRAM_CLIP where program_id=#{PROGRAMID} and clip_type_cd=2601 and display_FLG='Y'
+		) z where rownum > #{OFFSET} 
+	]]>  	
+    </select>
+    <select id="VOD_BY_ID_SELECT" resultType="hashmap">
+    <![CDATA[
+			select   clip_id vodid, img_id photo,clip_title title, 'MNET'  channelName 
+			from MNET.dbo.VT_PROGRAM_CLIP where clip_id=#{ID}  and display_FLG='Y'
+			-- and clip_type_cd=2601
+	]]>  	
+    </select>
+    <select id="VOD_COUNT_SELECT" resultType="hashmap">
+    <![CDATA[
+			select count(*) cnt	from MNET.dbo.VT_PROGRAM_CLIP where program_id=#{PROGRAMID} and clip_type_cd=2601 and display_FLG='Y'
+	]]>  	
+    </select>
+    
+    
+    <select id="OPENALBUM_ITEM_BY_ID_SELECT" resultType="hashmap">
+    <![CDATA[
+       select   genre, album_nm albumname, album_intro review,user_nm artistname,img_id,img_extension 
+       from MNET.dbo.OA_ALBUM with(nolock)
+       where DISPLAY_FLG = 'Y'
+         and ALBUM_NO = #{ALBUM_NO}
+    ]]>  	
+    </select>
+    
+    
+    
+    
+    <select id="CHART_SELECT" resultType="hashmap">
+    <![CDATA[
+	{ call UP_SM_S3_ChartTotalTopLst
+        (
+            #{id, mode=IN, jdbcType=VARCHAR, javaType=string},
+            #{cnt, mode=IN, jdbcType=VARCHAR, javaType=string}
+        )
+    }  	
+    ]]>
+    </select>
+    
+</mapper>

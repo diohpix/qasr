@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/INME_RECOMM">
+ 	<select id="ORDERED_MY_FAVORITE_CATEGORY_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 	select cnt,cid from (
+		select count(a.contentid) cnt,categoryid cid
+	from view_history a, content b , folder c
+		where a.userid=#{USERID} and a.contentid=b.contentid and b.folderid=c.folderid group by 2 order by 1 desc) z , category x where z.cid=x.categoryid
+	]]>
+    </select>
+    <select id="ORDERED_MY_FAVORITE_CATEGORY_SINCE_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 	select cnt,cid from (
+		select count(a.contentid) cnt,categoryid cid
+	from view_history a, content b , folder c
+		where a.userid=#{USERID} and a.contentid=b.contentid and b.folderid=c.folderid and  a.regDate > DATE_SUB(CURDATE(),INTERVAL 90 DAY)  group by 2 order by 1 desc) z , category x where z.cid=x.categoryid
+	]]>
+    </select>
+</mapper>

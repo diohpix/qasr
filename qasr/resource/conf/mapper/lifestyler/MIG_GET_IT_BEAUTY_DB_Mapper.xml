@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/MIG_GET_IT_BEAUTY_DB">
+	<!--  뷰티앱관련  -->
+	<select id="EPISODE_SELECT" resultType="hashmap">
+	<![CDATA[
+		select Number,title,OnairDate  from episode ep 
+		where (ep.CreateDate <= GETDATE()) AND (ep.ViewType IN ('Y', 'R')) AND episodeid=#{EPID}
+	]]>
+	</select>
+ 
+	<select id="BEAUTY_TIP_CONTENT_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select a.groupSeq,a.title, a.thumbnail,a.summary, productname,  brandKorname,c.ImagePath
+		from beautyTipContents a with (nolock)  
+		left outer join beautyTipProduct b with(nolock)  on a.TipContentsSeq = b.TipContentsSeq  
+		left outer join product c with(nolock) on  b.productSeq = c.productSeq 
+		left outer join brand  d with(nolock) on c.brandSeq = d.brandSeq  
+		where a.tipSeq=#{TIPSEQ} 
+		order by a.GroupSeq asc ,a.stepseq asc
+    ]]>
+	</select>
+<!--
+	<select id="TIP_PRODUCT_SELECT" resultType="hashmap">
+	<![CDATA[
+	select   brandKorName,productName  , b.ImagePath  
+	from  commonProduct  a with(nolock)  , product b with(nolock), brand c with(nolock)  
+	where commonSeq=#{ID} and a.productSeq=b.productSeq and b.brandSeq = c.brandSeq
+	]]>
+	</select>
+-->
+
+	<select id="BEAUTY_TIP_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select b.* from beautyTip b with (nolock)  
+		left outer join episode ep with (nolock)
+		 on ep.episodeId = b.episodeId
+		where (b.CreateDate <= GETDATE()) AND (b.ViewType IN ('Y', 'R'))
+		  and (ep.CreateDate <= GETDATE()) AND (ep.ViewType IN ('Y', 'R')) 
+		order by b.episodeID asc, infoYn, TipSeq desc
+    ]]>
+	</select>
+	<select id="BEAUTY_TIP_BY_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select b.* from beautyTip b with (nolock)  
+		left outer join episode ep with (nolock)
+		 on ep.episodeId = b.episodeId
+		where (b.CreateDate <= GETDATE()) AND (b.ViewType IN ('Y', 'R'))
+		  and (ep.CreateDate <= GETDATE()) AND (ep.ViewType IN ('Y', 'R'))
+	 	  and tipseq=#{ID} 
+    ]]>
+	</select>
+
+	<select id="COMMONBOARD_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select * from commonBoard with (nolock) where parentsCode like '${CODE}%' and viewType='Y' 
+    ]]>
+	</select>
+	
+	<select id="COMMONBOARD_BY_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select  * from commonBoard with (nolock) where  viewType='Y' and ID=#{ID} 
+    ]]>
+	</select>
+	
+	<select id="BLINDTEST_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select b.* from blindtest b with (nolock) 
+		LEFT OUTER JOIN dbo.Episode AS ep
+		  ON  b.EpisodeID = ep.EpisodeID
+		where (ep.CreateDate <= GETDATE()) AND (ep.ViewType IN ('Y', 'R')) 
+		 AND  (b.CreateDate <= GETDATE()) AND (b.ViewType IN ('Y', 'R')) 
+    ]]>
+	</select>
+	
+	<select id="BLINDTEST_BY_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select b.* from blindtest b with (nolock) 
+		LEFT OUTER JOIN dbo.Episode AS ep
+		  ON  b.EpisodeID = ep.EpisodeID
+		WHERE (ep.CreateDate <= GETDATE()) AND (ep.ViewType IN ('Y', 'R')) 
+		  AND (b.CreateDate <= GETDATE()) AND (b.ViewType IN ('Y', 'R')) 
+ 		  AND BlindSeq=#{ID}  
+    ]]>
+	</select>
+
+	<select id="BLINDPRETEST_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select   *  from blindpretest with(nolock)
+ 		
+    ]]>
+	</select>
+	<select id="BLINDPRETEST_BY_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select *  from blindpretest with(nolock) 
+ 		where pretestseq=#{ID} 
+ 		  and ViewType IN ('Y', 'R') 
+ 		  AND CreateDate <= GETDATE() 
+    ]]>
+	</select>
+	
+	<select id="EPISODE_GUIDE_CONTENT_SELECT" resultType="hashmap">
+ 	<![CDATA[
+		select  * from boardContents  with (nolock) where boardDefinitionID=17 and isDelete='N' and isSecret='N' and isViolation='N' order by  id asc
+    ]]>
+	</select>
+	<select id="EPISODE_GUIDE_CONTENT_BY_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+		select  * 
+		from boardContents  with (nolock) 
+		where  ID=#{ID} 
+		  and isDelete='N' 
+		  and isSecret='N' 
+		  and isViolation='N'
+    ]]>
+	</select>
+	
+	<select id="PRODUCT_SELECT" resultType="hashmap">
+ 	<![CDATA[
+		select * from product with (nolock)
+    ]]>
+	</select>
+
+	<select id="GIB_WINNER_SELECT" resultType="hashmap">
+ 	<![CDATA[
+		select  * from battleWinner with (nolock) where channelCode='CHL006' and ViewYN='Y' and recipeID > 0
+    ]]>
+	</select>
+	
+	<select id="BATTLE_BY_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+		select  * from battleEvent with(nolock) 
+		where battleCode=#{ID}
+		  and isDelete = 'N' AND ChannelCode = 'CHL006' 
+          AND (isnull(StartDate, convert(varchar(10),getdate(),102)) <= getdate()) 
+    ]]>
+	</select>
+
+	<select id="GIB_BOX_SELECT" resultType="hashmap">
+ 	<![CDATA[
+		select * from mainContents  with (nolock) where type='box'
+    ]]>
+	</select>
+	<select id="GIB_BOX_BY_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+		select * from mainContents  with (nolock) where type='box' and  SUBSTRING   (startDate  ,0 , 8 )=#{ID}
+    ]]>
+	</select>
+	
+	
+	<select id="XEPISODE_SELECT">
+	<![CDATA[
+	select  distinct(ep.episodeid)  d from beautyTip b with (nolock)  
+		left outer join episode ep with (nolock)
+		 on ep.episodeId = b.episodeId
+		where (b.CreateDate <= GETDATE()) AND (b.ViewType IN ('Y', 'R'))
+		  and (ep.CreateDate <= GETDATE()) AND (ep.ViewType IN ('Y', 'R')) order by d
+	]]>
+	</select>
+	<select id="XEPISODE_TIP_SELECT">
+	<![CDATA[
+	select  tipseq  from beautyTip b with (nolock)  
+		left outer join episode ep with (nolock)
+		 on ep.episodeId = b.episodeId
+		where (b.CreateDate <= GETDATE()) AND (b.ViewType IN ('Y', 'R'))
+		  and (ep.CreateDate <= GETDATE()) AND (ep.ViewType IN ('Y', 'R'))
+			and ep.episodeid=#{EP}
+			]]>
+	</select>
+	
+	
+	
+	
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/MNET_SNS_DB">
+ 	<select id="LIST_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 	select TOP ${LIMIT} POST_SQ cid ,a.MCODE  uid ,a.USER_TITLE un ,a.CONTENT c,a.CREATE_DT rd ,t , mentioncode mid ,mentionid mun ,  case profile_img_path  when '' then null else 'http://mnetimg.mnet.com/L_uimg/'+profile_img_path+'/'+Ltrim(str(a.MCODE))+'.jpg' end p from(
+
+		(select POST_SQ,MCODE, USER_ID,USER_TITLE,CONTENT,CREATE_DT ,0 t ,null mentioncode ,null mentionid from dbo.MY_POST   with(NOLOCK) where cate_cd=#{CATE} and  content_no=#{CNTID} AND SERVICE_FLG='Y' )   
+		union all
+		(select a.REPLY_SQ,a.MCODE,a.USER_ID,a.USER_TITLE,a.CONTENT,a.CREATE_DT, 1 t , b.MCODE mentioncode, b.USER_TITLE metionname from dbo.MY_POST_REPLY a with(NOLOCK) , dbo.MY_POST b  with(NOLOCK) where a.post_sq=b.post_sq and b.content_no=#{CNTID} and b.cate_cd=#{CATE} and b.reply_cnt>0 and a.SERVICE_FLG='Y' and b.SERVICE_FLG='Y' )
+
+	) a left outer join dbo.MY_BLOG  b on a.MCODE=b.MCODE  and  a.create_dt  < #{LAST_DATE}  order by  a.create_dt desc , a.POST_SQ desc    
+    ]]>
+    </select>
+    <select id="COMMENT_ALL_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 	select top 5000  POST_SQ cid ,a.MCODE  uid ,a.USER_TITLE un ,a.CONTENT c,a.CREATE_DT rd ,t , mentioncode mid ,mentionid mun ,  case profile_img_path  when '' then null else 'http://mnetimg.mnet.com/L_uimg/'+profile_img_path+'/'+Ltrim(str(a.MCODE))+'.jpg' end p from(
+
+		(select POST_SQ,MCODE, USER_ID,USER_TITLE,CONTENT,CREATE_DT ,0 t ,null mentioncode ,null mentionid from dbo.MY_POST   with(NOLOCK) where cate_cd=#{CATE} and  content_no=#{CNTID} AND SERVICE_FLG='Y' )   
+		union all
+		(select a.REPLY_SQ,a.MCODE,a.USER_ID,a.USER_TITLE,a.CONTENT,a.CREATE_DT, 1 t , b.MCODE mentioncode, b.USER_TITLE metionname from dbo.MY_POST_REPLY a with(NOLOCK) , dbo.MY_POST b  with(NOLOCK) where a.post_sq=b.post_sq and b.content_no=#{CNTID} and b.cate_cd=#{CATE} and b.reply_cnt>0 and a.SERVICE_FLG='Y' and b.SERVICE_FLG='Y' )
+
+	) a left outer join dbo.MY_BLOG  b on a.MCODE=b.MCODE    order by  a.create_dt desc , a.POST_SQ desc    
+    ]]>
+    </select>
+    
+    <select id="COUNT_ALL_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select  count(*) cnt from(
+
+		(select POST_SQ,MCODE, USER_ID,USER_TITLE,CONTENT,CREATE_DT ,0 t ,null mentioncode ,null mentionid from dbo.MY_POST   with(NOLOCK) where cate_cd=#{CATE} and  content_no=#{CNTID} AND SERVICE_FLG='Y' )   
+		union all
+		(select a.REPLY_SQ,a.MCODE,a.USER_ID,a.USER_TITLE,a.CONTENT,a.CREATE_DT, 1 t , b.MCODE mentioncode, b.USER_TITLE metionname from dbo.MY_POST_REPLY a with(NOLOCK) , dbo.MY_POST b  with(NOLOCK) where a.post_sq=b.post_sq and b.content_no=#{CNTID} and b.cate_cd=#{CATE} and b.reply_cnt>0 and a.SERVICE_FLG='Y' and b.SERVICE_FLG='Y' )
+
+	) a left outer join dbo.MY_BLOG  b on a.MCODE=b.MCODE        
+    ]]>
+    </select>
+    
+    
+	<select id="URL_MGR_SELECT" resultType="hashmap">
+ 	<![CDATA[
+		select  seq  from MY_URL_MGR with(nolock) where location=#{URL}
+    ]]>
+    </select>    
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/COMMON_COMMENT">
+ 	<select id="COMMENT_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select contentid id, commentid cid ,userid uid ,userName un ,gmcode gid ,usertype ut ,likes lk ,regDate rd ,photo p ,comment c ,uk
+	 		from commonComment  where contentid=#{CONTENTID}  order by regDate  desc limit #{LIMIT} offset #{OFFSET}
+    	]]>
+    </select>
+    
+    <select id="COMMENT_NEXT_FROM_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select contentid id, commentid cid ,userid uid ,userName un ,gmcode gid ,usertype ut ,likes lk ,regDate rd ,photo p ,comment c 
+	 		from commonComment  where contentid=#{CONTENTID} and commentid < #{COMMENTID}  order by regDate  ${ORDER} limit #{LIMIT}
+    	]]>
+    </select>
+    <select id="COMMENT_NEXT_FROM_ID_BY_UK_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select contentid id, commentid cid ,userid uid ,userName un ,gmcode gid ,usertype ut ,likes lk ,regDate rd ,photo p ,comment c ,uk
+	 		from commonComment  where contentid=#{CONTENTID} and uk < #{COMMENTID}  order by regDate  ${ORDER} limit #{LIMIT}
+    	]]>
+    </select>
+    
+    <select id="COMMENT_BEFORE_FROM_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select contentid id, commentid cid ,userid uid ,userName un ,gmcode gid ,usertype ut ,likes lk ,regDate rd ,photo p ,comment c 
+	 		from commonComment  where contentid=#{CONTENTID} and commentid > #{COMMENTID} order by regDate  ${ORDER} limit #{LIMIT} 
+    	]]>
+    </select>
+    <select id="COMMENT_BEFORE_FROM_ID_BY_UK_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select contentid id, commentid cid ,userid uid ,userName un ,gmcode gid ,usertype ut ,likes lk ,regDate rd ,photo p ,comment c,uk 
+	 		from commonComment  where contentid=#{CONTENTID} and uk > #{COMMENTID} order by regDate  ${ORDER} limit #{LIMIT} 
+    	]]>
+    </select>
+    
+    <select id="COMMENT_USERT_BY_COMMENTID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select  * from commonComment  where contentid=#{CONTENTID} and commentid=#{COMMENTID}
+    	]]>
+    </select>
+    
+    <select id="CONTENTID_BY_COMMENTID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select contentid,userid,gmcode from commonComment  where  commentid=#{COMMENTID}
+    	]]>
+    </select>
+    
+    <select id="COMMENT_USERT_BY_UK_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select  gmcode,userid,contentid from commonComment  where uk=#{COMMENTID}
+    	]]>
+    </select>
+
+	<select id="COMMENT_USER_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select userid  from commonComment  where contentid=#{CNTID}  group by 1
+    	
+    	]]>
+    </select>    
+    
+    <select id="COMMENT_COUNT_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select count ,mig from commonCommentCount  where contentid=#{CONTENTID}
+    	]]>
+    </select>
+    <select id="COMMENT_TOTAL_COUNT_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 			select count(*) cnt from commonComment  where contentid=#{CONTENTID}
+    	]]>
+    </select>
+    
+    <insert id="COMMENT_INSERT">
+ 	<![CDATA[
+ 			insert into commonComment( contentid,commentid,userid,userName,gmcode,usertype,likes,regDate,photo,comment)
+ 			values(#{CONTENTID},#{COMMENTID},#{USERID},#{USERNAME},#{GMCODE},#{USERTYPE},0,#{REGDATE},#{PHOTO},#{COMMENT})
+    	]]>
+    </insert>
+    <insert id="COMMENT_COUNT_INSERT">
+ 	<![CDATA[
+ 			insert into commonCommentCount(contentid,count,mig) values(#{CONTENTID},#{COUNT},#{MIG})
+    	]]>
+    </insert>
+    
+    <insert id="LIKE_COUNT_INSERT">
+ 	<![CDATA[
+ 		insert into likeCount (commentid,gmcode) values (#{commentid},#{gmcode});
+    	]]>
+    </insert>
+    
+    
+    <update id="COMMENT_MIG_UPDATE">
+ 	<![CDATA[
+ 			update commonCommentCount set mig='Y' where  contentid=#{CONTENTID}
+    	]]>
+    </update>
+    <update id="COMMENT_COUNT_UPDATE">
+ 	<![CDATA[
+ 			update commonCommentCount set count=count+#{COUNT} where  contentid=#{CONTENTID}
+    	]]>
+    </update>
+    <update id="COMMENT-LIKE_COUNT_UPDATE">
+ 	<![CDATA[
+ 			update commonComment set likes=likes+1 where  contentid=#{CONTENTID} and commentid=#{COMMENTID}
+    	]]>
+    </update>
+    <update id="COMMENT-LIKE_COUNT_BY_UK_UPDATE">
+ 	<![CDATA[
+ 			update commonComment set likes=likes+1 where  contentid=#{CONTENTID} and uk=#{COMMENTID}
+    	]]>
+    </update>
+    <delete id="COMMENT_DELETE" >
+ 	<![CDATA[
+ 			delete from commonComment where contentid=#{CONTENTID} and commentid=#{COMMENTID} and gmcode=#{GMCODE}
+    	]]>
+    </delete>
+    <delete id="COMMENT_BY_UK_DELETE" >
+ 	<![CDATA[
+ 			delete from commonComment where contentid=#{CONTENTID} and uk=#{COMMENTID} and gmcode=#{GMCODE}
+    	]]>
+    </delete>
+</mapper>

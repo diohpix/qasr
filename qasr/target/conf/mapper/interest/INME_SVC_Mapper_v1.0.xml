@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/INME_SVC">
+	<select id="MY_FOLLOW_SELECT" resultType="hashmap">
+	<![CDATA[
+		select followuserid from follow where userid=#{USERID}
+	]]>
+	</select>
+	<select id="MY_FOLLOW_USERINFO_SELECT" resultType="hashmap">
+	<![CDATA[
+		select b.gmcode, b.userId,b.userName ,b.photoUrl, certType'contact'   from follow a, user b  where a.userid=#{USERID} and a.followuserid = b.userid
+	]]>
+	</select>
+	
+	<select id="YESTERDAY_TOP_INTERESTING_CATEGORY_SELECT" resultType="hashmap">
+	<![CDATA[
+		select count(categoryid) count,categoryid 
+		from folderContent a, folder b 
+		where  date_format(subdate(current_date,1),'%Y-%m-%d')= date_format(a.regDate,'%Y-%m-%d') and a.folderid=b.folderid group by 2 order by 1 desc limit 1
+	]]>
+	</select>
+	<select id="YESTERDAY_INTERESTING_CATEGORY_SELECT" resultType="hashmap">
+	<![CDATA[
+		select count(categoryid) count,categoryid 
+		from folderContent a, folder b 
+		where  date_format(subdate(current_date,1),'%Y-%m-%d')= date_format(a.regDate,'%Y-%m-%d') and a.folderid=b.folderid group by 2 order by 1
+	]]> 
+	</select>
+	<select id="YESTERDAY_TOP_INTERESTING_CONTENT_SELECT" resultType="hashmap">
+	<![CDATA[
+		select count(contentid) count ,contentid  
+		from folderContent 
+		where  date_format(subdate(current_date,1),'%Y-%m-%d')= date_format(regDate,'%Y-%m-%d') group by 2 order by 1 desc limit 1
+	]]>
+	</select>
+	<select id="MY_FAVORITE_CATEGORY_ORDER_SELECT" resultType="hashmap">
+	<![CDATA[
+		select cnt count,categoryid, categoryName from (
+		select count(a.contentid) cnt,categoryid cid
+			from view_history a, content b , folder c
+			where a.userid=#{USERID} and a.contentid=b.contentid and b.folderid=c.folderid group by 2 order by 1 desc) z , category x where z.cid=x.categoryid
+	]]>
+	</select>
+	<select id="USERID_BY_CONTENTID_SELECT" resultType="hashmap">
+	<![CDATA[
+		select userid from content where contentid =#{ID}
+	]]>
+	</select>
+	<select id="YESTERDAY_TOP_INTEREST_CONTENT_GROUP_BY_CATEGORYID_SELECT">
+	<![CDATA[
+	select max(cnt) count , contentid ,categoryid from(
+		select count(a.contentid)  cnt,a.contentid, b.categoryid 
+		from folderContent a, folder b 
+		where  date_format(subdate(current_date,1),'%Y-%m-%d')= date_format(a.regDate,'%Y-%m-%d') and a.folderid=b.folderid
+	group by 2 ) z  group by 3 order by 1 desc
+	]]>
+	</select>
+	<select id="BESTUSER_SELECT">
+	<![CDATA[
+	select * from (
+		select a.userid, count(a.userid) count
+		from(
+			select userid 
+				from userCount where userid not in ('86','2Kaq')  order by followerCount desc limit #{MANYFOLLWER} 
+			) a , folderContent b 
+		where a.userid= b.userid group by 1 order by 2 desc  limit #{MANYINTEREST}) z  
+	order by rand() limit #{LIMIT}
+	]]>
+	</select>
+	<select id="INTEREST_USERR_BY_CONTENTID_SELECT" resultType="hashmap">
+	<![CDATA[
+		select userName,photoUrl,a.userid from folderContent  a, user b where contentid=#{CONTENTID} and likeYN='Y' and a.userid=b.userid limit 8
+	]]>
+	</select>
+
+
+	<select id="TOP3_CONTENTID_BY_USERID_SELECT" resultType="hashmap">
+	<![CDATA[
+		select contentid from folderContent where userid=#{USERID} order by contentid limit 3
+	]]>
+	</select>
+
+
+	
+	<select id="CONTENTID_BY_METACODE_SELECT" resultType="hashmap">
+	<![CDATA[
+		select contentid from content where metaCode =#{METACODE}
+	]]>
+	</select>
+	
+	
+	<select id="CONTENTINFO_BY_METATYPE_SELECT" resultType="hashmap">
+	<!-- poc 메타타입으로 인.미 content 가져오기   -->
+	<![CDATA[
+		select a.contentid, title,thumbnailImg thumbnail , a.description,a.regDate, b.userName,b.photoUrl ,a.uploadUrl  ,c.likeCount ,0 commentCount
+		from content a,user b ,contentCount c where a.metaCode =#{METAID} and a.userId =b.userId and c.contentid=a.contentid;
+	]]>
+	</select>
+
+	<select id="CONTENTINFO_BY_CONTENTID_SELECT" resultType="hashmap">
+	<!-- poc 컨텐트아이디 인.미 content 가져오기   -->
+	<![CDATA[
+		select a.contentid, title,thumbnailImg thumbnail , a.description,a.regDate, b.userName ,c.likeCount ,0 commentCount, uploadUrl,vodurl,b.photoUrl
+		from content a,user b ,contentCount c where a.contentid =#{METAID} and a.userId =b.userId and c.contentid=a.contentid;
+	]]>
+	</select>
+
+
+	
+	<select id="CONTENT_BY_CONTENTID_SELECT" resultType="hashmap">
+	<!--  컨텐츠 ID로 정보 가져오기     -->
+	<![CDATA[
+		select title,contentid,metatype,metacode,uploadurl,regDate,type,thumbnailImg thumbnail from content where contentid=#{CNTID}
+	]]>
+	</select>
+	
+	<select id="CATEGORY_RECENT_SELECT" resultType="hashmap">
+	<!-- 뷰티앱에서 최근항목 가져오기    -->
+	<![CDATA[
+		select contentid 
+		from folder a , folderContent  b  
+		where categoryid=#{CATEID} and a.folderid=b.folderid and b.likeYN='N' order by b.contentid desc limit ${LIMIT} offset ${OFFSET} 
+	]]>
+	</select>
+	
+	<select id="CATEGORY_RECENT_COUNT_SELECT" resultType="hashmap">
+	<!-- 뷰티앱에서 최근항목 가져오기    -->
+	<![CDATA[
+		select count(*) cnt 
+		from folder a , folderContent  b  
+		where categoryid=#{CATEID} and a.folderid=b.folderid and b.likeYN='N' 
+	]]>
+	</select>
+
+	<select id="USERID_BY_PROFILEPATH_SELECT" resultType="int" >
+	<![CDATA[
+     	select  userid from user where profilepath=#{PROFILEPATH} 
+     ]]> 
+   	</select>
+   	<select id="USERNAME_BY_USERID_SELECT" resultType="int" >
+	<![CDATA[
+     	select  username,gmcode,profilepath from user where userid=#{USERID} 
+     ]]> 
+   	</select>
+	<select id="USER_BY_GMCODE_SELECT" resultType="int" >
+	<![CDATA[
+     	select  username,photoUrl,userid,profilepath,certType from user where gmcode=#{GMCODE} 
+     ]]> 
+   	</select>
+	<select id="__insert__id__" resultType="int" >
+     	SELECT  LAST_INSERT_ID() as __insert__id__ 
+   	</select>
+	<insert id="CONTENT_INSERT" useGeneratedKeys="true"  keyProperty="__last_insert_id__">
+	<![CDATA[
+		insert into content(contentid,userid,folderid,uploadUrl,shortUrl,thumbnailImg,title,description,vodurl,type,shareYN,lang,hiddenYN,contentCode,metaCode,metaType,regDate,updDate,imgHeight,imgWidth,provideCompany,provideGroup)
+		value(null,#{userid},#{folderid},#{uploadUrl},#{shortUrl},#{thumbnailImg},#{title},#{description},#{vodurl},#{type},'N',#{lang},'N',#{contentCode},#{metaCode},#{metaType},#{regDate},#{updDate},#{imgHeight},#{imgWidth},#{provideCompany},#{provideGroup})
+		]]>
+	</insert>
+	
+	<insert id="FOLDERCONTENT_INSERT">
+	<![CDATA[
+		insert into folderContent (folderId,contentId,userId,likeYN,regDate) values(#{folderId},#{contentId},#{userId},#{likeYN},#{regDate})
+		]]>
+	</insert>
+	
+	<insert id="CONTENT_RESERVE_INSERT">
+		<![CDATA[
+		insert into contentReserve (publishDate,metaCode) values(#{regDate},#{metaCode})
+		]]>
+	</insert>
+	
+	<insert id="CONTENTCOUNT_INSERT">
+	<![CDATA[
+	insert into contentCount (contentid,viewCount,likeCount,commentCount,reachCount,sharefbCount,sharetwCount,liketofbCount,updDate) value(#{CONTENTID},0,0,0,0,0,0,0,now())
+		]]>
+	</insert>
+	
+	<select id="MAX_FOLDER_ORDER_SELECT" >
+     	SELECT  max(orderNo)+1 from folder where userid=#{ID} 
+   	</select>
+	
+	<insert id="FOLDER_INSERT" keyProperty="__last_insert_id__">
+	<![CDATA[
+		insert into folder(folderName,orderNo,userId,type,categoryid,regDate) values(#{foldername},#{orderno},#{userid},'F2',#{categoryid},now())
+		]]>
+	</insert>
+	<insert id="CONTENTREL_INSERT" >
+	<![CDATA[
+		insert into contentRel(orderNo,pContentId,metaContentId,thumbnailImg,vodUrl,description,linkUrl) values(#{order},#{pContentId},#{metaContentId},#{thumbnail},#{vodUrl},#{desc},#{linkUrl})
+		]]>
+	</insert>
+	
+	
+	<update id="CONTENT_ORDER_UPDATE" >
+	<![CDATA[
+		UPDATE content SET orderNo =  CONVERT(contentId, SIGNED) * -1 WHERE contentId= #{ID}
+		]]>
+	</update>
+	
+	
+	<insert id="FOLDERCOUNT_INSERT">
+	<![CDATA[
+		insert into folderCount(folderId,viewCount,contentCount) values(#{ID},0,0)
+		]]>
+	</insert>
+	
+	<insert id="CONTENTHTML_INSERT">
+	<![CDATA[
+	insert into contentHtml (contentid,contentHtml) value(#{CONTENTID},#{HTML})
+		]]>
+	</insert>
+	<update id="CONTENTHTML_UPDATE">
+	<![CDATA[
+		update contentHtml set contentHtml=#{HTML} where contentid=#{CONTENTID}
+		]]>
+	</update>
+	<update id="CONTENT_UPDATE">
+ 	<![CDATA[
+		update content 
+		set userid=#{userid},folderid=#{folderid},uploadUrl=#{uploadUrl},shortUrl=#{shortUrl}
+		    ,thumbnailImg=#{thumbnailImg},title=#{title},description=#{description},vodurl=#{vodurl}
+		    ,type=#{type},shareYN=#{shareYN},lang=#{lang},hiddenYN=#{hiddenYN},contentCode=#{contentCode}
+		    ,metaCode=#{metaCode},metaType=#{metaType}
+		    ,regDate=#{regDate},updDate=#{updDate}
+		    ,imgHeight=#{imgHeight},imgWidth=#{imgWidth}
+		    ,provideCompany=#{provideCompany},provideGroup=#{provideGroup}
+		where contentid=#{CONTENTID}
+   	]]>
+    </update>
+    
+    <select id="FOLDER_BY_ID_AND_CATEGORY_ID_SELECT" resultType="hashmap">
+	<![CDATA[
+		select folderId 
+		from folder
+		where userId=#{userid} 
+		  and categoryId = #{categoryid}
+		limit 1 
+	]]>
+	</select>
+	<select id="FOLDER_BY_ID_AND_CATEGORY_ID_BY_GMCODE_SELECT" resultType="hashmap">
+	<![CDATA[
+	select folderId ,b.userId
+		from folder a , user b
+		where a.userid=b.userid and b.gmcode=#{gmcode}
+		  and categoryId = #{categoryid}
+		limit 1;
+	]]>
+	</select>
+	<select id="FOLDERID_BY_FOLDERNAME_CATEORYID_SELECT" resultType="hashmap">
+	<![CDATA[
+		select folderId 
+		from folder
+		where userid=#{userid} and  folderName=#{folderName} 
+		  and categoryId = #{categoryid}
+	]]>
+	</select>
+
+	<select id="DELETE_CONTENT_SELECT">
+		select contentid from content where userid='2Kar' and metaCode like 'ppoc%';
+	</select>
+	<delete id="CONTENTCOUNT_DELETE">
+		delete from contentCount where contentid = #{CONTENTID}
+	</delete>
+	<delete id="FOLDERCONTENT_DELETE">
+		delete from folderContent where userid=#{USERID} and contentid=#{CONTENTID}
+	</delete>	
+	<delete id="CONTENT_DELETE">
+		delete from content where userid=#{USERID} and contentid=#{CONTENTID}
+	</delete>
+	<delete id="COMMENT_DELETE">
+		delete from comment where contentid=#{CONTENTID}
+	</delete>
+	<delete id="CONTENTREL_DELETE">
+		delete cr 
+		from content c, contentRel cr
+		where
+		  c.contentId = cr.pContentId 
+		  and c.userId=#{USERID}
+		  and cr.pContentid=#{PCONTENTID}
+	</delete>
+	<delete id="FOLDERCONTENT_BY_CONTENTID_ONLY_DELETE">
+		delete from folderContent where contentid=#{CONTENTID}
+	</delete>	
+	
+	
+	<select id="CONTENTID_AND_USERID_GMCODE_BY_METACODE_SELECT" resultType="hashmap">
+	<![CDATA[
+		select c.contentId, c.userId, u.gmcode
+		from content c
+		inner join user u 
+		   on c.userId = u.userId
+		where c.metaCode = #{metaCode}
+	]]>
+	</select>
+	
+	
+	<update id="COMMENT_COUNT_BY_META_UPDATE">
+	<![CDATA[
+		update contentCount a ,  (select contentid from content where metaCode=#{META})  b   set a.commentCount=#{VAL}  where a.contentid = b.contentid;
+	]]>
+	</update>
+	<update id="COMMENT_COUNT_BY_CONTENTID_UPDATE">
+	<![CDATA[
+		update contentCount    set commentCount=#{VAL}  where contentid = #{ID}
+	]]>
+	</update>
+	
+	<update id="INC_DEC_COMMENT_COUNT_BY_META_UPDATE">
+	<![CDATA[
+		update contentCount a ,  (select contentid from content where metaCode=#{META})  b   set a.commentCount=a.commentCount + #{VAL}  where a.contentid = b.contentid;
+	]]>
+	</update>
+	<update id="INC_DEC_COMMENT_COUNT_BY_CONTENTID_UPDATE">
+	<![CDATA[
+		update contentCount    set commentCount=commentCount + #{VAL}  where contentid = #{ID}
+	]]>
+	</update>
+	
+	
+	<update id="FOLDERCOUNT_CONTENTCOUNT_UPDATE">
+	<![CDATA[
+		update folderCount   set contentCount=contentCount+1 where folderid = #{ID}
+	]]>
+	</update>
+	<update id="CONTENTCOUNT_LIKECOUNT_UPDATE">
+	<![CDATA[
+		update contentCount   set  likeCount=likeCount+1 where contentid = #{ID}
+	]]>
+	</update>
+	<update id="USERCOUNT_MYCONTENTCOUNT_UPDATE">
+	<![CDATA[
+		update userCount   set  mycontentCount=mycontentCount+1 where userid = #{ID}
+	]]>
+	</update>
+	<update id="USERCOUNT_FOLDERCOUNT_UPDATE">
+	<![CDATA[
+		update userCount   set  folderCount=folderCount+1 where userid = #{ID}
+	]]>
+	</update>
+	<update id="USERCOUNT_MYLIKECOUNT_UPDATE">
+	<![CDATA[
+		update userCount   set  mylikeCount=mylikeCount+1 where userid = #{ID}
+	]]>
+	</update>
+	<update id="USERCOUNT_YOURLIKECOUNT_UPDATE">
+	<![CDATA[
+		update userCount   set  yourlikeCount=yourlikeCount+1 where userid = #{ID}
+	]]>
+	</update>
+
+	<!-- TOP30 -->	
+	<select id="TOP30_COOTOO_SELECT" resultType="hashmap">
+	<![CDATA[
+		select c.metaCode "metaid", title, cn.json json, thumbnailImg photo
+		from content c, contentNimits cn
+		where
+		 c.contentId = cn.contentId 
+		 and c.metaCode like 'cootoo-%'
+		order by c.contentId desc
+		limit 30
+	]]>
+	</select>
+		
+ 	<select id="VOD_TOP30_SELECT" resultType="hashmap">
+	<![CDATA[
+		select c.metaCode "metaid", title, cn.json json, thumbnailImg photo, regDate create_date, cn.json 
+		from content c, contentNimits cn
+		where
+		 c.contentId = cn.contentId 
+		 and c.metaCode like 'bcms-vod-%'
+		order by c.contentId desc
+		limit 30
+	]]>
+	</select>
+
+ 	<select id="PROGRAM_TOP30_SELECT" resultType="hashmap">
+	<![CDATA[
+		select c.metaCode "metaid", title, cn.json json, thumbnailImg photo, regDate create_date, cn.json 
+		from content c, contentNimits cn
+		where
+		 c.contentId = cn.contentId 
+		 and (c.metaCode like 'ppoc-pgm-%' or c.metaCode like 'mnet-pgm-%') 
+		order by c.contentId desc
+		limit #{LIMIT}
+	]]>
+	</select>
+
+			
+</mapper>

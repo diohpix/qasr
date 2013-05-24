@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/ENEWS_DB">
+    <select id="ENEWS24_COMMENT_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select TOP ${TOP}  rpId cid , rpUserId uid , rpUserId un , rpText c , rpRegDate rd from (
+        	select ROW_NUMBER() OVER(ORDER BY rpId desc) as rownum ,   rpId  , rpUserId , rpText  , rpRegDate   
+        	from ENEWSK.dbo.t_reply with(nolock) where newsID=#{NEWSID} and newsType=#{NEWSTYPE} and rpDelFlag='N'
+         ) a  where rownum > #{OFFSET}
+    ]]>
+    </select>
+    <select id="ENEWS24_COMMENT_ALL_SELECT" resultType="hashmap">
+    <![CDATA[
+        	select  newsID, rpId cid , rpUserId uid , rpUserName un , rpText c , rpRegDate rd    , newsType
+        	from ENEWSK.dbo.t_reply with(nolock) where    rpDelFlag='N' order by newsId, newsType, rpRegDate asc
+
+    ]]>
+    </select>
+    <select id="ENEWSWORLD_COMMENT_SELECT" resultType="hashmap">
+    <![CDATA[
+    	select TOP ${TOP}  num cid, c_content c, c_name, un, c_id cid , c_sns_img photo , rdate rd  from (
+		select  ROW_NUMBER() OVER(ORDER BY num desc) as rownum ,  num,c_content,c_name,c_id, c_sns_type,c_sns_img ,rdate 
+			from ENEWSG.dbo.tb_comment with(nolock) where article_num=8377 and c_del_YN='N' and a_c_del_YN='N'
+		) a where rownuM > #{OFFSET}
+    ]]>
+    </select>
+    <select id="ENEWSWORLD_COMMENT_ALL_SELECT" resultType="hashmap">
+    <![CDATA[
+		select article_num newsID , c_content c, c_name  un, c_id uid , c_sns_img photo , rdate rd  , c_article_type newsType
+			from ENEWSG.dbo.tb_comment with(nolock)  where  c_del_YN='N' and a_c_del_YN='N' order by newsID ,  rdate asc
+    ]]>
+    </select>
+
+    <select id="ENEWSWORLD_BY_ID_SELECT" resultType="hashmap">
+    <![CDATA[
+        select  M.*,C.nsImage npImage , C.nsText ,D.nsctCategoryID category 	from   
+       	  ENEWSCMS.dbo.T_NS_NewsMaster M WITH(NOLOCK), 
+          ENEWSCMS.dbo.T_NS_NewsContent C WITH(NOLOCK),
+          ENEWSCMS.dbo.T_NS_NewsCategoryMacthing D with(nolock)
+        where 
+          M.nsID =  #{NSID}
+          and M.nsID = C.parentID and M.nsType=#{TYPE} and C.parentType='N' and M.nsID=nsctParentID
+          order by M.nsID ASC
+
+        
+    ]]>
+    </select>
+    
+    <select id="ENEWSWORLD_CELEB_BY_ID_SELECT" resultType="hashmap">
+    <![CDATA[
+        select  M.*,C.nsImage npImage , C.nsText  	from   
+       	  ENEWSCMS.dbo.T_NS_StarMaster M WITH(NOLOCK), 
+          ENEWSCMS.dbo.T_NS_NewsContent C WITH(NOLOCK)
+        where 
+          M.stID =  #{ID}
+          and M.stID = C.parentID and c.parentType='S'
+          order by M.stID ASC
+
+        
+    ]]>
+    </select>
+    
+    <select id="ENEWSWORLD_PHOTO_BY_ID_SELECT" resultType="hashmap">
+    <![CDATA[
+        select  *  	from   
+       	  ENEWSCMS.dbo.T_NS_PhotoNewsMaster M WITH(NOLOCK), 
+          ENEWSCMS.dbo.T_NS_PhotoNewsContent C WITH(NOLOCK)
+        where 
+          M.ptID = #{ID}
+          and M.ptID = C.ptID 
+          order by M.ptID ASC
+        
+        
+    ]]>
+    </select>
+
+    <select id="ENEWS24_BY_ID_SELECT" resultType="hashmap">
+    <![CDATA[
+      select  * 
+		from 
+  			ENEWSKCMS.dbo.T_NS_NewsMaster M with(nolock), 
+  			ENEWSKCMS.dbo.T_NS_NewsContent C with(nolock),
+  			ENEWSKCMS.dbo.T_NS_NewsCategoryMacthing A with(nolock)
+		Where      
+			 M.nsID = #{nsID} AND        M.nsID = C.parentID  AND M.nsID=A.nsctParentID  and M.nsType='N' and C.parentType='N'    and A.depth=1 order by ncSort asc
+      
+    ]]>
+    </select>
+
+    <select id="ENEWS24_PHOTO_BY_ID_SELECT" resultType="hashmap">
+    <![CDATA[
+       select   * 
+		from 
+  			ENEWSKCMS.dbo.T_NS_PhotoNewsMaster  M with(nolock), 
+  			ENEWSKCMS.dbo.T_NS_PhotoNewsContent C with(nolock),
+  			ENEWSKCMS.dbo.T_NS_NewsCategoryMacthing A with(nolock)
+		Where       
+			M.ptID = #{ptID}  AND        M.ptID = C.ptID  AND M.ptID=A.nsctParentID  and A.depth=1   order by npID desc 
+       
+    ]]>
+    </select>
+</mapper>

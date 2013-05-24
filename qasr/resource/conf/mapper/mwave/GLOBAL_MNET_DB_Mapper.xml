@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="v1.0/GLOBAL_MNET_DB">
+	<select id="COMMENT_ID_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select  cmt_id  from mt_comment_url  with(NOLOCK) where url=#{URL}
+    ]]>
+    </select>
+ 	<select id="COMMENT_LIST_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 	 	select TOP ${TOP} * from (
+ 		select ROW_NUMBER() OVER(ORDER BY create_dt desc) as rownum ,seq cid , user_id uid, user_nm un,user_profile_url p, create_dt rd ,content c  
+ 			from mt_comment   with(NOLOCK)  where cmt_id=#{CMTID} and  service_flg='Y' 
+ 		) a  where rownum > #{OFFSET}
+    ]]>
+    </select>
+    <select id="COMMENT_ALL_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select * from (
+    select top 5001  a.seq cid , user_id uid, user_nm un,user_profile_url p, a.create_dt rd ,content c  
+ 		from mt_comment  a with(NOLOCK)  , mt_comment_url b  with(nolock)   
+ 		where a.cmt_id=b.cmt_id and  url=#{CMTID}  and  service_flg='Y' order by a.create_dt desc  
+  	)  b  order by rd asc
+    ]]>
+    </select>
+    <select id="COMMENT_COUNT_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select count(*) commentCount from mt_comment  a with(NOLOCK)  , mt_comment_url b  with(nolock)	where a.cmt_id=b.cmt_id and  url=#{CMTID}  and  service_flg='Y'   
+    ]]>
+    </select>
+    
+    <select id="SONG_LANG_META_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select lang_cd,SONG_NM name , '' description from MMIS.dbo.MT_SONG_META with (nolock) where SONG_ID=#{ID} 
+    ]]>
+    </select>
+    <select id="ALBUM_LANG_META_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select lang_cd,ALBUM_NM name, ALBUM_INTRO description from MMIS.dbo.MT_ALBUM_META with (nolock) where ALBUM_ID=#{ID} 
+    ]]>
+    </select>
+    <select id="ARTIST_LANG_META_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select lang_cd,ARTIST_NM name, ARTIST_INTRO description from MMIS.dbo.MT_ARTIST_META with (nolock) where ARTIST_ID=#{ID} 
+    ]]>
+    </select>
+    <select id="MV_LANG_META_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select lang_cd,MV_TITLE name , MV_INTRO description from MMIS.dbo.MT_MV_META with (nolock) where MV_ID=#{ID} 
+    ]]>
+    </select>
+    <select id="PROGRAM_LANG_META_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select lang_cd,PROGRAM_TITLE name, PROGRAM_INTRO description from MMIS.dbo.VT_PROGRAM_META with (nolock) where PROGRAM_ID=#{ID} 
+    ]]>
+    </select>
+    <select id="PROGRAM_VOD_LANG_META_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select lang_cd,CLIP_TITLE name, CLIP_INTRO description from MMIS.dbo.VT_PROGRAM_CLIP_META with (nolock) where CLIP_ID=#{ID} 
+    ]]>
+    </select>
+    <select id="GENRE_LANG_META_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select lang_cd,genre_nm name  from MMIS.dbo.CT_DOMAIN_GENRE_META with (nolock) where GENRE_CD=#{ID}
+    ]]>
+    </select>
+    
+    <select id="ROLE_LANG_META_SELECT" resultType="hashmap">
+ 	<![CDATA[
+ 		select lang_cd,role_nm name from MMIS.dbo.CT_DOMAIN_ROLE_META with (nolock) where ROLE_CD=#{ID}
+    ]]>
+    </select>
+    
+    
+    
+    
+</mapper>
