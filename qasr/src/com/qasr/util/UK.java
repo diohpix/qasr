@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.GZIPOutputStream;
 
 
@@ -70,16 +71,13 @@ public class UK {
 		long l = Double.doubleToLongBits(d) ;
 		return long2bytes(l);
 	}
-	public static String getWhereString(Query q){
-		if(q.getValueCount()>0){
-			StringBuilder a= new StringBuilder();
-			for(ByteString v : q.getValueList()){
-				a.append(v.toStringUtf8());
-			}
-			return a.toString();
-		}else{
-			return null;
+	public static String getWhereString(Map<String,Object> q){
+		if(q==null) return null;
+		StringBuilder sb = new StringBuilder();
+		for(Entry<String, Object> m : q.entrySet()) {
+			sb.append(",").append(m.getValue());
 		}
+		return sb.toString();
 	}
 	public static  Map<String,Object> getWhere(Query q){
 		Map<String,Object> where= null;
@@ -94,7 +92,7 @@ public class UK {
 				case STRING:
 	        		byte [] vv = value.get(idx).toByteArray();
 	        		if(vv.length==1 && vv[0] ==-1){
-	        			where.put(param,"");
+	        			where.put(param,null);
 	        		}else{
 	        			try {
 	        				where.put(param,new String(vv,"UTF-8"));

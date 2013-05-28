@@ -83,9 +83,9 @@ public class ProtobufRequestProcessor implements Runnable {
 				list = APIService.transactionQuery((SqlSession)event.getChannel().getAttachment(), type, SQL, _where);
 			}else{
 				if(q.hasExpire()){
-					list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(q),q.getExpire());
+					list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(_where),q.getExpire());
 				}else{
-					list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(q),expire);
+					list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(_where),expire);
 				}
 			}
 			Response r = null;
