@@ -47,6 +47,11 @@ public class Configure {
 		if(sf ==null) throw new Exception("SqlSession "+name+" not found");
 		return sf;
 	}
+	public static LoadBalancer getLoadBalancer(String name) throws Exception{
+		LoadBalancer sf = sqlfactory.get(name);
+		if(sf ==null) throw new Exception("LoadBalancer "+name+" not found");
+		return sf;
+	}
 	public static void addSQLFactory(String name,LoadBalancer value){
 		System.out.println("PUT "+name);
 		sqlfactory.put(name, value);

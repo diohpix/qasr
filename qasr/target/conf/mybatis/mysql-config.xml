@@ -13,6 +13,6 @@
         <typeHandler javaType="java.sql.Date"      handler="org.apache.ibatis.type.DateTypeHandler"/>
     </typeHandlers>
     <plugins>
-    	<plugin interceptor="me.interest.pi.relay.db.ResultSetInterceptor"/>
+    	<plugin interceptor="com.qasr.db.ResultSetInterceptor"/>
 	</plugins>
 </configuration>

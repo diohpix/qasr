@@ -20,6 +20,9 @@ public class LoadBalancer {
 		this.connList.add(sqlSession);
 		this.len++;
 	}
+	public List<ReloadableSqlSesseionFactoryBean> getSessionList(){
+		return this.connList;
+	}
 	public synchronized SqlSessionFactory getSession(){
 		SqlSessionFactory sf=null;
 		int c = seq;
