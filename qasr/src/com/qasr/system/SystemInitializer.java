@@ -54,7 +54,7 @@ public class SystemInitializer {
     	if(args.length>0){
     		r = new ClassPathResource(Configure.CONFIG_ROOT+args[0]);
     	}else{
-    		r = new ClassPathResource(Configure.CONFIG_ROOT+"interest.conf.xml");
+    		r = new ClassPathResource(Configure.CONFIG_ROOT+"qasr.xml");
     	}
     	try {
 			Configure.load(r.getFile());
@@ -82,11 +82,11 @@ public class SystemInitializer {
         	if((Configure.getProperty("jdbcs.item("+i+").urls.url")).length()>0){
 	        	while(true){
 	    			String h = Configure.getProperty("jdbcs.item("+i+").urls.url("+k+")");
-	    			logger.info(h);
 	    			if("".equals(h)){
 	    				break;
 	    			}else{
 	    				urls.add(h);
+	    				logger.info(h);
 	    			}
 	    			k++;
 	    		}
