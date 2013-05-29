@@ -1,4 +1,4 @@
-package me.interest.pi.relay.protocol;
+package com.qasr.protocol;
 
 import static org.jboss.netty.channel.Channels.pipeline;
 

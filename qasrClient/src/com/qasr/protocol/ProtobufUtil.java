@@ -1,4 +1,4 @@
-package me.interest.pi.relay.protocol;
+package com.qasr.protocol;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Time;
@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.interest.pi.relay.protocol.QueryProtocol.DataType;
-import me.interest.pi.relay.protocol.QueryProtocol.Response;
 
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.Shorts;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.qasr.protocol.QueryProtocol.DataType;
+import com.qasr.protocol.QueryProtocol.Response;
 
 public class ProtobufUtil {
     	/**

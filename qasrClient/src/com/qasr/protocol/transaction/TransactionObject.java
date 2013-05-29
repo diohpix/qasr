@@ -1,4 +1,4 @@
-package me.interest.pi.relay.protocol.transaction;
+package com.qasr.protocol.transaction;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -8,11 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import me.interest.pi.relay.protocol.APIClientHandler;
-import me.interest.pi.relay.protocol.ProtobufUtil;
-import me.interest.pi.relay.protocol.QueryProtocol.Query;
-import me.interest.pi.relay.protocol.QueryProtocol.Response;
-import me.interest.pi.relay.protocol.exception.InvalidCommandSuffix;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -20,6 +15,11 @@ import org.jboss.netty.channel.ChannelFuture;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.qasr.protocol.APIClientHandler;
+import com.qasr.protocol.ProtobufUtil;
+import com.qasr.protocol.QueryProtocol.Query;
+import com.qasr.protocol.QueryProtocol.Response;
+import com.qasr.protocol.exception.InvalidCommandSuffix;
 
 public class TransactionObject {
 	private Channel channel = null;

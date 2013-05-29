@@ -1,4 +1,4 @@
-package me.interest.pi.relay.protocol;
+package com.qasr.protocol;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.interest.pi.relay.protocol.QueryProtocol.Query;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
@@ -15,6 +14,8 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelHandler;
+
+import com.qasr.protocol.QueryProtocol.Query;
 
 public class APIClientHandler extends SimpleChannelHandler {
 

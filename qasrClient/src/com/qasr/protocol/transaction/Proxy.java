@@ -1,4 +1,4 @@
-package me.interest.pi.relay.protocol.transaction;
+package com.qasr.protocol.transaction;
 
 public class Proxy {
 	private boolean live;

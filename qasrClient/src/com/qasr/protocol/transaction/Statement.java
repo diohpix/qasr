@@ -1,4 +1,4 @@
-package me.interest.pi.relay.protocol.transaction;
+package com.qasr.protocol.transaction;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import me.interest.pi.relay.protocol.QueryProtocol.DataType;
-import me.interest.pi.relay.protocol.QueryProtocol.Query;
-import me.interest.pi.relay.protocol.exception.InvalidCommandSuffix;
 
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.Shorts;
 import com.google.protobuf.ByteString;
+import com.qasr.protocol.QueryProtocol.DataType;
+import com.qasr.protocol.QueryProtocol.Query;
+import com.qasr.protocol.exception.InvalidCommandSuffix;
 
 public class Statement {
 	private static byte [] zlen = new byte[]{-1};
