@@ -34,11 +34,11 @@
 <redis>
 	<servers>
 		<host>
-			<ip>172.16.35.249</ip>
+			<ip>127.0.0.1</ip>
 			<port>6379</port>
 		</host>
 		<host>
-			<ip>172.16.35.249</ip>
+			<ip>127.0.0.1</ip>
 			<port>6379</port>
 		</host>		
 	</servers>
@@ -54,283 +54,44 @@
 
 <jdbcs>
 	<item>
-		<name>in.me.master</name>
-		<sqlmapper>interest</sqlmapper>
+		<name>sample</name>
+		<sqlmapper>sample</sqlmapper>
 		<mybatis-conf>mybatis/mysql-config.xml</mybatis-conf>
 		<driver>com.mysql.jdbc.Driver</driver>
 		<url>
 		<![CDATA[
-			jdbc:mysql://172.16.80.228:3306/interest?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000
+			jdbc:mysql://127.0.0.1:3306/sample?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000
 		]]>
 		</url>
-		<user>interest</user>
-		<password>interest</password>
+		<user>sampleUser</user>
+		<password>sampleUaser</password>
 		<defaultAutoCommit>true</defaultAutoCommit>
 	</item>
 	
 	<item>
-		<name>in.me.readonly</name>
-		<sqlmapper>interest</sqlmapper>
+		<name>sample.multi</name>
+		<sqlmapper>sample</sqlmapper>
 		<mybatis-conf>mybatis/mysql-config.xml</mybatis-conf>
 		<driver>com.mysql.jdbc.Driver</driver>
 		<urls>
 			<url>
 				<![CDATA[
-					jdbc:mysql://172.16.80.239:3306/interest?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true 
+					jdbc:mysql://127.0.0.1:3306/sample1?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true 
 				]]>
 			</url>
 			<url>
 				<![CDATA[
-					jdbc:mysql://172.16.80.53:3306/interest?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true
+					jdbc:mysql://127.0.0.1:3306/sample2?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true
 				]]>
 			</url>
 			<url>
 				<![CDATA[
-					jdbc:mysql://172.16.80.237:3306/interest?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true 
+					jdbc:mysql://127.0.0.1:3306/sample3?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true 
 				]]>
 			</url>
 		</urls>
-		<user>interest</user>
-		<password>interest</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	
-	<item>
-		<name>comment</name>
-		<sqlmapper>interest</sqlmapper>
-		<mybatis-conf>mybatis/mysql-config.xml</mybatis-conf>
-		<driver>com.mysql.jdbc.Driver</driver>
-		<url>
-		<![CDATA[
-			jdbc:mysql:replication://172.17.111.51:3306,172.17.111.52:3306/interest?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true
-		]]>
-		</url>
-		<user>commentuser</user>
-		<password>comment_user</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>in.me</name>
-		<sqlmapper>interest</sqlmapper>
-		<mybatis-conf>mybatis/mysql-config.xml</mybatis-conf>
-		<driver>com.mysql.jdbc.Driver</driver>
-		<url>
-		<![CDATA[
-			jdbc:mysql://172.16.37.220:3306/interest?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000&zeroDateTimeBehavior=convertToNull
-		]]>
-		</url>
-		<user>interest</user>
-		<password>interest</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>in.me.dev</name>
-		<sqlmapper>interest</sqlmapper>
-		<mybatis-conf>mybatis/mysql-config.xml</mybatis-conf>
-		<driver>com.mysql.jdbc.Driver</driver>
-		<url>
-		<![CDATA[
-			jdbc:mysql://172.16.37.220:3306/interest?useUnicode=true&characterEncoding=UTF-8&connectTimeout=1000&zeroDateTimeBehavior=convertToNull
-		]]>
-		</url>
-		<user>interest</user>
-		<password>interest</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>broad</name>
-		<sqlmapper>lifestyler</sqlmapper>
-		<mybatis-conf>mybatis/oracle-config.xml</mybatis-conf>
-		<driver>oracle.jdbc.driver.OracleDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:oracle:thin:@172.17.111.40:1521/CMSDB
-		]]>
-		</url>
-		<user>CMS</user>
-		<password>CMS_123</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>giftmap</name>
-		<sqlmapper>lifestyler</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.17.113.82:1433;databaseName=OnlineBusinessPromotion
-		]]>
-		</url>
-		<user>usr_evtDB</user>
-		<password>$$aleldjelql</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>ls</name>
-		<sqlmapper>lifestyler</sqlmapper>
-		<mybatis-conf>mybatis/oracle-config.xml</mybatis-conf>
-		<driver>oracle.jdbc.driver.OracleDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:oracle:thin:@172.17.111.43:1521/ORCL
-		]]>
-		</url>
-		<user>webdb</user>
-		<password>dnpqelql321</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>ls.channel</name>
-		<sqlmapper>lifestyler</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.17.111.44:1433;databaseName=OnlineBusinessChannel
-		]]>
-		</url>
-		<user>WebChannel</user>
-		<password>dnpqcosjf!@#</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>ls.program</name>
-		<sqlmapper>lifestyler</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.17.111.44:1433;databaseName=OnlineBusinessProgram
-		]]>
-		</url>
-		<user>WebProgram</user>
-		<password>dnpqvmfhrmfoa!@#</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>ls.sns</name>
-		<sqlmapper>lifestyler</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.17.111.44:1433;databaseName=OnlineBusinessSNS
-		]]>
-		</url>
-		<user>WebSNS</user>
-		<password>dnpqsns!@#</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>mnet</name>
-		<sqlmapper>mnet</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.16.37.54:6231;databaseName=srvDB
-		]]>
-		</url>
-		<user>cmusic</user>
-		<password>!@12cjabwlr</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>mnet_mt</name>
-		<sqlmapper>mnet_mt</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.16.37.54:6231;databaseName=MNET
-		]]>
-		</url>
-		<user>cmusic</user>
-		<password>!@12cjabwlr</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>mnetsocial</name>
-		<sqlmapper>mnet</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.16.37.231:6231;databaseName=SOCIALDB
-		]]>
-		</url>
-		<user>socialDev</user>
-		<password>!@34thtuf</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>cootoo</name>
-		<sqlmapper>lifestyler</sqlmapper>
-		<mybatis-conf>mybatis/oracle-config.xml</mybatis-conf>
-		<driver>oracle.jdbc.driver.OracleDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:oracle:thin:@172.17.111.47:1521/soladb
-		]]>
-		</url>
-		<user>sola</user>
-		<password>tmakxmahqkdlf20</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>mwave</name>
-		<sqlmapper>mwave</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.16.37.242:6231;databaseName=GlobalKDB
-		]]>
-		</url>
-		<user>mnetGlbSrv</user>
-		<password>80($dpasptGLB</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>aud</name>
-		<sqlmapper>mwave</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.16.37.242:6231;databaseName=auditionDB
-		]]>
-		</url>
-		<user>mnetAudSrv</user>
-		<password>!@12mnetAudSrv</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>ssk</name>
-		<sqlmapper>mwave</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.16.37.227:6231;databaseName=SSKDB
-		]]>
-		</url>
-		<user>srvSSK</user>
-		<password>!@12srvSSK</password>
-		<defaultAutoCommit>true</defaultAutoCommit>
-	</item>
-	<item>
-		<name>enews</name>
-		<sqlmapper>enews</sqlmapper>
-		<mybatis-conf>mybatis/mssql-config.xml</mybatis-conf>
-		<driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-		<url>
-		<![CDATA[
-			jdbc:sqlserver://172.17.111.45:1433
-		]]>
-		</url>
-		<user>wishkjh</user>
-		<password>enewskjh1928</password>
+		<user>sampleUser</user>
+		<password>sampleUser</password>
 		<defaultAutoCommit>true</defaultAutoCommit>
 	</item>
 </jdbcs>
