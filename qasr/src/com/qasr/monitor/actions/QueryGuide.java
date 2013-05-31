@@ -35,7 +35,7 @@ public class QueryGuide implements ActionInterface{
 					files.add(mappedStatement.getResource());
 				}
 			}
-			List<Map<String,String>> list = new ArrayList<Map<String,String>>();
+			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			for (String path : files) {
 				String p = path.substring(path.indexOf("[")+1,path.lastIndexOf("]"));
 				Document doc = builder.parse(p);
@@ -45,7 +45,7 @@ public class QueryGuide implements ActionInterface{
 					String ns = node.getAttributes().getNamedItem("namespace").getNodeValue().trim();
 					NodeList q = node.getChildNodes();
 					for(int i=0;i<q.getLength();i++){
-						Map<String,String> info = new HashMap<String,String>();
+						Map<String,Object> info = new HashMap<String,Object>();
 						Node sql = q.item(i);
 						Node nid = sql.getAttributes() !=null ? sql.getAttributes().getNamedItem("id") : null;
 						if(nid!=null){

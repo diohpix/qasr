@@ -16,8 +16,11 @@ public class ResponseUtil {
 	private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss ZZ").serializeNulls().create();
 
 	
-	public static String getJSONString(List<Map<String,String>> list){
+	public static String getJSONString(List<Map<String,Object>> list){
 		return gson.toJson(list,List.class);
+	}
+	public static String getJSONString(Map<String,Object> list){
+		return gson.toJson(list,Map.class);
 	}
 	public static void makeResponse(ChannelEvent event,int code,String msg){
 		Response.Builder res = Response.newBuilder();

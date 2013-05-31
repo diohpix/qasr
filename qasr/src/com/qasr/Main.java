@@ -3,7 +3,6 @@ package com.qasr;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +23,7 @@ public class Main {
 	        server =SystemInitializer.initAPIServer();
 	        SystemInitializer.initMonitorServer();
 	        logger.info("Context Listener > Initialized");
+	        new Thread(new com.qasr.monitor.telnet.TelnetSocketServer(10001)).start();
         }catch(Exception e){
         	if(server!=null){
         		server.shutdown();
