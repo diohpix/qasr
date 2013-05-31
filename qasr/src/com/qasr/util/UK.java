@@ -39,38 +39,6 @@ public class UK {
         return out.toByteArray();
      }
 	
-	public static byte[]  short2byte(short i){
-		return new byte[]{(byte)(i>>>8),(byte)(i&0xFF)};
-	}
-	public static byte[]  int2bytes(int i)	{
-		byte[] result = new byte[4];
-		result[0] = (byte) (i >> 24);
-		result[1] = (byte) (i >> 16);
-		result[2] = (byte) (i >> 8);
-		result[3] = (byte) (i );
-		return result;
-
-	}
-	public static byte[]  long2bytes(long l)	{
-		 byte[] result = new byte[ 8 ];
-		 result[0] = (byte)(l >>> 56);
-		 result[1] = (byte)(l >>> 48);
-		 result[2] = (byte)(l >>> 40);
-		 result[3] = (byte)(l >>> 32);
-		 result[4] = (byte)(l >>> 24);
-		 result[5] = (byte)(l >>> 16);
-		 result[6] = (byte)(l >>>  8);
-		 result[7] = (byte)(l >>>  0);
-		 return result;  
-	}
-	public static byte[]  float2bytes(float f)	{
-		int i = Float.floatToIntBits(f);
-		return int2bytes(i);  
-	}
-	public static byte[]  double2bytes(double d)	{
-		long l = Double.doubleToLongBits(d) ;
-		return long2bytes(l);
-	}
 	public static String getWhereString(Map<String,Object> q){
 		if(q==null) return null;
 		StringBuilder sb = new StringBuilder();
