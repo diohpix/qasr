@@ -48,9 +48,7 @@ public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
 	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e)
 			throws Exception {
 		// Send greeting for a new connection.
-		e.getChannel().write(
-				"Welcome to " + InetAddress.getLocalHost().getHostName()
-						+ "!\r\n");
+		e.getChannel().write("Welcome to " + InetAddress.getLocalHost().getHostName()+ "!\r\n");
 		e.getChannel().write("It is " + new Date() + " now.\r\n");
 	}
 
