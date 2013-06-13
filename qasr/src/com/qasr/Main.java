@@ -21,7 +21,7 @@ public class Main {
     	SystemInitializer.initExecuteHandler();
         try{
 	        server =SystemInitializer.initAPIServer();
-	        SystemInitializer.initMonitorServer();
+	        //SystemInitializer.initMonitorServer();
 	        logger.info("Context Listener > Initialized");
 	        new Thread(new com.qasr.monitor.telnet.TelnetSocketServer(10001)).start();
         }catch(Exception e){
