@@ -57,13 +57,13 @@ public class Statement {
 		}
 	}
 	private int getSQLType(String command) {
-		if (command.endsWith("SELECT")) {
+		if (command.startsWith("SELECT") || command.endsWith("SELECT")) {
 			sqlType = 1;
-		} else if (command.endsWith("INSERT")) {
+		} else if (command.startsWith("INSERT") || command.endsWith("INSERT")) {
 			sqlType = 2;
-		} else if (command.endsWith("DELETE")) {
+		} else if (command.startsWith("DELETE") || command.endsWith("DELETE")) {
 			sqlType = 3;
-		} else if (command.endsWith("UPDATE")) {
+		} else if (command.startsWith("UPDATE") || command.endsWith("UPDATE")) {
 			sqlType = 4;
 		}
 		return sqlType;
