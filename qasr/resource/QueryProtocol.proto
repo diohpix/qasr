@@ -20,7 +20,7 @@
 //          --java_out=src/main/java
 //
 // Add @SuppressWarnings("all") to the generated code not to pollute IDE task list.
-option java_package = "me.interest.pi.relay.protocol";
+option java_package = "com.qasr.protocol";
 option optimize_for = SPEED;
 
 
