@@ -30,7 +30,7 @@ message Query {
   required bytes command = 4;
   repeated string param = 5;
   repeated bytes value = 6;
-  repeated .DataType type = 7;
+  repeated DataType type = 7;
   optional int32 expire = 8;
 }
 message Response {
