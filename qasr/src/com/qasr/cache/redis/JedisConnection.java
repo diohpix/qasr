@@ -29,21 +29,17 @@ public class JedisConnection {
 	
 	public static void setCheckJEDIS(){
 		checkjedis = true;
-		System.out.println("CHECK");
 		(new Thread(){
 			public void run(){
 				while(true){
-					System.out.println("------");
 					try {
 						Thread.sleep(5000);
 						ShardedJedis jedis = shardedPool.getResource();
 						jedis.get("OK".getBytes());
 						checkjedis = false;
-						System.out.println("SUCCESS!");
 						break;
 					} catch (Throwable e) {
-						e.printStackTrace();
-						System.out.println("FAIL ");
+//						e.printStackTrace();
 					}
 				}
 			}
