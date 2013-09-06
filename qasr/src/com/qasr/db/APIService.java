@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
@@ -47,8 +48,12 @@ public class APIService {
 				long lastSeq=0;
 				if(type==2){ // insert
 					rtn = sess.insert(SQL, where);
-					if(where.get("__last_insert_id__")!=null){
-						lastSeq = ((Long)where.get("__last_insert_id__")).longValue();
+					MappedStatement sta = sess.getConfiguration().getMappedStatement(SQL);
+					if(sta.getKeyProperties()!=null){
+						String genkey = sta.getKeyProperties()[0];
+						if(where.get(genkey)!=null){
+							lastSeq = ((Long)where.get(genkey)).longValue();
+						}
 					}
 				}else if(type==3){ // update 
 					rtn = sess.update(SQL, where);
@@ -140,15 +145,13 @@ public class APIService {
 				sess.getConnection().setReadOnly(false);
 				if(type==2){ // insert
 					rtn = sess.insert(SQL, where);
-					if(where.get("__last_insert_id__")!=null){
-						lastSeq = ((Long)where.get("__last_insert_id__")).longValue();
+					MappedStatement sta = sess.getConfiguration().getMappedStatement(SQL);
+					if(sta.getKeyProperties()!=null){
+						String genkey = sta.getKeyProperties()[0];
+						if(where.get(genkey)!=null){
+							lastSeq = ((Long)where.get(genkey)).longValue();
+						}
 					}
-				/*	List<Object> tobj = sess.selectList("__insert__id__");
-					for (Object object : tobj) {
-						//Integer i = ((Map<String,Integer>)obj.get(1)).get("__insert__id__");
-						Long i = (Long) ((List<Map<String,Object>>)tobj.get(1)).get(0).get("__insert__id__");
-						lastSeq = i;
-					}*/
 				}else if(type==3){ // update 
 					rtn = sess.update(SQL, where);
 				}else if(type ==4){ // delete

@@ -20,7 +20,7 @@
 //          --java_out=src/main/java
 //
 // Add @SuppressWarnings("all") to the generated code not to pollute IDE task list.
-option java_package = "me.interest.pi.relay.protocol";
+option java_package = "com.qasr.protocol";
 option optimize_for = SPEED;
 
 
@@ -30,7 +30,7 @@ message Query {
   required bytes command = 4;
   repeated string param = 5;
   repeated bytes value = 6;
-  repeated .DataType type = 7;
+  repeated DataType type = 7;
   optional int32 expire = 8;
 }
 message Response {
