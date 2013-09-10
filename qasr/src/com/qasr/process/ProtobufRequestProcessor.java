@@ -1,5 +1,6 @@
 package com.qasr.process;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -104,14 +105,37 @@ public class ProtobufRequestProcessor implements Runnable {
 			if(event.getChannel().isConnected()){
 				Response.Builder res = Response.newBuilder();
 				if(e instanceof SQLException){
-					res.setCode(600);
+					SQLException sqle = (SQLException)e;
+					try {
+						res.setCode(600);
+						res.addHeader("error");
+						res.addType(DataType.STRING);
+						res.addData(ByteString.copyFromUtf8(msg));
+						
+						res.addHeader("message");
+						res.addType(DataType.STRING);
+						res.addData(ByteString.copyFrom(sqle.getMessage(),"UTF-8"));
+						
+						res.addHeader("sqlstate");
+						res.addType(DataType.STRING);
+						res.addData(ByteString.copyFrom(sqle.getSQLState(),"UTF-8"));
+
+						res.addHeader("errorCode");
+						res.addType(DataType.STRING);
+						res.addData(ByteString.copyFrom(""+sqle.getErrorCode(),"UTF-8"));
+					
+						
+					} catch (UnsupportedEncodingException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}else{
 					res.setCode(500);
+					res.addHeader("error");
+					res.addType(DataType.STRING);
+					if(msg==null) msg="ERROR";
+					res.addData(ByteString.copyFromUtf8(msg));
 				}
-				res.addHeader("error");
-				res.addType(DataType.STRING);
-				if(msg==null) msg="ERROR";
-				res.addData(ByteString.copyFromUtf8(msg));
 				event.getChannel().write(res.build());
 				if(event.getChannel().getAttachment()!=null){ // 에러발생시 sql세션종료및 disconnect
 						//TODO 이걸 롤백시켜야되 말아야되 
