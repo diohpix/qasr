@@ -101,9 +101,19 @@ public class TransactionObject {
 				}
 				result.setKey(getterKeymap, getterNummap);
 			}else{
-				result.setCode(res.getCode());
+				int errType = res.getCode();
+				result.setCode(errType);
 				result.setError(res.getData(0).toStringUtf8());
-				throw new SQLException(result.getError());
+				if(errType==600){
+					if(res.getDataCount() ==4){
+						SQLException sqle = new SQLException(res.getData(1).toStringUtf8(),res.getData(2).toStringUtf8(),Integer.valueOf(res.getData(3).toStringUtf8()));
+						throw sqle;
+					}else{
+						throw new RuntimeException(result.getError());
+					}
+				}else{
+					throw new RuntimeException(result.getError());
+				}
 			}
 		} else { // dbproxy 가 전송한 데이터가 string 등의 객체일경우
 			result.setError((String) response);
