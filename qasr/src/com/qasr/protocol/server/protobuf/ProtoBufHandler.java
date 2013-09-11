@@ -21,7 +21,7 @@ import com.qasr.util.Configure;
 
 public class ProtoBufHandler extends SimpleChannelHandler {
     private static final Logger logger = LoggerFactory.getLogger(  ProtoBufHandler.class.getName());
-
+    private final static Logger timeoutLogger = LoggerFactory.getLogger("TIMEOUT");
     @Override
     public void handleUpstream( ChannelHandlerContext ctx, ChannelEvent e) throws Exception {
     		super.handleUpstream(ctx, e);
@@ -31,25 +31,23 @@ public class ProtoBufHandler extends SimpleChannelHandler {
     		super.handleDownstream(ctx, e);
     }
     @Override
-    public void messageReceived(
-            ChannelHandlerContext ctx, MessageEvent e) {
+    public void messageReceived( ChannelHandlerContext ctx, MessageEvent e) {
     	if(Configure.useExecuteHandler){
-    		new ProtobufRequestProcessor(e).run();	
+    		new ProtobufRequestProcessor(ctx,e).run();	
     	}else{
-    		CommonObject.executor.execute(new ProtobufRequestProcessor(e));
+    		CommonObject.executor.execute(new ProtobufRequestProcessor(ctx,e));
     	}
     }
 
     @Override
     public void exceptionCaught(   ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
-    	clearResource(ctx, e);
     	if (e.getCause() instanceof ReadTimeoutException) {
-            System.out.println("Timeout Exception");
+            timeoutLogger.info("SQL : {}",ctx.getAttachment());
         }else if(e.getCause() instanceof ClosedChannelException){
-        	System.out.println("Channel closed Exception");
         }else{
         	logger.warn("Unexpected exception from downstream. {}",      e.getCause());	
         }
+    	clearResource(ctx, e);
     }
     @Override
     public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception{
@@ -92,6 +90,7 @@ public class ProtoBufHandler extends SimpleChannelHandler {
     		sess.close();
     		logger.warn("ROLLBACK");
     	}
+    	ctx.setAttachment(null);
         e.getChannel().close();
     }
 }

@@ -8,10 +8,9 @@
 		</encoder>
 	</appender>
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>/tmp/logFile.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- daily rollover -->
-			<fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>/tmp/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
 			<!-- keep 30 days' worth of history -->
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
@@ -20,7 +19,52 @@
 			</pattern>
 		</encoder>
 	</appender>
+	<appender name="TIMEOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>/tmp/timeout.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{YYYY-MM:dd HH:mm:ss} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<appender name="SLOWQUERY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>/tmp/slowquery.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{YYYY-MM:dd HH:mm:ss} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<appender name="EXCEPTION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>/tmp/exception.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{YYYY-MM:dd HH:mm:ss} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
+	<logger name="TIMEOUT" level="INFO" >
+		<appender-ref ref="TIMEOUT" />
+	</logger>
+	<logger name="SLOWQUERY" level="INFO" >
+		<appender-ref ref="SLOWQUERY" />
+	</logger>
+	<logger name="EXCEPTION" level="INFO" >
+		<appender-ref ref="EXCEPTION" />
+	</logger>
 </configuration>

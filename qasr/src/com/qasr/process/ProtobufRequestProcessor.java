@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.util.Map;
 
 
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
+import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +26,11 @@ import com.qasr.util.UK;
 public class ProtobufRequestProcessor implements Runnable {
 	private static int expire = Configure.getIntProperty("redis.default_expire");
 	private MessageEvent event;
-	private final static Logger logger = LoggerFactory.getLogger(ProtobufRequestProcessor.class);
-	public ProtobufRequestProcessor(MessageEvent e) {
+	private ChannelHandlerContext ctx;
+	private final static Logger exceptionLogger = LoggerFactory.getLogger("EXCEPTION");
+	public ProtobufRequestProcessor(ChannelHandlerContext ctx,MessageEvent e) {
 		this.event = e;
+		this.ctx = ctx;
 	}
 	
 	public void run() {
@@ -34,7 +38,7 @@ public class ProtobufRequestProcessor implements Runnable {
 			Query q = (Query) event.getMessage();
 			int type = q.getQueryType();
 			String SQL = q.getCommand().toStringUtf8();
-			
+			ctx.setAttachment(SQL);
 			Map<String,Object> _where = UK.getWhere(q);
 			if("BEGIN_TRANSACTION".equals(SQL)){
 				SqlSession sess = APIService.getSession(q.getDbname());
@@ -101,11 +105,12 @@ public class ProtobufRequestProcessor implements Runnable {
 	        event.getChannel().write(r);
 		} catch (Throwable e) {
 			String msg=Throwables.getStackTraceAsString(e);
-			logger.error(msg);
+			exceptionLogger.info(msg);
 			if(event.getChannel().isConnected()){
 				Response.Builder res = Response.newBuilder();
-				if(e instanceof SQLException){
-					SQLException sqle = (SQLException)e;
+				if(e instanceof PersistenceException && e.getCause() instanceof SQLException){
+					PersistenceException p = (PersistenceException)e;
+					SQLException sqle = (SQLException)p.getCause();
 					try {
 						res.setCode(600);
 						res.addHeader("error");
@@ -123,8 +128,6 @@ public class ProtobufRequestProcessor implements Runnable {
 						res.addHeader("errorCode");
 						res.addType(DataType.STRING);
 						res.addData(ByteString.copyFrom(""+sqle.getErrorCode(),"UTF-8"));
-					
-						
 					} catch (UnsupportedEncodingException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -136,7 +139,6 @@ public class ProtobufRequestProcessor implements Runnable {
 					if(msg==null) msg="ERROR";
 					res.addData(ByteString.copyFromUtf8(msg));
 				}
-				event.getChannel().write(res.build());
 				if(event.getChannel().getAttachment()!=null){ // 에러발생시 sql세션종료및 disconnect
 						//TODO 이걸 롤백시켜야되 말아야되 
 					SqlSession s = (SqlSession) event.getChannel().getAttachment();
@@ -148,8 +150,9 @@ public class ProtobufRequestProcessor implements Runnable {
 					}
 					s.close();
 				}
+				event.getChannel().write(res.build());
 			}
-			event.getChannel().close();	//TODO 이걸 끊어야해 말아야해
+			//event.getChannel().close();	//TODO 이걸 끊어야해 말아야해
 				
 		} finally {
 			//if(event.getChannel().getAttachment()==null){
