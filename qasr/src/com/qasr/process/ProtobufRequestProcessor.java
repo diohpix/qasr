@@ -38,7 +38,11 @@ public class ProtobufRequestProcessor implements Runnable {
 			Query q = (Query) event.getMessage();
 			int type = q.getQueryType();
 			String SQL = q.getCommand().toStringUtf8();
-			ctx.setAttachment(SQL);
+			if(ctx.getAttachment()==null){
+				ctx.setAttachment(SQL);
+			}else{
+				ctx.setAttachment(ctx.getAttachment()+"|"+SQL);
+			}
 			Map<String,Object> _where = UK.getWhere(q);
 			if("BEGIN_TRANSACTION".equals(SQL)){
 				SqlSession sess = APIService.getSession(q.getDbname());
@@ -105,7 +109,7 @@ public class ProtobufRequestProcessor implements Runnable {
 	        event.getChannel().write(r);
 		} catch (Throwable e) {
 			String msg=Throwables.getStackTraceAsString(e);
-			exceptionLogger.info(msg);
+			exceptionLogger.info(ctx.getAttachment()+"\n"+msg);
 			if(event.getChannel().isConnected()){
 				Response.Builder res = Response.newBuilder();
 				if(e instanceof PersistenceException && e.getCause() instanceof SQLException){
