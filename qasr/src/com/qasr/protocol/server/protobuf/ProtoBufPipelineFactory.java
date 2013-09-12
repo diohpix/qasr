@@ -52,6 +52,7 @@ public class ProtoBufPipelineFactory implements ChannelPipelineFactory {
         
         p.addLast("deflater", new ZlibEncoder(ZlibWrapper.GZIP));
         p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
+        
         p.addLast("protobufEncoder", new ProtobufEncoder());        
         
         
