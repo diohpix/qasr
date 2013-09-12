@@ -44,14 +44,17 @@ public class ProtoBufPipelineFactory implements ChannelPipelineFactory {
     public ChannelPipeline getPipeline() throws Exception {
         ChannelPipeline p = pipeline();
         p.addLast("readTimeHandler", this.readTimeoutHandler);
-        p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
-        p.addLast("protobufEncoder", new ProtobufEncoder());
-
-        p.addLast("deflater", new ZlibEncoder(ZlibWrapper.GZIP));
-        p.addLast("inflater", new ZlibDecoder(ZlibWrapper.GZIP));
         
+        p.addLast("inflater", new ZlibDecoder(ZlibWrapper.GZIP));
         p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
         p.addLast("protobufDecoder", new ProtobufDecoder(QueryProtocol.Query.getDefaultInstance()));
+        
+        
+        p.addLast("deflater", new ZlibEncoder(ZlibWrapper.GZIP));
+        p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
+        p.addLast("protobufEncoder", new ProtobufEncoder());        
+        
+        
         if(Configure.useExecuteHandler){
         	p.addLast("exehandler", this.exehandle);
         }
