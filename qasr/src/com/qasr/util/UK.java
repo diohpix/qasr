@@ -43,7 +43,9 @@ public class UK {
 		if(q==null) return null;
 		StringBuilder sb = new StringBuilder();
 		for(Entry<String, Object> m : q.entrySet()) {
-			sb.append(",").append(m.getValue());
+			if(!"#_CK_#".equals(m.getKey())){
+				sb.append(",").append(m.getValue());	
+			}
 		}
 		return sb.toString();
 	}
@@ -53,9 +55,19 @@ public class UK {
 			List<String> keys = q.getParamList();
 			List<ByteString> value = q.getValueList();
 			where= new HashMap<String,Object>();
+			StringBuilder sb = null;
 			int idx=0;
 			for (String param : keys) {
+				boolean ckExist = false;
+				if(param.startsWith("CK:")){
+					param = param.substring(3);
+					if(sb==null){
+						sb= new StringBuilder();
+					}
+					ckExist = true;
+				}
 	        	DataType type =q.getType(idx);
+	        	
 	        	switch (type) {
 				case STRING:
 	        		byte [] vv = value.get(idx).toByteArray();
@@ -63,44 +75,85 @@ public class UK {
 	        			where.put(param,null);
 	        		}else{
 	        			try {
-	        				where.put(param,new String(vv,"UTF-8"));
+	        				String ss = new String(vv,"UTF-8");
+	        				where.put(param,ss);
+	        				if(ckExist){
+	    		        		sb.append(",").append(ss);
+	    		        	}
 						} catch (UnsupportedEncodingException e) {
 							e.printStackTrace();
 						}
 	        		}
 					break;
 				case SHORT:
-	        		where.put(param,Shorts.fromByteArray(value.get(idx).toByteArray()));	
+					short s = Shorts.fromByteArray(value.get(idx).toByteArray());
+	        		where.put(param,s);
+	        		if(ckExist){
+		        		sb.append(",").append(s);
+		        	}
 					break;
 				case INTEGER:
-	        		where.put(param,Ints.fromByteArray(value.get(idx).toByteArray()));
+					int i = Ints.fromByteArray(value.get(idx).toByteArray());
+	        		where.put(param,i);
+	        		if(ckExist){
+		        		sb.append(",").append(i);
+		        	}
 					break;
 				case LONG:
-	        		where.put(param, Longs.fromByteArray(value.get(idx).toByteArray()));
+					long l = Longs.fromByteArray(value.get(idx).toByteArray());
+	        		where.put(param, l);
+	        		if(ckExist){
+		        		sb.append(",").append(l);
+		        	}
 					break;
 				case FLOAT:
 	        		int intbit = Ints.fromByteArray(value.get(idx).toByteArray());
 	        		where.put(param,Float.intBitsToFloat(intbit));
+	        		if(ckExist){
+		        		sb.append(",").append(intbit);
+		        	}
 					break;
 				case DOUBLE:
 	        		long longbit = Longs.fromByteArray(value.get(idx).toByteArray());
 	        		where.put(param,Double.longBitsToDouble(longbit));
+	        		if(ckExist){
+		        		sb.append(",").append(longbit);
+		        	}
 					break;
 				case DATE:
-	        		Date date =	new Date(Longs.fromByteArray(value.get(idx).toByteArray()));
+					long l1=Longs.fromByteArray(value.get(idx).toByteArray());
+	        		Date date =	new Date(l1);
 		        	where.put(param,date);
+		        	if(ckExist){
+		        		sb.append(",").append(l1);
+		        	}
 					break;
 				case TIME:
-					where.put(param,new Time(Longs.fromByteArray(value.get(idx).toByteArray())));
+					long l2 = Longs.fromByteArray(value.get(idx).toByteArray());
+					where.put(param,new Time(l2));
+					if(ckExist){
+		        		sb.append(",").append(l2);
+		        	}
 					break;
 				case TIMESTAMP:
-					where.put(param,new Timestamp(Longs.fromByteArray(value.get(idx).toByteArray())));
+					long l3= Longs.fromByteArray(value.get(idx).toByteArray());
+					where.put(param,new Timestamp(l3));
+					if(ckExist){
+		        		sb.append(",").append(l3);
+		        	}
 					break;
 				default:
-	        		where.put(param,value.get(idx).toStringUtf8());
+					String str=value.get(idx).toStringUtf8();
+	        		where.put(param,str);
+	        		if(ckExist){
+		        		sb.append(",").append(str);
+		        	}
 					break;
 				}
 	        	idx++;
+			}
+			if(sb!=null){
+				where.put("#_CK_#", sb.toString());
 			}
 		}
 		return where;

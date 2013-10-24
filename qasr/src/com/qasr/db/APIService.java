@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.ShardedJedisPool;
 
 import com.google.common.base.Throwables;
 import com.qasr.cache.redis.JedisConnection;
@@ -20,13 +22,10 @@ import com.qasr.util.Configure;
 import com.qasr.util.UK;
 
 
-import redis.clients.jedis.ShardedJedis;
-import redis.clients.jedis.ShardedJedisPool;
-
-
 
 public class APIService {
 	private final static Logger logger = LoggerFactory.getLogger(APIService.class);
+	private final static Logger slowqueryLogger = LoggerFactory.getLogger("SLOWQUERY");
 	//private static SqlSessionFactory f = CommonObject.context.getBean("mainSessionFactory", SqlSessionFactory.class);
 	private static int slow_query_time = Configure.getIntProperty("slow_query_time");
 	
@@ -104,16 +103,23 @@ public class APIService {
 		ShardedJedis jedis = null;
 		byte[] select = null;
 		Response.Builder res =null;
-		logger.debug("EXPIRE");
+		String CACHE_KEY=SQL;
+		String CK = null;
+		if(where !=null){
+			CK = (String)where.get("#_CK_#");
+			if(CK!=null){
+				CACHE_KEY+=CK;
+			}
+		}
 		if(type==1 && expireTime > 0){
 			try {
 				pool = JedisConnection.getShardedInstance();
 				if(pool!=null){
 					jedis = pool.getResource();
-					if(where ==null){
-						select = jedis.get(SQL.getBytes());
+					if(_where ==null){
+						select = jedis.get(CACHE_KEY.getBytes());
 					}else{
-						select = jedis.hget(SQL.getBytes(), _where.getBytes());
+						select = jedis.hget(CACHE_KEY.getBytes(), _where.getBytes());
 					}
 					if(select!=null) {
 						logger.debug("FROM CACHE {} {}", SQL, _where);
@@ -200,7 +206,7 @@ public class APIService {
 		}
 		long elap = System.currentTimeMillis()-time;
 		if(elap > slow_query_time){
-			logger.warn("SLOW QUERY  COMMAND {} [ {} ] : LAP {} ", SQL, _where, (elap));
+			slowqueryLogger.info("{} [ {} ] : time : {}", SQL, where, (elap));
 		}
 		res = UK.convertObject2Response(obj);
 		res.setCode(200);
@@ -222,12 +228,12 @@ public class APIService {
 			            }
 						jedis = pool.getResource();
 				        if(_where !=null){
-				        	jedis.hset(SQL.getBytes(), _where.getBytes(), select);
+				        	jedis.hset(CACHE_KEY.getBytes(), _where.getBytes(), select);
 				        }else{
-				        	jedis.set(SQL.getBytes(), select);
+				        	jedis.set(CACHE_KEY.getBytes(), select);
 				        }
 				        if(expireTime >-1){
-				        	jedis.expire(SQL.getBytes(),expireTime);
+				        	jedis.expire(CACHE_KEY.getBytes(),expireTime);
 				        }
 					}
 				}catch(Exception e){
