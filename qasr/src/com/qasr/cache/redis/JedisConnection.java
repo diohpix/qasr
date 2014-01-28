@@ -23,6 +23,7 @@ public class JedisConnection {
 	private static boolean checkjedis=  false;
 	static{
 		
+		
 	}
 	public JedisConnection() {
 	}
