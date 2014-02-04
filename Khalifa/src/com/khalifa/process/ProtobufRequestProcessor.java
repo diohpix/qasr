@@ -51,41 +51,43 @@ public class ProtobufRequestProcessor  {
 				state.addLog(SQL);
 			}
 			Map<String,Object> _where = UK.getWhere(q);
-			if("BEGIN_TRANSACTION".equals(SQL)){
-				SqlSession sess = APIService.getSession(q.getDbname());
-				sess.getConnection().setAutoCommit(false);
-				sess.clearCache();
-				state.setSession(sess);
-				ResponseUtil.makeResponse(ctx, 200, "TRANSACTION_START");
-				return;
-			}else if("END_TRANSACTION".equals(SQL)){
-				SqlSession sess =state.getSession();
-				if(sess!=null){
-					state.setSession(null);
-					sess.close();
-					ResponseUtil.makeResponse(ctx, 200, "TRANSACTION_END");
-				}else{
-					ResponseUtil.makeResponse(ctx, 201, "NO_TRANSACTION");
+			if(type==5){ //transaction command
+				if("BEGIN_TRANSACTION".equals(SQL)){
+					SqlSession sess = APIService.getSession(q.getDbname());
+					sess.getConnection().setAutoCommit(false);
+					sess.clearCache();
+					state.setSession(sess);
+					ResponseUtil.makeResponse(ctx, 200, "TRANSACTION_START");
+					return;
+				}else if("END_TRANSACTION".equals(SQL)){
+					SqlSession sess =state.getSession();
+					if(sess!=null){
+						state.setSession(null);
+						sess.close();
+						ResponseUtil.makeResponse(ctx, 200, "TRANSACTION_END");
+					}else{
+						ResponseUtil.makeResponse(ctx, 201, "NO_TRANSACTION");
+					}
+					return;
+				}else if("ROLLBACK".equals(SQL)){
+					SqlSession sess =state.getSession();
+					if(sess!=null){
+						sess.getConnection().rollback();
+						ResponseUtil.makeResponse(ctx, 200, "ROLLBACK_SUCCESS");
+					}else{
+						ResponseUtil.makeResponse(ctx, 201, "NO_TRANSACTION");
+					}
+					return;
+				}else if("COMMIT".equals(SQL)){
+					SqlSession sess =state.getSession();
+					if(sess!=null){
+						sess.getConnection().commit();
+						ResponseUtil.makeResponse(ctx, 200, "COMMIT_SUCCESS");
+					}else{
+						ResponseUtil.makeResponse(ctx, 201, "NO_TRANSACTION");
+					}
+					return;
 				}
-				return;
-			}else if("ROLLBACK".equals(SQL)){
-				SqlSession sess =state.getSession();
-				if(sess!=null){
-					sess.getConnection().rollback();
-					ResponseUtil.makeResponse(ctx, 200, "ROLLBACK_SUCCESS");
-				}else{
-					ResponseUtil.makeResponse(ctx, 201, "NO_TRANSACTION");
-				}
-				return;
-			}else if("COMMIT".equals(SQL)){
-				SqlSession sess =state.getSession();
-				if(sess!=null){
-					sess.getConnection().commit();
-					ResponseUtil.makeResponse(ctx, 200, "COMMIT_SUCCESS");
-				}else{
-					ResponseUtil.makeResponse(ctx, 201, "NO_TRANSACTION");
-				}
-				return;
 			}
 			Object list = null;
 			if(state.getSession()!=null){
