@@ -94,11 +94,5 @@
 			<version>3.12.1.GA</version>
 		</dependency>
 	</dependencies>
-	<name>proxyClient</name>
-	<distributionManagement>
-		<repository>
-			<id>thirdparty</id>
-			<url>http://172.17.113.116:8081/nexus/content/repositories/thirdparty</url>
-		</repository>
-	</distributionManagement>
+	<name>KhalifaClient</name>
 </project>
