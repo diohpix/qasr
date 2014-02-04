@@ -33,7 +33,6 @@ public class JedisConnection {
 		(new Thread(){
 			public void run(){
 				while(true){
-					System.out.println("------");
 					try {
 						Thread.sleep(5000);
 						ShardedJedis jedis = shardedPool.getResource();
@@ -42,8 +41,7 @@ public class JedisConnection {
 						System.out.println("SUCCESS!");
 						break;
 					} catch (Throwable e) {
-						e.printStackTrace();
-						System.out.println("FAIL ");
+						//System.out.println("FAIL ");
 					}
 				}
 			}

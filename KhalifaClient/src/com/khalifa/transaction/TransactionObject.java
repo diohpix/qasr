@@ -79,7 +79,7 @@ public class TransactionObject {
 		if (sqlType == 0){
 			throw new InvalidCommandSuffix("invalid command ! command must end with _SELECT , _UPDATE , _DELETE , _INSERT");
 		}
-		if(dbname.indexOf("read")>-1 && (sqlType == 2 || sqlType ==3 || sqlType ==4) ){
+		if(dbname.indexOf("read")>-1 && sqlType != 1){
 			throw new InvalidCommandSuffix("ReadOnly  DB");
 		}
 		ResultObject result = new ResultObject();

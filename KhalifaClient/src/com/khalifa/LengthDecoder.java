@@ -1,35 +1,38 @@
 package com.khalifa;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageDecoder;
+import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.compression.JdkZlibDecoder;
+import io.netty.handler.codec.compression.ZlibWrapper;
 
 import java.util.List;
 
-@Sharable
-public class LengthDecoder extends MessageToMessageDecoder<ByteBuf> {
-	private JdkZlibDecoder zdecode;
-	public LengthDecoder(JdkZlibDecoder jd){
-		this.zdecode = jd;
+public class LengthDecoder extends ByteToMessageDecoder {
+	private int type=-1;
+	private int length = -1;
+	public LengthDecoder(){
 	}
-    @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-    	if (in.readableBytes() < 8) {
-            return; // (3)
-        }
-    	in.markReaderIndex();
-    	int type = in.readInt();
-		int length = in.readInt();
-		if (in.readableBytes() < length) {
+    	if(type==-1){
+    		if (in.readableBytes() < 8) {
+                return; // (3)
+            }
+	    	type = in.readInt();
+			length = in.readInt();
+			in.markReaderIndex();
+    	}
+    	if (in.readableBytes() < length) {
 			in.resetReaderIndex();
 			return;
-		}else{
-			if(type==1){
-				ctx.pipeline().addAfter("LengthDecoder","___INRERNAL_GUNZIP___",zdecode);
-			}
-			out.add(in.readBytes(length));
 		}
+    	if(ctx.pipeline().get("___INRERNAL_GUNZIP___")!=null){
+    		ctx.pipeline().remove("___INRERNAL_GUNZIP___");
+    	}
+		if(type==1){
+			ctx.pipeline().addAfter("LengthDecoder","___INRERNAL_GUNZIP___",new JdkZlibDecoder(ZlibWrapper.ZLIB.GZIP));
+		}
+		ctx.pipeline().remove(this);
+		ctx.pipeline().addAfter("readTime","LengthDecoder", new LengthDecoder()); 
     }
 }

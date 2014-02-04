@@ -110,7 +110,7 @@ public class ProtobufRequestProcessor  {
 	        	f.addListener(new ChannelFutureListener() {
 					@Override
 					public void operationComplete(ChannelFuture future) throws Exception {
-						((SocketChannel)future.channel()).shutdownOutput(); // half_close socket
+						//((SocketChannel)future.channel()).shutdownOutput(); // half_close socket
 					}
 				});	
 	        }

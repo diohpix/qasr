@@ -50,8 +50,8 @@ public class KhalifaClient {
 			protected void initChannel(Channel ch) throws Exception {
 				// TODO Auto-generated method stub
 				ChannelPipeline p = ch.pipeline();
-		        p.addLast( new ReadTimeoutHandler( 10));
-		        p.addLast("LengthDecoder", new LengthDecoder(new JdkZlibDecoder(ZlibWrapper.ZLIB.GZIP))); //decoder
+		        p.addLast("readTime", new ReadTimeoutHandler( 10));
+		        p.addLast("LengthDecoder", new LengthDecoder()); //decoder
 				p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder()); //decoder
 		        p.addLast("protobufDecoder", new ProtobufDecoder(QueryProtocol.Response.getDefaultInstance())); //decoder
 		        p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender()); //encoder
