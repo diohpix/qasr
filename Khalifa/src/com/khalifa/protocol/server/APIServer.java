@@ -1,15 +1,7 @@
 package com.khalifa.protocol.server;
 
-import com.khalifa.protocol.ProtocolSelector;
-import com.khalifa.protocol.QueryProtocol;
-import com.khalifa.protocol.server.protobuf.CompressSelectEncoder;
-import com.khalifa.protocol.server.protobuf.LengthEncoder;
-import com.khalifa.protocol.server.protobuf.ProtobufInboundHandler;
-import com.khalifa.util.Configure;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -17,15 +9,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.compression.JdkZlibDecoder;
-import io.netty.handler.codec.compression.JdkZlibEncoder;
-import io.netty.handler.codec.compression.ZlibWrapper;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
+
+import com.khalifa.protocol.ProtocolSelector;
+import com.khalifa.util.Configure;
 
 /**
  * Receives a list of continent/city pairs from a {@link LocalTimeClient} to

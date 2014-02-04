@@ -4,8 +4,6 @@ package com.khalifa.cache.redis;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.khalifa.util.Configure;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -14,6 +12,8 @@ import redis.clients.jedis.Protocol;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 import redis.clients.util.Hashing;
+
+import com.khalifa.util.Configure;
 
 public class JedisConnection {
 // TODO IP CHANGE 107 -> 108

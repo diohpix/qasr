@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.MappedStatement.Builder;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
 import org.apache.ibatis.scripting.xmltags.MixedSqlNode;

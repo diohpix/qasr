@@ -2,7 +2,6 @@
 package com.khalifa.db;
 
 import java.io.IOException;
-import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
