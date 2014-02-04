@@ -30,19 +30,19 @@ public class SystemInitializer {
 	}
 	
 	public static void initConfigure(String [] args){
-		ClassPathResource r = null;
+		/*ClassPathResource r = null;
     	if(args.length>0){
     		r = new ClassPathResource(Configure.CONFIG_ROOT+args[0]);
     	}else{
     		r = new ClassPathResource(Configure.CONFIG_ROOT+"dbproxy.xml");
-    	}
+    	}*/
+		File f = new File(args[0]);
+		System.out.println("Config : "+f.getAbsolutePath());
     	try {
-			Configure.load(r.getFile());
+			Configure.load(f);
 		} catch (ConfigurationException e1) {
 			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		} 
 		
 	}
 	public static void initDataSource(){
