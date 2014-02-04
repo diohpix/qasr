@@ -1,6 +1,5 @@
 package com.khalifa.db;
 
-import gudusoft.gsqlparser.EDbVendor;
 
 import java.io.File;
 import java.io.IOException;
@@ -171,7 +170,7 @@ public class ReloadableSqlSesseionFactoryBean extends SqlSessionFactoryBean	impl
 					Node sql = q.item(i);
 					Node nid = sql.getAttributes() !=null ? sql.getAttributes().getNamedItem("id") : null;
 					if(nid!=null){
-						String id = ns+"."+sql.getAttributes().getNamedItem("id").getNodeValue();
+						/*String id = ns+"."+sql.getAttributes().getNamedItem("id").getNodeValue();
 						info.put("sqlType", sql.getNodeName());
 						info.put("command",id);
 						NodeList item  = sql.getChildNodes();
@@ -187,7 +186,7 @@ public class ReloadableSqlSesseionFactoryBean extends SqlSessionFactoryBean	impl
 							vendor = EDbVendor.dbvoracle;
 						}else{
 							vendor = EDbVendor.dbvansi;
-						}
+						}*/
 						System.out.println("scan "+this.vendor);
 						//scantable scan = new scantable( osql, vendor );
 						//System.out.print( scan.getScanResult( ) );
