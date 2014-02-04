@@ -25,7 +25,7 @@ import com.khalifa.protocol.QueryProtocol;
 import com.khalifa.transaction.TransactionObject;
 
 
-public class DBProxyClient {
+public class KhalifaClient {
 	private static Bootstrap bootstrap;
 	private static EventLoopGroup workerGroup;
 	public static void init(File r){
@@ -63,7 +63,7 @@ public class DBProxyClient {
 	    
 	}
 	public static TransactionObject getTransacation(String dbname) throws IOException{
-		return new TransactionObject(bootstrap, DBProxyInfo.getInfo(dbname));
+		return new TransactionObject(bootstrap, KhalifaInfo.getInfo(dbname));
 	}
 	public static void destroy() throws IOException, InterruptedException{
 		workerGroup.shutdownGracefully();

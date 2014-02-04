@@ -50,7 +50,7 @@ public class Configure {
         			}
         			k++;
         		}
-        		DBProxyInfo.add(pinfo);
+        		KhalifaInfo.add(pinfo);
         	}
         	i++;
         }
