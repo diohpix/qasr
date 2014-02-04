@@ -1,4 +1,4 @@
-package com.cj.enm.platform.dbproxy;
+package com.khalifa;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Time;
@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import com.cj.enm.platform.dbproxy.protocol.QueryProtocol.DataType;
-import com.cj.enm.platform.dbproxy.protocol.QueryProtocol.Response;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.Shorts;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.khalifa.protocol.QueryProtocol.DataType;
+import com.khalifa.protocol.QueryProtocol.Response;
 
 public class ProtobufUtil {
     	/**

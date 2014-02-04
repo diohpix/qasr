@@ -1,17 +1,16 @@
-package com.cj.enm.platform.dbproxy.config;
+package com.khalifa.config;
 
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
-
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cj.enm.platform.dbproxy.transaction.Proxy;
-import com.cj.enm.platform.dbproxy.transaction.ProxyInfo;
+import com.khalifa.transaction.Proxy;
+import com.khalifa.transaction.ProxyInfo;
 
 
 /**

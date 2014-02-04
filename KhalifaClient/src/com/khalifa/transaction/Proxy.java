@@ -1,4 +1,4 @@
-package com.cj.enm.platform.dbproxy.transaction;
+package com.khalifa.transaction;
 
 public class Proxy {
 	private boolean live;

@@ -1,4 +1,4 @@
-package com.cj.enm.platform.dbproxy.config;
+package com.khalifa.config;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -19,10 +19,10 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import java.io.File;
 import java.io.IOException;
 
-import com.cj.enm.platform.dbproxy.APIClientHandler;
-import com.cj.enm.platform.dbproxy.LengthDecoder;
-import com.cj.enm.platform.dbproxy.protocol.QueryProtocol;
-import com.cj.enm.platform.dbproxy.transaction.TransactionObject;
+import com.khalifa.APIClientHandler;
+import com.khalifa.LengthDecoder;
+import com.khalifa.protocol.QueryProtocol;
+import com.khalifa.transaction.TransactionObject;
 
 
 public class DBProxyClient {

@@ -1,4 +1,4 @@
-package com.cj.enm.platform.dbproxy.transaction;
+package com.khalifa.transaction;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -10,14 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
-import com.cj.enm.platform.dbproxy.exception.InvalidCommandSuffix;
-import com.cj.enm.platform.dbproxy.protocol.QueryProtocol.DataType;
-import com.cj.enm.platform.dbproxy.protocol.QueryProtocol.Query;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.Shorts;
 import com.google.protobuf.ByteString;
+import com.khalifa.exception.InvalidCommandSuffix;
+import com.khalifa.protocol.QueryProtocol.DataType;
+import com.khalifa.protocol.QueryProtocol.Query;
 
 public class Statement {
 	private static byte [] zlen = new byte[]{-1};

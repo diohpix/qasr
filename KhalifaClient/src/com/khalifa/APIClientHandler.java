@@ -1,4 +1,4 @@
-package com.cj.enm.platform.dbproxy;
+package com.khalifa;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.cj.enm.platform.dbproxy.protocol.QueryProtocol.Query;
+import com.khalifa.protocol.QueryProtocol.Query;
 
 
 public class APIClientHandler extends ChannelInboundHandlerAdapter {

@@ -1,4 +1,4 @@
-package com.cj.enm.platform.dbproxy.transaction;
+package com.khalifa.transaction;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -12,14 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import com.cj.enm.platform.dbproxy.APIClientHandler;
-import com.cj.enm.platform.dbproxy.ProtobufUtil;
-import com.cj.enm.platform.dbproxy.exception.InvalidCommandSuffix;
-import com.cj.enm.platform.dbproxy.protocol.QueryProtocol.Query;
-import com.cj.enm.platform.dbproxy.protocol.QueryProtocol.Response;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.khalifa.APIClientHandler;
+import com.khalifa.ProtobufUtil;
+import com.khalifa.exception.InvalidCommandSuffix;
+import com.khalifa.protocol.QueryProtocol.Query;
+import com.khalifa.protocol.QueryProtocol.Response;
 
 public class TransactionObject {
 	private Channel channel = null;

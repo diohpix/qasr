@@ -1,4 +1,4 @@
-package com.cj.enm.platform.dbproxy;
+package com.khalifa;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;

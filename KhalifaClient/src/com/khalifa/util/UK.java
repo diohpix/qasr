@@ -1,4 +1,4 @@
-package com.cj.enm.platform.dbproxy.util;
+package com.khalifa.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

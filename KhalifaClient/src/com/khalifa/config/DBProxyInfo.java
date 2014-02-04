@@ -1,9 +1,9 @@
-package com.cj.enm.platform.dbproxy.config;
+package com.khalifa.config;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.cj.enm.platform.dbproxy.transaction.ProxyInfo;
+import com.khalifa.transaction.ProxyInfo;
 
 
 class DBProxyInfo {

@@ -1,4 +1,4 @@
-package com.cj.enm.platform.dbproxy.exception;
+package com.khalifa.exception;
 
 public class InvalidCommandSuffix extends Throwable {
 	public InvalidCommandSuffix(String message){
