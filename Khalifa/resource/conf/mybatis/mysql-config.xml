@@ -14,7 +14,7 @@
         <typeHandler javaType="java.sql.Date"      handler="org.apache.ibatis.type.DateTypeHandler"/>
     </typeHandlers>
     <plugins>
-    	<plugin interceptor="com.cj.enm.platform.dbproxy.db.ResultSetInterceptor"/>
-    	<plugin interceptor="com.cj.enm.platform.dbproxy.db.QueryInterceptor"/>
+    	<plugin interceptor="com.khalifa.db.ResultSetInterceptor"/>
+    	<plugin interceptor="com.khalifa.db.QueryInterceptor"/>
 	</plugins>
 </configuration>

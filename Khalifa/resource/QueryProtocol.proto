@@ -20,7 +20,7 @@
 //          --java_out=src/main/java
 //
 // Add @SuppressWarnings("all") to the generated code not to pollute IDE task list.
-option java_package = "com.cj.enm.platform.dbproxy.protocol";
+option java_package = "com.khalifa.protocol";
 option java_outer_classname = "QueryProtocol";
 
 option optimize_for = SPEED;
