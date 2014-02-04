@@ -49,22 +49,9 @@ public class Statement {
 		  res = Query.newBuilder();
 		  try {
 			res.setCommand(ByteString.copyFrom(command,"UTF-8"));
-			res.setQueryType(getSQLType(command));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-	}
-	private int getSQLType(String command) {
-		if (command.endsWith("SELECT")) {
-			sqlType = 1;
-		} else if (command.endsWith("INSERT")) {
-			sqlType = 2;
-		} else if (command.endsWith("DELETE")) {
-			sqlType = 3;
-		} else if (command.endsWith("UPDATE")) {
-			sqlType = 4;
-		}
-		return sqlType;
 	}
 	public void clearParameter(){
 		ByteString command = res.getCommand();
@@ -228,6 +215,7 @@ public class Statement {
 			System.out.println(this.toString());
 			return null;
 		}
+		res.setQueryType(1);
 		return tx.executeQuery( res);
 	}
 	public long getLastInsertId(){
@@ -238,8 +226,9 @@ public class Statement {
 			System.out.println(this.toString());
 			return -1;
 		}
+		res.setQueryType(2);
 		ResultObject r = executeQuery();
-		if(sqlType==2){
+		if(r.getList().get(0).get("__insert__id__")!=null){
 				__insert__id__ = ((Long)(r.getList().get(0).get("__insert__id__"))).longValue();
 		}
 		return ((Integer)(r.getList().get(0).get("__count__"))).intValue();
