@@ -3,7 +3,6 @@ package com.khalifa.transaction;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
