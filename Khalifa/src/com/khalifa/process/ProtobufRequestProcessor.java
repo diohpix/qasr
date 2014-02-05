@@ -105,6 +105,7 @@ public class ProtobufRequestProcessor  {
 				r = res.build();
 			}
 	        ChannelFuture f = ctx.writeAndFlush(r);
+	        /*
 	        if(state.getSession()==null){
 	        	f.addListener(new ChannelFutureListener() {
 					@Override
@@ -112,7 +113,7 @@ public class ProtobufRequestProcessor  {
 						//((SocketChannel)future.channel()).shutdownOutput(); // half_close socket
 					}
 				});	
-	        }
+	        }*/
 		} catch (Exception e) {
 			throw e;
 			//event.getChannel().close();	//TODO 이걸 끊어야해 말아야해
