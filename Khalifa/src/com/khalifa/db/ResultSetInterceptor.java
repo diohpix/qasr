@@ -41,6 +41,10 @@ public class ResultSetInterceptor implements Interceptor {
 					Map<String, String> columnMeta = new LinkedHashMap();
 					String columnName = rsmd.getColumnName(i);
 					String columnLabel = rsmd.getColumnLabel(i);
+					if("".equals(columnName)){
+						columnName="column"+i;
+						columnLabel = columnName;
+					}
 					String javatype = rsmd.getColumnClassName(i);
 					columnMeta.put("columnName", columnName);
 					columnMeta.put("columnLabel", columnLabel);
