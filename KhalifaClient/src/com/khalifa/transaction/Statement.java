@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -22,14 +21,12 @@ public class Statement {
 	private static byte [] zlen = new byte[]{-1};
 	private Query.Builder res =null;
 	private int expireTime;
+	private int statmentType;
 	private long __insert__id__=-1;
 	private TransactionObject tx = null;
-	private int sqlType = 0;
 	public static boolean DEBUG=false;
 	public String toString(){
-		List<String> param = res.getParamList();
 		int pcount = res.getParamCount();
-		List<ByteString> value = res.getValueList();
 		StringBuilder sb = new StringBuilder();
 		for(int i =0 ; i< pcount;i++){
 			sb.append(res.getParam(i)+" "+res.getValue(i).toStringUtf8()+"\n");
@@ -47,6 +44,17 @@ public class Statement {
 	public Statement(TransactionObject tx,String command) {
 		this.tx = tx;
 		  res = Query.newBuilder();
+		  this.statmentType = 0;
+		  try {
+			res.setCommand(ByteString.copyFrom(command,"UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+	public Statement(TransactionObject tx,String command,int statmentType) {
+		this.tx = tx;
+		  res = Query.newBuilder();
+		  this.statmentType = statmentType;
 		  try {
 			res.setCommand(ByteString.copyFrom(command,"UTF-8"));
 		} catch (UnsupportedEncodingException e) {
@@ -171,46 +179,7 @@ public class Statement {
 		// yyyy-mm-dd hh:mm:ss 일경우만 
 		setTimestamp(key, Timestamp.valueOf(value));
 	}
-	/*
-	public void setParameter(String key,Object value){
-		res.addParam(key);
-		if(value instanceof String){
-			if("".equals(value.toString())){
-				res.addValue(ByteString.copyFrom(zlen));
-			}else{
-				res.addValue(ByteString.copyFromUtf8(value.toString()));
-			}
-			res.addType(DataType.STRING);
-		}else if(value instanceof Short){
-			res.addValue(ByteString.copyFrom(Shorts.toByteArray(((Short) value).shortValue())));
-			res.addType(DataType.SHORT);
-		}else if(value instanceof Integer){
-			res.addValue(ByteString.copyFrom(Ints.toByteArray(((Integer) value).intValue())));
-			res.addType(DataType.INTEGER);
-		}else if(value instanceof Long){
-			res.addValue(ByteString.copyFrom(Longs.toByteArray(((Long) value).longValue())));
-			res.addType(DataType.LONG);
-		}else if(value instanceof Float){
-			res.addValue(ByteString.copyFrom(Ints.toByteArray(Float.floatToIntBits(((Float) value).floatValue()))));
-			res.addType(DataType.FLOAT);
-		}else if(value instanceof Double){
-			res.addValue(ByteString.copyFrom(Longs.toByteArray(Double.doubleToLongBits(((Double) value).doubleValue()))));
-			res.addType(DataType.DOUBLE);
-		}else if(value instanceof Date){
-			long time = ((Date)value).getTime();
-			res.addValue(ByteString.copyFrom(Longs.toByteArray(time)));
-			res.addType(DataType.DATE);
-		}else if(value instanceof Time){
-			long time = ((Timestamp) value).getTime();
-			res.addValue(ByteString.copyFrom(Longs.toByteArray(time)));
-			res.addType(DataType.TIME);
-		}else if(value instanceof Timestamp){
-			long time = ((Timestamp) value).getTime();
-			res.addValue(ByteString.copyFrom(Longs.toByteArray(time)));
-			res.addType(DataType.TIMESTAMP);
-		}
-	}
-	*/
+	
 	public Response getOutputParam() throws IOException{
 		return tx.outputParam();
 	}
@@ -219,7 +188,11 @@ public class Statement {
 			System.out.println(this.toString());
 			return null;
 		}
-		res.setQueryType(1);
+		if(statmentType==1){
+			res.setQueryType(10);
+		}else{
+			res.setQueryType(1);
+		}
 		return tx.executeQuery( res);
 	}
 	public long getLastInsertId(){

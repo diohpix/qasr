@@ -96,7 +96,7 @@ public class ProtobufRequestProcessor  {
 			}
 			Object list = null;
 			if(state.getSession()!=null){
-				list = APIService.transactionQuery((ProxySqlSession)state.getSession(), SQL, _where);
+				list = APIService.transactionQuery((ProxySqlSession)state.getSession(), SQL, _where,state);
 			}else{
 				int _exp = q.hasExpire() ? q.getExpire() : expire;
 				list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);

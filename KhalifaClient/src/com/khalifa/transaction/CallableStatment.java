@@ -20,8 +20,12 @@ public class CallableStatment extends Statement {
 	private Response res;
 	private int curr = -1;
 
+	public CallableStatment(TransactionObject tx, String command,int statmentType) {
+		super(tx, command,10);
+		// TODO Auto-generated constructor stub
+	}
 	public CallableStatment(TransactionObject tx, String command) {
-		super(tx, command);
+		super(tx, command,10);
 		// TODO Auto-generated constructor stub
 	}
 	

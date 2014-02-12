@@ -40,7 +40,7 @@ public class APIService {
 		SqlSessionFactory factory =  Configure.getSQLFactory(dbname);
 		return  factory.openSession();	
 	}
-	public static Object transactionQuery(ProxySqlSession sess, String SQL,Map<String,Object> where ) throws Exception{
+	public static Object transactionQuery(ProxySqlSession sess, String SQL,Map<String,Object> where,State state) throws Exception{
 		Response.Builder res =null;
 		long time = System.currentTimeMillis();
 		List<Object> obj =null;
@@ -97,6 +97,42 @@ public class APIService {
 				sess.commit();
 				obj.add(l);
 			}
+			if(ms.getStatementType() == StatementType.CALLABLE){
+				System.out.println("callable");
+				final List<ParameterMapping> parameterMappings = ms.getBoundSql(where).getParameterMappings();
+			    List<Object> actual = new ArrayList<Object>();
+			    Object[] metaData = new Object[1];
+			    
+	  			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+			    int c=0;
+				for (int i = 0; i < parameterMappings.size(); i++) {
+			      final ParameterMapping parameterMapping = parameterMappings.get(i);
+			      if (parameterMapping.getMode() == ParameterMode.OUT || parameterMapping.getMode() == ParameterMode.INOUT) {
+			  			String columnName = parameterMapping.getProperty();
+			  			String javatype = parameterMapping.getJavaType().getName();
+			  			Map<String, String> columnMeta = new LinkedHashMap();
+			  			columnMeta.put("columnName", columnName);
+			  			columnMeta.put("columnLabel", columnName);
+			  			columnMeta.put("columnType", javatype);
+			  			metaData[c++] = columnMeta;
+
+			  			Map<String, Object> col = new HashMap<String, Object>();
+			  			col.put(columnName, where.get(columnName));
+			  			list.add(col);
+			    	  /*if (ResultSet.class.equals(parameterMapping.getJavaType())) {
+			          		//handleRefCursorOutputParameter((ResultSet) cs.getObject(i + 1), parameterMapping, metaParam);
+			        	} else {
+			          final TypeHandler<?> typeHandler = parameterMapping.getTypeHandler();
+			          		//metaParam.setValue(parameterMapping.getProperty(), typeHandler.getResult(cs, i + 1));
+			        	}*/
+			      }
+			    }
+				actual.add(metaData);
+				actual.add(list);
+			    Response.Builder rs = UK.convertObject2Response(actual);
+			    state.setOutputParam(rs);
+			}
+
 		long elap = System.currentTimeMillis()-time;
 		if(elap > slow_query_time){
 			slowqueryLogger.info("{} [ {} ] : time : {}", SQL, where, (elap));

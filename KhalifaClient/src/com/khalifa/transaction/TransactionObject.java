@@ -64,7 +64,7 @@ public class TransactionObject {
 	}
 	public Statement prepareStatement(String command) throws IOException{
 		if(!open) throw new IOException("closed Session");
-		return new Statement(this, command);
+		return new Statement(this, command,0);
 	}
 	public CallableStatment callableStatement(String command) throws IOException{
 		if(!open) throw new IOException("closed Session");
