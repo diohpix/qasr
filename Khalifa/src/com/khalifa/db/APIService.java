@@ -4,11 +4,15 @@ package com.khalifa.db;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ParameterMode;
 import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
@@ -20,6 +24,7 @@ import redis.clients.jedis.ShardedJedisPool;
 import com.google.common.base.Throwables;
 import com.khalifa.cache.redis.JedisConnection;
 import com.khalifa.db.proxy.ProxySqlSession;
+import com.khalifa.process.State;
 import com.khalifa.protocol.QueryProtocol.Response;
 import com.khalifa.util.Configure;
 import com.khalifa.util.UK;
@@ -100,7 +105,7 @@ public class APIService {
 		res.setCode(200);
 		return res;
 	}	
-	public static Object query(String dbname,int type,String SQL,Map<String,Object> where,String _where ,int expireTime) throws Exception{
+	public static Object query(String dbname,int type,String SQL,Map<String,Object> where,String _where ,int expireTime,State state) throws Exception{
 		ShardedJedisPool pool = null;
 		ShardedJedis jedis = null;
 		byte[] select = null;
@@ -193,6 +198,41 @@ public class APIService {
 				l.add(data);
 				sess.commit();
 				obj.add(l);
+			}
+			if(ms.getStatementType() == StatementType.CALLABLE){
+				System.out.println("callable");
+				final List<ParameterMapping> parameterMappings = ms.getBoundSql(where).getParameterMappings();
+			    List<Object> actual = new ArrayList<Object>();
+			    Object[] metaData = new Object[1];
+			    
+	  			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+			    int c=0;
+				for (int i = 0; i < parameterMappings.size(); i++) {
+			      final ParameterMapping parameterMapping = parameterMappings.get(i);
+			      if (parameterMapping.getMode() == ParameterMode.OUT || parameterMapping.getMode() == ParameterMode.INOUT) {
+			  			String columnName = parameterMapping.getProperty();
+			  			String javatype = parameterMapping.getJavaType().getName();
+			  			Map<String, String> columnMeta = new LinkedHashMap();
+			  			columnMeta.put("columnName", columnName);
+			  			columnMeta.put("columnLabel", columnName);
+			  			columnMeta.put("columnType", javatype);
+			  			metaData[c++] = columnMeta;
+
+			  			Map<String, Object> col = new HashMap<String, Object>();
+			  			col.put(columnName, where.get(columnName));
+			  			list.add(col);
+			    	  /*if (ResultSet.class.equals(parameterMapping.getJavaType())) {
+			          		//handleRefCursorOutputParameter((ResultSet) cs.getObject(i + 1), parameterMapping, metaParam);
+			        	} else {
+			          final TypeHandler<?> typeHandler = parameterMapping.getTypeHandler();
+			          		//metaParam.setValue(parameterMapping.getProperty(), typeHandler.getResult(cs, i + 1));
+			        	}*/
+			      }
+			    }
+				actual.add(metaData);
+				actual.add(list);
+			    Response.Builder rs = UK.convertObject2Response(actual);
+			    state.setOutputParam(rs);
 			}
 			sess.close();
 		}catch(Exception e){

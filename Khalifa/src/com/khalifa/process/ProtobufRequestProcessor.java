@@ -1,7 +1,6 @@
 package com.khalifa.process;
 
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
@@ -50,7 +49,7 @@ public class ProtobufRequestProcessor  {
 				state.addLog(SQL);
 			}
 			Map<String,Object> _where = UK.getWhere(q);
-			if(type==5){ //transaction command
+			if(type==5){ // transaction command
 				if("BEGIN_TRANSACTION".equals(SQL)){
 					SqlSession sess = APIService.getSession(q.getDbname());
 					sess.getConnection().setAutoCommit(false);
@@ -86,6 +85,13 @@ public class ProtobufRequestProcessor  {
 						ResponseUtil.makeResponse(ctx, 201, "NO_TRANSACTION");
 					}
 					return;
+				}else if("OUTPUTPARAM".equals(SQL)){
+					Response.Builder res = state.getOutputParam();
+					if(res!=null){
+						res.setCode(200);
+						ChannelFuture f = ctx.writeAndFlush(res.build());
+					}
+					return;
 				}
 			}
 			Object list = null;
@@ -93,7 +99,7 @@ public class ProtobufRequestProcessor  {
 				list = APIService.transactionQuery((ProxySqlSession)state.getSession(), SQL, _where);
 			}else{
 				int _exp = q.hasExpire() ? q.getExpire() : expire;
-				list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp);
+				list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);
 			}
 			Response r = null;
 			if(list instanceof byte[]){
@@ -105,12 +111,11 @@ public class ProtobufRequestProcessor  {
 				r = res.build();
 			}
 	        ChannelFuture f = ctx.writeAndFlush(r);
-	        /*
-	        if(state.getSession()==null){
+	       /* if(state.getSession()==null){
 	        	f.addListener(new ChannelFutureListener() {
 					@Override
 					public void operationComplete(ChannelFuture future) throws Exception {
-						//((SocketChannel)future.channel()).shutdownOutput(); // half_close socket
+					//	((SocketChannel)future.channel()).shutdownOutput(); // half_close socket
 					}
 				});	
 	        }*/

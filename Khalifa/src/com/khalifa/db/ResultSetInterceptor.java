@@ -61,8 +61,6 @@ public class ResultSetInterceptor implements Interceptor {
 				}
 				list.add(col);
 			}
-			rs.close();
-			statement.close();
 			actual.add(list);
 		} catch (Exception e) {
 			throw e;
@@ -74,13 +72,14 @@ public class ResultSetInterceptor implements Interceptor {
 					e.printStackTrace();
 				}
 			}
+			/*System.out.println(statement);
 			if(statement !=null){
 				try {
 					statement.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-			}
+			}*/
 			return actual;
 		}
 	}
