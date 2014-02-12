@@ -14,9 +14,9 @@ import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.Shorts;
 import com.google.protobuf.ByteString;
-import com.khalifa.exception.InvalidCommandSuffix;
 import com.khalifa.protocol.QueryProtocol.DataType;
 import com.khalifa.protocol.QueryProtocol.Query;
+import com.khalifa.protocol.QueryProtocol.Response;
 
 public class Statement {
 	private static byte [] zlen = new byte[]{-1};
@@ -53,6 +53,7 @@ public class Statement {
 			e.printStackTrace();
 		}
 	}
+	
 	public void clearParameter(){
 		ByteString command = res.getCommand();
 		int queryType = res.getQueryType();
@@ -210,7 +211,10 @@ public class Statement {
 		}
 	}
 	*/
-	public ResultObject executeQuery() throws InvalidCommandSuffix, IOException,SQLException{
+	public Response getOutputParam() throws IOException{
+		return tx.outputParam();
+	}
+	public ResultObject executeQuery() throws IOException,SQLException{
 		if(DEBUG){
 			System.out.println(this.toString());
 			return null;
@@ -221,7 +225,7 @@ public class Statement {
 	public long getLastInsertId(){
 		return __insert__id__;
 	}
-	public int executeUpdate() throws InvalidCommandSuffix, IOException,SQLException{
+	public int executeUpdate() throws IOException,SQLException{
 		if(DEBUG){
 			System.out.println(this.toString());
 			return -1;

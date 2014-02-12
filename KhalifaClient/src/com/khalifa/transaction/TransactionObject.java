@@ -15,7 +15,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.khalifa.APIClientHandler;
 import com.khalifa.ProtobufUtil;
-import com.khalifa.exception.InvalidCommandSuffix;
 import com.khalifa.protocol.QueryProtocol.Query;
 import com.khalifa.protocol.QueryProtocol.Response;
 
@@ -67,19 +66,23 @@ public class TransactionObject {
 		if(!open) throw new IOException("closed Session");
 		return new Statement(this, command);
 	}
+	public CallableStatment callableStatement(String command) throws IOException{
+		if(!open) throw new IOException("closed Session");
+		return new CallableStatment(this, command);
+	}
 	
 	void setDistributed(boolean v){
 		this.isDistributed = v;
 	}
-	ResultObject executeQuery(Query.Builder query)	throws InvalidCommandSuffix, IOException, SQLException {
+	ResultObject executeQuery(Query.Builder query)	throws  IOException, SQLException {
 		if(!open || !channel.isActive()) throw new IOException("closed Session");
 		query.setDbname(dbname);
 		int sqlType = query.getQueryType();
 		if (sqlType == 0){
-			throw new InvalidCommandSuffix("invalid command ! command must end with _SELECT , _UPDATE , _DELETE , _INSERT");
+			throw new RuntimeException("SQLType Error");
 		}
-		if(dbname.indexOf("read")>-1 && sqlType != 1){
-			throw new InvalidCommandSuffix("ReadOnly  DB");
+		if(dbname.indexOf("read")>-1 && (sqlType == 2 || sqlType ==3 || sqlType ==4) ){
+			throw new RuntimeException("ReadOnly  DB");
 		}
 		ResultObject result = new ResultObject();
 		Object response = handler.getDataDirect(this.channel,query);
@@ -144,6 +147,25 @@ public class TransactionObject {
 			}
 		} 
 		return rtn;
+	}
+	public Response outputParam() throws IOException{
+		if(!open || !channel.isActive()) throw new IOException("closed Session");
+		Response res = null;
+		Query.Builder query = Query.newBuilder();
+		query.setDbname(dbname);
+		query.setQueryType(5);
+		query.setCommand(ByteString.copyFrom("OUTPUTPARAM","UTF-8"));
+		//Object response = handler.getData(query);
+		Object response = handler.getDataDirect(this.channel,query);
+		if (ProtobufUtil.success(response)) { 
+			 res = (Response) response;
+			if(res.getCode()==200){
+			
+			}else{
+
+			}
+		} 
+		return res;
 	}
 	
 	public boolean startTransaction() throws IOException	{
