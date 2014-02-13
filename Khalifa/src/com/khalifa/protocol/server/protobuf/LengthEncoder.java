@@ -9,7 +9,6 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class LengthEncoder extends MessageToByteEncoder<ByteBuf> {
 	@Override
     protected void encode( ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
-    		System.out.println("final Encoder "+ msg.readableBytes());
     		int bodyLen = msg.readableBytes();
     		Object g = ctx.pipeline().get("___INRERNAL_GZIP___");
     		if(g!=null){
