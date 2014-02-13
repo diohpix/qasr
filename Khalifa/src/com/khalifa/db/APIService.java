@@ -98,7 +98,6 @@ public class APIService {
 				obj.add(l);
 			}
 			if(ms.getStatementType() == StatementType.CALLABLE){
-				System.out.println("callable");
 				final List<ParameterMapping> parameterMappings = ms.getBoundSql(where).getParameterMappings();
 			    List<Object> actual = new ArrayList<Object>();
 			    Object[] metaData = new Object[1];
@@ -236,7 +235,6 @@ public class APIService {
 				obj.add(l);
 			}
 			if(ms.getStatementType() == StatementType.CALLABLE){
-				System.out.println("callable");
 				final List<ParameterMapping> parameterMappings = ms.getBoundSql(where).getParameterMappings();
 			    List<Object> actual = new ArrayList<Object>();
 			    Object[] metaData = new Object[1];
