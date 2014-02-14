@@ -38,7 +38,7 @@ public class SystemInitializer {
     	if(args.length>0){
     		r = new ClassPathResource(Configure.CONFIG_ROOT+args[0]);
     	}else{
-    		r = new ClassPathResource(Configure.CONFIG_ROOT+"dbproxy.xml");
+    		r = new ClassPathResource(Configure.CONFIG_ROOT+"khalifa.xml");
     	}
     	try {
 			Configure.load(r.getFile());

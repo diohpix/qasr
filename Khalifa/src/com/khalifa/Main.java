@@ -1,8 +1,6 @@
 
 package com.khalifa;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -14,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.khalifa.protocol.server.APIServer;
 import com.khalifa.system.SystemInitializer;
-import com.khalifa.util.CommonObject;
 
 @SuppressWarnings("unused")
 public class Main {
@@ -65,9 +62,6 @@ public class Main {
         	if(server!=null){
         		server.shutdown();
         	}
-        	if(CommonObject.executor!=null){
-        		((ThreadPoolExecutor)CommonObject.executor).shutdown();
-        	}
         	logger.error(e.getCause().getMessage(), e);
         	e.printStackTrace();
         	System.exit(-1);
@@ -77,9 +71,6 @@ public class Main {
     public void destroy() {
     	if(server!=null){
     		server.shutdown();
-    	}
-    	if(CommonObject.executor!=null){
-    		((ThreadPoolExecutor)CommonObject.executor).shutdown();
     	}
     	logger.info("Complete");
     }
