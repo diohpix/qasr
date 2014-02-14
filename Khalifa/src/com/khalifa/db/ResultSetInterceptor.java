@@ -38,7 +38,7 @@ public class ResultSetInterceptor implements Interceptor {
 				columnCount = rsmd.getColumnCount();
 				Object[] metaData = new Object[columnCount];
 				for (int i = 1; i <= columnCount; i++) {
-					Map<String, String> columnMeta = new LinkedHashMap();
+					Map<String, String> columnMeta = new LinkedHashMap<String,String>();
 					String columnName = rsmd.getColumnName(i);
 					String columnLabel = rsmd.getColumnLabel(i);
 					if("".equals(columnName)){
@@ -57,7 +57,11 @@ public class ResultSetInterceptor implements Interceptor {
 			while (rs.next()) {
 				Map<String, Object> col = new HashMap<String, Object>();
 				for (int i = 1; i <= columnCount; i++) {
-					col.put(rsmd.getColumnLabel(i), rs.getObject(i));
+					String label = rsmd.getColumnLabel(i);
+					if("".equals(label)){
+						label = "column"+i;
+					}
+					col.put(label, rs.getObject(i));
 				}
 				list.add(col);
 			}

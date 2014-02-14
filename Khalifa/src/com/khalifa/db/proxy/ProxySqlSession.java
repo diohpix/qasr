@@ -19,7 +19,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.defaults.DefaultSqlSession.StrictMap;
 
 public class ProxySqlSession implements SqlSession {
 

@@ -13,8 +13,7 @@ import com.khalifa.db.APIService;
 import com.khalifa.db.proxy.ProxySqlSession;
 import com.khalifa.protocol.QueryProtocol.Query;
 import com.khalifa.protocol.QueryProtocol.Response;
-import com.khalifa.protocol.server.protobuf.CommonData;
-import com.khalifa.util.Configure;
+import com.khalifa.util.CommonData;
 import com.khalifa.util.ResponseUtil;
 import com.khalifa.util.UK;
 
@@ -22,7 +21,7 @@ public class ProtobufRequestProcessor  {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ProtobufRequestProcessor.class);
     
-	private static int expire = Configure.getIntProperty("redis.default_expire");
+	private static int expire = CommonData.redis_default_expire;
 	private ChannelHandlerContext ctx;
 	private Query q;
 	
@@ -48,13 +47,20 @@ public class ProtobufRequestProcessor  {
 				state.addLog("|");
 				state.addLog(SQL);
 			}
-			Map<String,Object> _where = UK.getWhere(q);
+			
 			if(type==5){ // transaction command
 				if("BEGIN_TRANSACTION".equals(SQL)){
 					SqlSession sess = APIService.getSession(q.getDbname());
 					sess.getConnection().setAutoCommit(false);
 					sess.clearCache();
 					state.setSession(sess);
+					ResponseUtil.makeResponse(ctx, 200, "TRANSACTION_START");
+					return;
+				}else if("BEGIN_R_TRANSACTION".equals(SQL)){
+					SqlSession sess = APIService.getSession(q.getDbname());
+					sess.clearCache();
+					state.setSession(sess);
+					state.setReadTransaction(true);
 					ResponseUtil.makeResponse(ctx, 200, "TRANSACTION_START");
 					return;
 				}else if("END_TRANSACTION".equals(SQL)){
@@ -86,6 +92,8 @@ public class ProtobufRequestProcessor  {
 					}
 					return;
 				}else if("OUTPUTPARAM".equals(SQL)){
+					logger.debug("OUTPUTPARAM");
+					
 					Response.Builder res = state.getOutputParam();
 					if(res!=null){
 						res.setCode(200);
@@ -94,11 +102,14 @@ public class ProtobufRequestProcessor  {
 					return;
 				}
 			}
+			Map<String,Object> _where = UK.getWhere(q);
 			Object list = null;
-			if(state.getSession()!=null){
+			int _exp = q.hasExpire() ? q.getExpire() : expire;
+			if(state.getSession()!=null && !state.isReadTransaction()) { // transaction
 				list = APIService.transactionQuery((ProxySqlSession)state.getSession(), SQL, _where,state);
-			}else{
-				int _exp = q.hasExpire() ? q.getExpire() : expire;
+			}if(state.getSession()!=null && state.isReadTransaction()) { // read only transaction
+				list = APIService.readOnlyQuery((ProxySqlSession)state.getSession(),q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);
+			}else{ // normal SQL
 				list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);
 			}
 			Response r = null;
@@ -109,6 +120,7 @@ public class ProtobufRequestProcessor  {
 				res = (Response.Builder) list;
 				res.setCode(200);
 				r = res.build();
+				res.clear();
 			}
 	        ChannelFuture f = ctx.writeAndFlush(r);
 	       /* if(state.getSession()==null){

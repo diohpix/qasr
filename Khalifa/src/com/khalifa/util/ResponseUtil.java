@@ -11,12 +11,11 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.protobuf.ByteString;
-import com.khalifa.process.ProtobufRequestProcessor;
 import com.khalifa.protocol.QueryProtocol.DataType;
 import com.khalifa.protocol.QueryProtocol.Response;
 
 public class ResponseUtil {
-	private static final Logger logger = LoggerFactory.getLogger(ProtobufRequestProcessor.class);
+	private static final Logger logger = LoggerFactory.getLogger(ResponseUtil.class);
 	private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss ZZ").serializeNulls().create();
 
 	
@@ -51,6 +50,7 @@ public class ResponseUtil {
 		res.addType(DataType.STRING);
 		res.addData(ByteString.copyFromUtf8(msg));
 		ctx.writeAndFlush(res.build());
+		res.clear();
 		logger.debug(msg);
 	}
 }

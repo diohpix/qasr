@@ -27,7 +27,7 @@ import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import com.khalifa.db.LoadBalancer;
 import com.khalifa.db.ReloadableSqlSesseionFactoryBean;
 import com.khalifa.db.proxy.ProxyDataSource;
-import com.khalifa.util.Configure;
+import com.khalifa.util.CommonData;
 import com.khalifa.util.ResponseUtil;
 
 
@@ -57,13 +57,13 @@ public class Monitor {
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		Map<String,Object> r = new HashMap<String,Object>();
 		
-		Iterator<String> names = Configure.getSQLFactoryNames();
+		Iterator<String> names = CommonData.getSQLFactoryNames();
 		r.put("time",new Date());
 		while(names.hasNext()){
 			String name = names.next();
 			LoadBalancer lb;
 			try {
-				lb = Configure.getLoadBalancer(name);
+				lb = CommonData.getLoadBalancer(name);
 				List<ReloadableSqlSesseionFactoryBean> connList = lb.getSessionList();
 				for (ReloadableSqlSesseionFactoryBean rs : connList) {
 					Map<String,Object> data = new HashMap<String,Object>();
@@ -94,7 +94,7 @@ public class Monitor {
 		try {
 			String name = (String) map.get("name");
 			LoadBalancer lb;
-			lb = Configure.getLoadBalancer(name);
+			lb = CommonData.getLoadBalancer(name);
 			List<ReloadableSqlSesseionFactoryBean> connList = lb.getSessionList();
 			for (ReloadableSqlSesseionFactoryBean rs : connList) {
 				SqlSessionFactory f =rs.getObject();
@@ -130,7 +130,7 @@ public class Monitor {
 			String nm = (String) map.get("nm");
 			String id=ns+"."+nm;
 			LoadBalancer lb;
-			lb = Configure.getLoadBalancer(name);
+			lb = CommonData.getLoadBalancer(name);
 			List<ReloadableSqlSesseionFactoryBean> connList = lb.getSessionList();
 			for (ReloadableSqlSesseionFactoryBean rs : connList) {
 				Map<String,Object> data = new HashMap<String,Object>();
@@ -195,7 +195,7 @@ public class Monitor {
 			String name = (String) map.get("name");
 			String command = (String) map.get("command");
 			LoadBalancer lb;
-			lb = Configure.getLoadBalancer(name);
+			lb = CommonData.getLoadBalancer(name);
 			Map<String,Object> data = (Map<String, Object>) map.get("data");
 			List<ReloadableSqlSesseionFactoryBean> connList = lb.getSessionList();
 			int hashcode = ((Double)map.get("hashcode")).intValue();
@@ -231,7 +231,7 @@ public class Monitor {
 			String command = (String) map.get("command");
 			String sql = (String) map.get("sql");
 			LoadBalancer lb;
-			lb = Configure.getLoadBalancer(name);
+			lb = CommonData.getLoadBalancer(name);
 			Map<String,Object> data = (Map<String, Object>) map.get("data");
 			List<ReloadableSqlSesseionFactoryBean> connList = lb.getSessionList();
 			int hashcode = ((Double)map.get("hashcode")).intValue();
@@ -273,7 +273,7 @@ public class Monitor {
 			String command = (String) map.get("command");
 			String sql = (String) map.get("sql");
 			LoadBalancer lb;
-			lb = Configure.getLoadBalancer(name);
+			lb = CommonData.getLoadBalancer(name);
 			Map<String,Object> data = (Map<String, Object>) map.get("data");
 			List<ReloadableSqlSesseionFactoryBean> connList = lb.getSessionList();
 			int hashcode = ((Double)map.get("hashcode")).intValue();
@@ -330,7 +330,7 @@ public class Monitor {
 		int hashcode = ((Double)map.get("id")).intValue();
 		LoadBalancer lb;
 		try {
-			lb = Configure.getLoadBalancer(name);
+			lb = CommonData.getLoadBalancer(name);
 			List<ReloadableSqlSesseionFactoryBean> connList = lb.getSessionList();
 			for (ReloadableSqlSesseionFactoryBean rs : connList) {
 				SqlSessionFactory f =rs.getObject();
@@ -368,7 +368,7 @@ public class Monitor {
 			String name = (String) map.get("name");
 			String command = (String) map.get("command");
 			LoadBalancer lb;
-			lb = Configure.getLoadBalancer(name);
+			lb = CommonData.getLoadBalancer(name);
 			Map<String,Object> data = (Map<String, Object>) map.get("data");
 			List<ReloadableSqlSesseionFactoryBean> connList = lb.getSessionList();
 			int hashcode = ((Double)map.get("hashcode")).intValue();

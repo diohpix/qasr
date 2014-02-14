@@ -4,6 +4,8 @@ package com.khalifa.cache.redis;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.HierarchicalConfiguration;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -13,7 +15,7 @@ import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 import redis.clients.util.Hashing;
 
-import com.khalifa.util.Configure;
+import com.khalifa.util.CommonData;
 
 public class JedisConnection {
 // TODO IP CHANGE 107 -> 108
@@ -33,6 +35,7 @@ public class JedisConnection {
 		(new Thread(){
 			public void run(){
 				while(true){
+					System.out.println("------");
 					try {
 						Thread.sleep(5000);
 						ShardedJedis jedis = shardedPool.getResource();
@@ -41,7 +44,8 @@ public class JedisConnection {
 						System.out.println("SUCCESS!");
 						break;
 					} catch (Throwable e) {
-						//System.out.println("FAIL ");
+						e.printStackTrace();
+						System.out.println("FAIL ");
 					}
 				}
 			}
@@ -50,13 +54,13 @@ public class JedisConnection {
 	private static JedisPoolConfig getPoolConfig(){
 		
 		JedisPoolConfig config = new JedisPoolConfig();
-		config.setMaxActive(Configure.getIntProperty("redis.maxActive")); 
-		config.setMaxIdle(Configure.getIntProperty("redis.maxIdle"));
-		config.setMaxWait(Configure.getIntProperty("redis.maxWait"));
-		config.setTestOnBorrow(Configure.getBoolProperty("redis.testOnBorrow"));
-		config.setTestWhileIdle(Configure.getBoolProperty("redis.testWhileIdle"));
-		config.minEvictableIdleTimeMillis = Configure.getIntProperty("redis.evictableIdleTimeMillis");
-		config.timeBetweenEvictionRunsMillis = Configure.getIntProperty("redis.timeBetweenEvictionRunsMillis");
+		config.setMaxActive(CommonData.redis_maxActive); 
+		config.setMaxIdle(CommonData.redis_maxIdle);
+		config.setMaxWait(CommonData.redis_maxWait);
+		config.setTestOnBorrow(CommonData.redis_testOnBorrow);
+		config.setTestWhileIdle(CommonData.redis_testWhileIdle);
+		config.minEvictableIdleTimeMillis = CommonData.redis_evictableIdleTimeMillis;
+		config.timeBetweenEvictionRunsMillis = CommonData.redis_timeBetweenEvictionRunsMillis;
 //		config.numTestsPerEvictionRun = -1;
 		return config;
 	}
@@ -64,16 +68,12 @@ public class JedisConnection {
 	public static JedisPool getInstance(){
 		if(pool==null){
 			try{
-				List<Object> ss = Configure.getList("redis.servers.host.ip");
-		        int redislen = ss.size();
-				for(int i=0;i<redislen;i++){
-					String ip = Configure.getProperty("redis.servers.host("+i+").ip");
-					String port = Configure.getProperty("redis.servers.host("+i+").port");
+				List<HierarchicalConfiguration> cc = CommonData.redis_servers_host;
+				for (HierarchicalConfiguration host : cc) {
+					String ip = host.getString("ip");
+					String port = host.getString("port");
 					pool = new JedisPool(getPoolConfig(),ip.toString(),Integer.parseInt(port), Protocol.DEFAULT_TIMEOUT+1000);
-					break;
 				}
-
-				
 			}catch(Exception e){
 				throw new RedisException("Jedis Connection Pool Excption!");
 			}
@@ -84,15 +84,13 @@ public class JedisConnection {
 	public static ShardedJedisPool getShardedInstance(){
 		if(checkjedis ) return null;
 		if(shardedPool==null ) {
-			List<Object> ss = Configure.getList("redis.servers.host.ip");
-	        int redislen = ss.size();
 			List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>();
 			JedisShardInfo jsi = null;
-			for(int i=0;i<redislen;i++){
-				String ip = Configure.getProperty("redis.servers.host("+i+").ip");
-				String port = Configure.getProperty("redis.servers.host("+i+").port");
+			List<HierarchicalConfiguration> cc = CommonData.redis_servers_host;
+			for (HierarchicalConfiguration host : cc) {
+				String ip = host.getString("ip");
+				String port = host.getString("port");
 				jsi = new JedisShardInfo(ip, Integer.valueOf( port), 1000);
-				//jsi = new JedisShardInfo(ip, Integer.valueOf( port), Protocol.DEFAULT_TIMEOUT+1000);
 				jsi.setPassword(JEDIS_PASSWORD);
 			    shards.add( jsi );
 			}

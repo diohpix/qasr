@@ -22,6 +22,7 @@ import com.khalifa.process.State;
 import com.khalifa.protocol.QueryProtocol.DataType;
 import com.khalifa.protocol.QueryProtocol.Query;
 import com.khalifa.protocol.QueryProtocol.Response;
+import com.khalifa.util.CommonData;
 
 public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHandler.class.getName());
@@ -44,30 +45,35 @@ public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
 		}
     }
 	public void channelInactive(ChannelHandlerContext ctx)      throws Exception{
-		// State 객체 NULL
 		State state = ctx.attr(CommonData.STATE).get();
 		if(state!=null){
+			state.clear();
 			ctx.attr(CommonData.STATE).set(null);
 		}
 	}
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) {
+    	String msg=Throwables.getStackTraceAsString(e);
+    	State  state =ctx.attr(CommonData.STATE).get();
     	if (e instanceof ReadTimeoutException) {
-            CommonData.timeoutLogger.info("SQL : {}",ctx.attr(CommonData.STATE).get().getLog().toString());
+    		if(state!=null){
+    			CommonData.timeoutLogger.info("SQL : {}",state.getLog().toString());
+    		}
         }else if(e.getCause() instanceof ClosedChannelException){
         }else{
-        	logger.warn("Unexpected exception from downstream. {}",      e.getCause());	
+        	logger.warn("Unexpected exception from downstream. {}",e.getCause());	
         }
-		String msg=Throwables.getStackTraceAsString(e);
-		CommonData.exceptionLogger.info(ctx.attr(CommonData.STATE).get().getLog().toString()+"\n"+msg);
-		if(ctx.attr(CommonData.STATE).get().getSession()!=null){ // 에러발생시 sql세션종료및 disconnect
-			SqlSession s =ctx.attr(CommonData.STATE).get().getSession();
-			ctx.attr(CommonData.STATE).get().setSession(null);
+		if(state!=null){
+			CommonData.exceptionLogger.info(state.getLog().toString()+"\n"+msg);
+		}
+		if(state.getSession()!=null){ // 에러발생시 sql세션종료및 disconnect
+			SqlSession s =state.getSession();
 			try {
 				s.getConnection().rollback();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 			s.close();
+			state.clear();
 			logger.warn("ROLLBACK");
 		}
 		if(ctx.channel().isActive()){
@@ -104,6 +110,7 @@ public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
 				res.addData(ByteString.copyFromUtf8(msg));
 			}
 			ctx.writeAndFlush(res.build()).addListener(ChannelFutureListener.CLOSE);
+			res.clear();
 		}
         logger.debug("Unexpected exception from downstream.", e.getCause());
         ctx.close();

@@ -1,24 +1,20 @@
 package com.khalifa.util;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.khalifa.db.LoadBalancer;
 
 public class Configure {
 	private final static Logger log = LoggerFactory.getLogger(Configure.class);
 	public static String CONFIG_ROOT="../conf/";
 	public static boolean useCacheGzip = false;
-	private static Map<String,LoadBalancer> sqlfactory = new HashMap<String, LoadBalancer>(); 
+	
 	private static  XMLConfiguration config ;
 	public static void load(File fileName) throws ConfigurationException {
 		XMLConfiguration.setDefaultListDelimiter('|');
@@ -36,40 +32,48 @@ public class Configure {
 			}
 			System.out.println("================================================================");
 		}
+		CommonData.mapper_check_interval = Configure.getIntProperty("mapper_check_interval");
+		CommonData.slow_query_time = Configure.getIntProperty("slow_query_time");
+		CommonData.readtimeout = Configure.getIntProperty("readtimeout");
+		CommonData.executorGroupSize = Configure.getIntProperty("executorGroupSize");
 		
+		CommonData.api_server_port = Configure.getIntProperty("api.server.port");
+		CommonData.api_server_writeBufferHighWaterMark = Configure.getIntProperty("api.server.writeBufferHighWaterMark");
+		CommonData.api_server_sendBufferSize= Configure.getIntProperty("api.server.sendBufferSize");
+		CommonData.api_server_receiveBufferSize = Configure.getIntProperty("api.server.receiveBufferSize");
+		CommonData.api_server_backlog = Configure.getIntProperty("api.server.backlog");
+		CommonData.api_child_sendBufferSize = Configure.getIntProperty("api.child.sendBufferSize");
+		CommonData.api_child_receiveBufferSize = Configure.getIntProperty("api.child.receiveBufferSize");
+		CommonData.api_child_tcpNoDelay = Configure.getBoolProperty("api.child.tcpNoDelay");
+		CommonData.api_child_soLinger = Configure.getIntProperty("api.child.soLinger");
+		CommonData.api_server_tcpNoDelay = Configure.getBoolProperty("api.server.tcpNoDelay");
+		CommonData.api_server_keepAlive= Configure.getBoolProperty("api.server.keepAlive");
+		
+		CommonData.redis_maxActive = Configure.getIntProperty("redis.maxActive");
+		CommonData.redis_maxIdle = Configure.getIntProperty("redis.maxIdle");
+		CommonData.redis_maxWait = Configure.getIntProperty("redis.maxWait");
+		CommonData.redis_testOnBorrow = Configure.getBoolProperty("redis.testOnBorrow");
+		CommonData.redis_testWhileIdle = Configure.getBoolProperty("redis.testWhileIdle");
+		CommonData.redis_evictableIdleTimeMillis =Configure.getIntProperty("redis.evictableIdleTimeMillis");
+		CommonData.redis_timeBetweenEvictionRunsMillis = Configure.getIntProperty("redis.timeBetweenEvictionRunsMillis");
+		CommonData.redis_servers_host = Configure.configurationsAt("redis.servers.host");
+		CommonData.redis_default_expire = Configure.getIntProperty("redis.default_expire");
+		
+		CommonData.jdbcs =  Configure.configurationsAt("jdbcs.item");
 	}
-	public static Iterator<String> getSQLFactoryNames(){
-		return sqlfactory.keySet().iterator();
+	private static List<HierarchicalConfiguration>  configurationsAt(String key){
+		return config.configurationsAt(key);
 	}
-	public static SqlSessionFactory getSQLFactory(String name) throws Exception{
-		SqlSessionFactory sf = sqlfactory.get(name).getSession();
-		if(sf ==null) throw new Exception("SqlSession "+name+" not found");
-		return sf;
-	}
-	public static LoadBalancer getLoadBalancer(String name) throws Exception{
-		LoadBalancer sf = sqlfactory.get(name);
-		if(sf ==null) throw new Exception("LoadBalancer "+name+" not found");
-		return sf;
-	}
-	public static void addSQLFactory(String name,LoadBalancer value){
-		sqlfactory.put(name, value);
-	}
-	public static String getProperty(String key) {
-		String value = config.getProperty(key) == null ? ""
-				: config.getProperty(key).toString();
-		return value;
-	}
-	public static int getIntProperty(String key) {
+	
+	
+	private static int getIntProperty(String key) {
 		return config.getInt(key);
 	}
 	public static boolean getBoolProperty(String key){
 		
 		return config.getBoolean(key);
 	}
-	public static Object getObject(String key){
-		return config.getProperty(key);
-	}
-	public static List<Object> getList(String key){
+	private static List<Object> getList(String key){
 		return config.getList(key);
 	}
 }

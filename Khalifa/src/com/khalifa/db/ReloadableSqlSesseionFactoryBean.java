@@ -1,6 +1,5 @@
 package com.khalifa.db;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -31,14 +30,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.khalifa.util.Configure;
+import com.khalifa.util.CommonData;
 
 
 public class ReloadableSqlSesseionFactoryBean extends SqlSessionFactoryBean	implements DisposableBean {
 
 	private final Logger log = LoggerFactory.getLogger(ReloadableSqlSesseionFactoryBean.class);
 	private SqlSessionFactory proxy;
-	private int interval = Configure.getIntProperty("mapper_check_interval");
+	private int interval = CommonData.mapper_check_interval;
 	private Timer timer;
 	private TimerTask task;
 	private Resource[] mapperLocations;
@@ -150,7 +149,7 @@ public class ReloadableSqlSesseionFactoryBean extends SqlSessionFactoryBean	impl
 		m.appendTail(sb);
 		return sb.toString();
 	}
-	
+	/*
 	public void parseSQLMapper(String [] files) throws Exception{
 		if(builder==null){
 			 builder = factory.newDocumentBuilder();
@@ -170,7 +169,7 @@ public class ReloadableSqlSesseionFactoryBean extends SqlSessionFactoryBean	impl
 					Node sql = q.item(i);
 					Node nid = sql.getAttributes() !=null ? sql.getAttributes().getNamedItem("id") : null;
 					if(nid!=null){
-						/*String id = ns+"."+sql.getAttributes().getNamedItem("id").getNodeValue();
+						String id = ns+"."+sql.getAttributes().getNamedItem("id").getNodeValue();
 						info.put("sqlType", sql.getNodeName());
 						info.put("command",id);
 						NodeList item  = sql.getChildNodes();
@@ -186,10 +185,10 @@ public class ReloadableSqlSesseionFactoryBean extends SqlSessionFactoryBean	impl
 							vendor = EDbVendor.dbvoracle;
 						}else{
 							vendor = EDbVendor.dbvansi;
-						}*/
+						}
 						System.out.println("scan "+this.vendor);
-						//scantable scan = new scantable( osql, vendor );
-						//System.out.print( scan.getScanResult( ) );
+						scantable scan = new scantable( osql, vendor );
+						System.out.print( scan.getScanResult( ) );
 						
 					}
 				}
@@ -197,7 +196,7 @@ public class ReloadableSqlSesseionFactoryBean extends SqlSessionFactoryBean	impl
 			finishedFile.add(path);
 		}
 	}
-
+*/
 	/**
 
 	 * 싱글톤 멤버로 SqlMapClient 원본 대신 프록시로 설정하도록 오버라이드.
