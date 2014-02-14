@@ -13,18 +13,18 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.khalifa.ProtobufUtil;
 import com.khalifa.protocol.QueryProtocol.Response;
 
-public class CallableStatment extends Statement {
+public class CallableStatement extends Statement {
 	private List<Map<String, Object>> list;
 	private Map<String, String> byKey;
 	private Map<Integer, String> byNum;
 	private Response res;
 	private int curr = -1;
 
-	public CallableStatment(TransactionObject tx, String command,int statmentType) {
+	public CallableStatement(TransactionObject tx, String command,int statmentType) {
 		super(tx, command,10);
 		// TODO Auto-generated constructor stub
 	}
-	public CallableStatment(TransactionObject tx, String command) {
+	public CallableStatement(TransactionObject tx, String command) {
 		super(tx, command,10);
 		// TODO Auto-generated constructor stub
 	}

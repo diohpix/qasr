@@ -66,9 +66,9 @@ public class TransactionObject {
 		if(!open) throw new IOException("closed Session");
 		return new Statement(this, command,0);
 	}
-	public CallableStatment callableStatement(String command) throws IOException{
+	public CallableStatement callableStatement(String command) throws IOException{
 		if(!open) throw new IOException("closed Session");
-		return new CallableStatment(this, command);
+		return new CallableStatement(this, command);
 	}
 	
 	void setDistributed(boolean v){
@@ -168,8 +168,12 @@ public class TransactionObject {
 		return res;
 	}
 	
-	public boolean startTransaction() throws IOException	{
+	public boolean startTransaction() throws IOException{
 		isTransaction = command("BEGIN_TRANSACTION");
+		return isTransaction;
+	}
+	public boolean startReadOnlyTransaction() throws IOException{
+		isTransaction = command("BEGIN_R_TRANSACTION");
 		return isTransaction;
 	}
 	public boolean endTransaction() throws IOException	{

@@ -188,7 +188,7 @@ public class Statement {
 			System.out.println(this.toString());
 			return null;
 		}
-		if(statmentType==1){
+		if(statmentType==10){
 			res.setQueryType(10);
 		}else{
 			res.setQueryType(1);

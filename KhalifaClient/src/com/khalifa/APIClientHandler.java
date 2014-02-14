@@ -48,7 +48,6 @@ public class APIClientHandler extends ChannelInboundHandlerAdapter {
         return localTimes;
     }
     public void channelRead(ChannelHandlerContext ctx,Object msg) {
-    	System.out.println("channelRead");
     	if(msg!=null){
     		ReferenceCountUtil.release(msg);
     		answer.offer(msg);

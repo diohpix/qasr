@@ -13,6 +13,8 @@ public class LengthDecoder extends ByteToMessageDecoder {
 	private int length = -1;
 	public LengthDecoder(){
 	}
+	
+    @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
     	if(type==-1){
     		if (in.readableBytes() < 8) {
