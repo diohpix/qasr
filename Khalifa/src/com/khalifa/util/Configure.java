@@ -32,6 +32,10 @@ public class Configure {
 			}
 			System.out.println("================================================================");
 		}
+		
+		CommonData.monitorEnable = Configure.getBoolProperty("monitor[@enable]");
+		CommonData.monitorUseDBProxyPort = Configure.getBoolProperty("monitor[@useDBProxyPort]");
+		CommonData.monitor_port = Configure.getIntProperty("monitor[@port]");
 		CommonData.mapper_check_interval = Configure.getIntProperty("mapper_check_interval");
 		CommonData.slow_query_time = Configure.getIntProperty("slow_query_time");
 		CommonData.readtimeout = Configure.getIntProperty("readtimeout");

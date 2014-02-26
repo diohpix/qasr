@@ -17,6 +17,7 @@ import java.util.List;
 
 import com.khalifa.protocol.server.http.HttpSnoopServerHandler;
 import com.khalifa.protocol.server.protobuf.ProtobufInboundHandler;
+import com.khalifa.util.CommonData;
 
 public class ProtocolSelector extends ByteToMessageDecoder {
 	final static ProtobufEncoder protobufEncoder = new ProtobufEncoder();
@@ -31,20 +32,25 @@ public class ProtocolSelector extends ByteToMessageDecoder {
 	}
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-    	if (in.readableBytes() < 5) {
-            return;
-        }
-        final int magic1 = in.getUnsignedByte(in.readerIndex());
-        final int magic2 = in.getUnsignedByte(in.readerIndex() + 1);
-            if (isHttp(magic1, magic2)) {
-                switchToHttp(ctx);
-            } else  {
-                switchToProtobuf(ctx);
-            }/* else {
-                // Unknown protocol; discard everything and close the connection.
-                in.clear();
-                ctx.close();
-            }*/
+    	if(CommonData.monitorEnable && CommonData.monitorUseDBProxyPort) {
+	    	if (in.readableBytes() < 5) {
+	            return;
+	        }
+	        final int magic1 = in.getUnsignedByte(in.readerIndex());
+	        final int magic2 = in.getUnsignedByte(in.readerIndex() + 1);
+	            if (isHttp(magic1, magic2)) {
+	                switchToHttp(ctx);
+	            } else  {
+	                switchToProtobuf(ctx);
+	            }/* else {
+	                // Unknown protocol; discard everything and close the connection.
+	                in.clear();
+	                ctx.close();
+	                
+	            }*/
+    	}else{
+            switchToProtobuf(ctx);
+    	}
     }
     private void switchToHttp(ChannelHandlerContext ctx) {
         ChannelPipeline p = ctx.pipeline();

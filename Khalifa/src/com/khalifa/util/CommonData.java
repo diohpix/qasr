@@ -40,6 +40,9 @@ public class CommonData {
 		sqlfactory.put(name, value);
 	}
 	
+	public static boolean monitorEnable=false;
+	public static boolean monitorUseDBProxyPort=false;
+	public static int monitor_port=0;
 	public static int mapper_check_interval;
 	public static int slow_query_time;
 	public static int redis_default_expire;

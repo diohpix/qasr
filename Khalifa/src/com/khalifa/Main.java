@@ -10,10 +10,12 @@ import javassist.Modifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.khalifa.monitor.MonitorServer;
 import com.khalifa.protocol.server.APIServer;
 import com.khalifa.system.SystemInitializer;
+import com.khalifa.util.CommonData;
 
-@SuppressWarnings("unused")
+
 public class Main {
 	final static Logger logger = LoggerFactory.getLogger(Main.class);
     private static APIServer server = null;
@@ -39,7 +41,11 @@ public class Main {
     	SystemInitializer.initDataSource();
         try{
 	        server = SystemInitializer.initAPIServer();
-	        //SystemInitializer.initMonitorServer();
+	        if(CommonData.monitorEnable && !CommonData.monitorUseDBProxyPort){
+        		MonitorServer monitor = new MonitorServer(CommonData.monitor_port);
+        		Thread t = new Thread(monitor);
+        		t.start();
+        	}
 	        
 	        logger.info("Context Listener > Initialized");
 	        

@@ -13,8 +13,11 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.Cookie;
 import io.netty.handler.codec.http.CookieDecoder;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -54,41 +57,9 @@ public class HttpSnoopServerHandler extends SimpleChannelInboundHandler<Object> 
             if (is100ContinueExpected(request)) {
                 send100Continue(ctx);
             }
-            /*buf.setLength(0);
-            buf.append("WELCOME TO THE WILD WILD WEB SERVER\r\n");
-            buf.append("===================================\r\n");
-
-            buf.append("VERSION: ").append(request.getProtocolVersion()).append("\r\n");
-            buf.append("HOSTNAME: ").append(getHost(request, "unknown")).append("\r\n");
-            buf.append("REQUEST_URI: ").append(request.getUri()).append("\r\n\r\n");
-            
-            HttpHeaders headers = request.headers();
-            if (!headers.isEmpty()) {
-                for (Map.Entry<String, String> h: headers) {
-                    String key = h.getKey();
-                    String value = h.getValue();
-                    buf.append("HEADER: ").append(key).append(" = ").append(value).append("\r\n");
-                }
-                buf.append("\r\n");
-            }
-
-            QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.getUri());
-            Map<String, List<String>> params = queryStringDecoder.parameters();
-            if (!params.isEmpty()) {
-                for (Entry<String, List<String>> p: params.entrySet()) {
-                    String key = p.getKey();
-                    List<String> vals = p.getValue();
-                    for (String val : vals) {
-                        buf.append("PARAM: ").append(key).append(" = ").append(val).append("\r\n");
-                    }
-                }
-                buf.append("\r\n");
-            }
-            appendDecoderResult(buf, request);*/
         }
         if (msg instanceof HttpContent) {
             HttpContent httpContent = (HttpContent) msg;
-
             ByteBuf content = httpContent.content();
             if (content.isReadable()) {
             	if(body ==null){
@@ -96,26 +67,9 @@ public class HttpSnoopServerHandler extends SimpleChannelInboundHandler<Object> 
             	}else{
             		body+=content.toString(CharsetUtil.UTF_8);
             	}
-                /*buf.append("CONTENT: ");
-                buf.append(body);
-                buf.append("\r\n");
-                appendDecoderResult(buf, request);*/
-                
             }
             if (msg instanceof LastHttpContent) {
-                //buf.append("END OF CONTENT\r\n");
-
                 LastHttpContent trailer = (LastHttpContent) msg;
-                /*if (!trailer.trailingHeaders().isEmpty()) {
-                    buf.append("\r\n");
-                    for (String name: trailer.trailingHeaders().names()) {
-                        for (String value: trailer.trailingHeaders().getAll(name)) {
-                            buf.append("TRAILING HEADER: ");
-                            buf.append(name).append(" = ").append(value).append("\r\n");
-                        }
-                    }
-                    buf.append("\r\n");
-                }*/
                 String buf = service();
                 writeResponse(trailer, ctx,buf);
             }
@@ -125,6 +79,7 @@ public class HttpSnoopServerHandler extends SimpleChannelInboundHandler<Object> 
     	QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.getUri());
         Map<String, List<String>> params = queryStringDecoder.parameters();
         String url = request.getUri();
+        System.out.println(url);
         HttpMethod method = request.getMethod();
         String buf = null;
         if(body==null){
@@ -154,43 +109,51 @@ public class HttpSnoopServerHandler extends SimpleChannelInboundHandler<Object> 
         	response = new DefaultFullHttpResponse(HTTP_1_1, currentObj.getDecoderResult().isSuccess()? OK : BAD_REQUEST,  Unpooled.copiedBuffer(buf.toString(), CharsetUtil.UTF_8));
         	response.headers().set(CONTENT_TYPE, "application/json;charset=UTF-8");
         }else{
-        	Map<String,Object> map = ResponseUtil.convertJSONString2Map(buf);
-        	List<Map<String,Object>> list = (List<Map<String, Object>>) map.get("list");
         	StringBuilder b = new StringBuilder();
-        	int i=0;
-        	b.append("<table border='1'>");
-        	for (Map<String, Object> map2 : list) {
-        		
-        		if(i==0){
-        			b.append("<tr>");
-        			for (Map.Entry<String, Object> item : map2.entrySet()){
-						b.append("<td>").append(item.getKey()).append("</td>");
-        			}	
-        			i++;
-        			b.append("</tr>");
-        		}
-        		b.append("<tr>");
-        		for (Map.Entry<String, Object> item : map2.entrySet()){
-        			if(item.getValue()instanceof Double){
-        				b.append("<td>").append( ((Double)item.getValue()).intValue()).append("</td>");
-        			}else{
-        				b.append("<td>").append(item.getValue()).append("</td>");
-        			}
-        		}
-        		b.append("</tr>");
-			}
-        	b.append("</table>");
-        	response = new DefaultFullHttpResponse(HTTP_1_1, currentObj.getDecoderResult().isSuccess()? OK : BAD_REQUEST,  Unpooled.copiedBuffer(b.toString(), CharsetUtil.UTF_8));
-        	response.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");	
+        	if(buf==null){
+        		b.append("Not Found");
+        		ctx.close();
+        		return false;
+        	}else{
+	        	Map<String,Object> map = ResponseUtil.convertJSONString2Map(buf);
+	        	List<Map<String,Object>> list = (List<Map<String, Object>>) map.get("list");
+	        	
+	        	int i=0;
+	        	b.append("<table border='1'>");
+	        	for (Map<String, Object> map2 : list) {
+	        		
+	        		if(i==0){
+	        			b.append("<tr>");
+	        			for (Map.Entry<String, Object> item : map2.entrySet()){
+							b.append("<td>").append(item.getKey()).append("</td>");
+	        			}	
+	        			i++;
+	        			b.append("</tr>");
+	        		}
+	        		b.append("<tr>");
+	        		for (Map.Entry<String, Object> item : map2.entrySet()){
+	        			if(item.getValue()instanceof Double){
+	        				b.append("<td>").append( ((Double)item.getValue()).intValue()).append("</td>");
+	        			}else{
+	        				b.append("<td>").append(item.getValue()).append("</td>");
+	        			}
+	        		}
+	        		b.append("</tr>");
+				}
+	        	b.append("</table>");
+	        	response = new DefaultFullHttpResponse(HTTP_1_1, currentObj.getDecoderResult().isSuccess()? OK : BAD_REQUEST,  Unpooled.copiedBuffer(b.toString(), CharsetUtil.UTF_8));
+	        	response.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");
+        	}
         }
-        
-
+        keepAlive=false;
         if (keepAlive) {
             // Add 'Content-Length' header only for a keep-alive connection.
             response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
             // Add keep alive header as per:
             // - http://www.w3.org/Protocols/HTTP/1.1/draft-ietf-http-v11-spec-01.html#Connection
             response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        }else{
+        	response.headers().set(CONNECTION, HttpHeaders.Values.CLOSE);
         }
 
         // Encode the cookie.
@@ -205,13 +168,19 @@ public class HttpSnoopServerHandler extends SimpleChannelInboundHandler<Object> 
             }
         } else {
             // Browser sent no cookie.  Add some.
-            response.headers().add(SET_COOKIE, ServerCookieEncoder.encode("key1", "value1"));
-            response.headers().add(SET_COOKIE, ServerCookieEncoder.encode("key2", "value2"));
+            //response.headers().add(SET_COOKIE, ServerCookieEncoder.encode("key1", "value1"));
+            //response.headers().add(SET_COOKIE, ServerCookieEncoder.encode("key2", "value2"));
         }
 
         // Write the response.
-        ctx.writeAndFlush(response);
-        ctx.close();
+        ChannelFuture f = ctx.writeAndFlush(response);
+        f.addListener(new ChannelFutureListener() {
+			
+			@Override
+			public void operationComplete(ChannelFuture future) throws Exception {
+				((SocketChannel)future.channel()).close();
+			}
+		});
         return keepAlive;
     }
 
