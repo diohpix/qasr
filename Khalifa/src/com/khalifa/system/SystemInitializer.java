@@ -56,10 +56,11 @@ public class SystemInitializer {
         	List<String> urls = new ArrayList<String>();
         	
         	LoadBalancer balance = new LoadBalancer();
-        	if(jdbc.containsKey("urls")){
-        		List<HierarchicalConfiguration> l = jdbc.configurationsAt("urls");
+        	int size = jdbc.configurationsAt("urls.url").size();
+        	if(size > 0){
+        		List<HierarchicalConfiguration> l = jdbc.configurationsAt("urls.url");
         		for (HierarchicalConfiguration iurl : l) {
-        			String h = iurl.getString("url");
+        			String h = (String) iurl.getRoot().getValue();
         			logger.info(h);
     				urls.add(h);
 				}
