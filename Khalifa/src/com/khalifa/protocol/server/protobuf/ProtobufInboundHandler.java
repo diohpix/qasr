@@ -39,21 +39,21 @@ public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
     }
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
 		// State 객체없으면 쓸때없는 접속으로 강제종료 
-    	State state = ctx.attr(CommonData.STATE).get();
+    	State state = ctx.channel().attr(CommonData.STATE).get();
 		if(state==null){
 			ctx.close();
 		}
     }
 	public void channelInactive(ChannelHandlerContext ctx)      throws Exception{
-		State state = ctx.attr(CommonData.STATE).get();
+		State state = ctx.channel().attr(CommonData.STATE).get();
 		if(state!=null){
 			state.clear();
-			ctx.attr(CommonData.STATE).set(null);
+			ctx.channel().attr(CommonData.STATE).set(null);
 		}
 	}
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) {
     	String msg=Throwables.getStackTraceAsString(e);
-    	State  state =ctx.attr(CommonData.STATE).get();
+    	State  state =ctx.channel().attr(CommonData.STATE).get();
     	if (e instanceof ReadTimeoutException) {
     		if(state!=null){
     			CommonData.timeoutLogger.info("SQL : {}",state.getLog().toString());

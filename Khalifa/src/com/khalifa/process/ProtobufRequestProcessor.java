@@ -31,7 +31,7 @@ public class ProtobufRequestProcessor  {
 	}
 	
 	public void run() throws Exception {
-		State state = ctx.attr(CommonData.STATE).get();
+		State state = ctx.channel().attr(CommonData.STATE).get();
 		try {
 			int type = q.getQueryType();
 			String SQL = q.getCommand().toStringUtf8();
@@ -42,7 +42,7 @@ public class ProtobufRequestProcessor  {
 			if(state==null){
 				state = new State();
 				state.addLog(SQL);
-				ctx.attr(CommonData.STATE).set(state);
+				ctx.channel().attr(CommonData.STATE).set(state);
 			}else{
 				state.addLog("|");
 				state.addLog(SQL);
@@ -107,7 +107,7 @@ public class ProtobufRequestProcessor  {
 			int _exp = q.hasExpire() ? q.getExpire() : expire;
 			if(state.getSession()!=null && !state.isReadTransaction()) { // transaction
 				list = APIService.transactionQuery((ProxySqlSession)state.getSession(), SQL, _where,state);
-			}if(state.getSession()!=null && state.isReadTransaction()) { // read only transaction
+			}else if(state.getSession()!=null && state.isReadTransaction()) { // read only transaction
 				list = APIService.readOnlyQuery((ProxySqlSession)state.getSession(),q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);
 			}else{ // normal SQL
 				list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);
