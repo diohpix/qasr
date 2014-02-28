@@ -25,10 +25,13 @@ import com.khalifa.protocol.QueryProtocol.Response;
 import com.khalifa.util.CommonData;
 
 public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHandler.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHandler.class);
 	
 	public void channelRead(ChannelHandlerContext ctx,Object msg) throws Exception {
     	try{
+    		if(logger.isDebugEnabled()){
+    			logger.debug("channelRead "+(Query)msg);
+    		}
     		ProtobufRequestProcessor rp = new ProtobufRequestProcessor(ctx,(Query)msg );
     		rp.run();
     	}catch(Exception e){
@@ -39,42 +42,54 @@ public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
     }
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
 		// State 객체없으면 쓸때없는 접속으로 강제종료 
+		logger.debug("channelReadComplete");
     	State state = ctx.channel().attr(CommonData.STATE).get();
 		if(state==null){
 			ctx.close();
+		}else{
+			logger.debug(state.toString());
 		}
     }
 	public void channelInactive(ChannelHandlerContext ctx)      throws Exception{
+		logger.debug("channelInactive");
 		State state = ctx.channel().attr(CommonData.STATE).get();
 		if(state!=null){
 			state.clear();
-			ctx.channel().attr(CommonData.STATE).set(null);
 		}
+		ctx.channel().attr(CommonData.STATE).set(null);
+	}
+	@Override
+	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+		logger.debug("channel Unregister");
+		super.channelUnregistered(ctx);
 	}
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) {
     	String msg=Throwables.getStackTraceAsString(e);
+    	logger.debug("exception "+msg);
     	State  state =ctx.channel().attr(CommonData.STATE).get();
     	if (e instanceof ReadTimeoutException) {
     		if(state!=null){
     			CommonData.timeoutLogger.info("SQL : {}",state.getLog().toString());
     		}
         }else if(e.getCause() instanceof ClosedChannelException){
+        
         }else{
         	logger.warn("Unexpected exception from downstream. {}",e.getCause());	
         }
-		if(state!=null){
-			CommonData.exceptionLogger.info(state.getLog().toString()+"\n"+msg);
-		}
 		if(state.getSession()!=null){ // 에러발생시 sql세션종료및 disconnect
 			SqlSession s =state.getSession();
 			try {
 				s.getConnection().rollback();
 			} catch (Exception e1) {
 				e1.printStackTrace();
+			} finally{
+				s.close();
 			}
-			s.close();
-			state.clear();
 			logger.warn("ROLLBACK");
+		}
+		if(state!=null){
+			CommonData.exceptionLogger.info(state.getLog().toString()+"\n"+msg);
+			state.clear();
 		}
 		if(ctx.channel().isActive()){
 			Response.Builder res = Response.newBuilder();
@@ -99,7 +114,6 @@ public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
 					res.addType(DataType.STRING);
 					res.addData(ByteString.copyFrom(""+sqle.getErrorCode(),"UTF-8"));
 				} catch (UnsupportedEncodingException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}else{
@@ -113,6 +127,7 @@ public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
 			res.clear();
 		}
         logger.debug("Unexpected exception from downstream.", e.getCause());
+        ctx.channel().attr(CommonData.STATE).set(null);
         ctx.close();
     }
 }
