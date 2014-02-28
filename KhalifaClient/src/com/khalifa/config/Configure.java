@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,42 +28,31 @@ public class Configure {
 		XMLConfiguration.setDefaultListDelimiter('|');
 		config = new XMLConfiguration(fileName);
 		
-        int i=0;
-        while(true){
-        	String hs = Configure.getProperty("dbproxy.server("+i+")[@name]");
-        	if("".equals(hs)) {
-        		break;
-        	}else{
-        		ProxyInfo pinfo = new ProxyInfo();
-        		pinfo.setName(hs);
-        		int k=0;
-        		while(true){
-        			String h = Configure.getProperty("dbproxy.server("+i+").host("+k+")[@ip]");
-        			if("".equals(h)){
-        				break;
-        			}else{
-        				int port = Configure.getIntProperty("dbproxy.server("+i+").host("+k+")[@port]");
-        				System.out.println(hs+" - "+ h+":"+port);
-        				Proxy p = new Proxy();
-        				p.setHost(h);
-        				p.setPort(port);
-        				pinfo.addProxy(p);
-        			}
-        			k++;
-        		}
-        		KhalifaInfo.add(pinfo);
-        	}
-        	i++;
-        }
+        List<HierarchicalConfiguration> dbproxies = config.configurationsAt("dbproxy.server");
+        for (HierarchicalConfiguration server : dbproxies) {
+        	String hs = server.getString("[@name]");
+        	ProxyInfo pinfo = new ProxyInfo();
+    		pinfo.setName(hs);
+    		List<HierarchicalConfiguration> hosts = server.configurationsAt("host");
+    		for (HierarchicalConfiguration host : hosts) {
+    			int port = host.getInt("[@port]");
+    			String ip = host.getString("[@ip]");
+				Proxy p = new Proxy();
+				p.setHost(ip);
+				p.setPort(port);
+				pinfo.addProxy(p);
+			}
+    		KhalifaInfo.add(pinfo);
+		}
         if(log.isDebugEnabled()){
-			System.out.println("================================================================");
-			System.out.println("ProxyClient - System Configure");
+			log.debug("================================================================");
+			log.debug("ProxyClient - System Configure");
 			Iterator<String> key = config.getKeys();
 			while(key.hasNext()){
 				String k = key.next();
-				System.out.println(k+"="+config.getString(k));
+				log.debug(k+"="+config.getString(k));
 			}
-			System.out.println("================================================================");
+			log.debug("================================================================");
 		}
 		
 	}

@@ -8,15 +8,16 @@ import io.netty.util.ReferenceCountUtil;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.khalifa.protocol.QueryProtocol.Query;
 
 
 public class APIClientHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger logger = Logger.getLogger( APIClientHandler.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger( APIClientHandler.class);
 
     private final BlockingQueue<Object> answer = new LinkedBlockingQueue<Object>();
     public Object getData(Channel channel,Query.Builder query) {
@@ -61,7 +62,7 @@ public class APIClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught( ChannelHandlerContext ctx, Throwable e) {
     	e.printStackTrace();
-        logger.log( Level.WARNING, "Unexpected exception from downstream.",e.getCause());
+        logger.warn( "Unexpected exception from downstream. {}",e.getCause());
         try{
         	answer.add(e.getCause().getMessage());
 		if(ctx.channel().isActive()){
