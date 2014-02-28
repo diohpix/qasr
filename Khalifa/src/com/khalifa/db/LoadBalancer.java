@@ -33,17 +33,17 @@ public class LoadBalancer {
 			if(seq==c) new RuntimeException(new Date()+" All  Repliations  Down");
 			ReloadableSqlSesseionFactoryBean s= this.connList.get(seq++);
 			sf  = s.getObject();
+			SqlSession ss = null;
 			try{
-				SqlSession ss = sf.openSession();
+				ss = sf.openSession();
 				ss.getConnection().setReadOnly(true);
-				ss.close();
 				break;
 			}catch(Exception e){
 				e.printStackTrace();
-			/*	this.connList.remove(sf);
-				len = this.connList.size();
-				seq=0;
-				c=-1;*/
+			}finally{
+				if(ss!=null){
+					ss.close();
+				}
 			}
 		}
 		return  sf;
