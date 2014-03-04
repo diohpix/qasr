@@ -25,7 +25,7 @@ import com.khalifa.protocol.QueryProtocol.Response;
 import com.khalifa.util.CommonData;
 
 public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHandler.class);
+private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHandler.class);
 	
 	public void channelRead(ChannelHandlerContext ctx,Object msg) throws Exception {
     	try{
