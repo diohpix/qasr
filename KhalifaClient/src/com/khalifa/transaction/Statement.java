@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import com.google.common.primitives.Shorts;
@@ -18,13 +21,13 @@ import com.khalifa.protocol.QueryProtocol.Query;
 import com.khalifa.protocol.QueryProtocol.Response;
 
 public class Statement {
+	private static final Logger logger = LoggerFactory.getLogger(Statement.class);
 	private static byte [] zlen = new byte[]{-1};
 	private Query.Builder res =null;
 	private int expireTime;
 	private int statmentType;
 	private long __insert__id__=-1;
 	private TransactionObject tx = null;
-	public static boolean DEBUG=false;
 	public String toString(){
 		int pcount = res.getParamCount();
 		StringBuilder sb = new StringBuilder();
@@ -184,9 +187,9 @@ public class Statement {
 		return tx.outputParam();
 	}
 	public ResultObject executeQuery() throws IOException,SQLException{
-		if(DEBUG){
-			System.out.println(this.toString());
-			return null;
+		if(logger.isDebugEnabled()){
+			logger.debug("executeQuery ",this);
+		//	return null;
 		}
 		if(statmentType==10){
 			res.setQueryType(10);
@@ -199,9 +202,8 @@ public class Statement {
 		return __insert__id__;
 	}
 	public int executeUpdate() throws IOException,SQLException{
-		if(DEBUG){
-			System.out.println(this.toString());
-			return -1;
+		if(logger.isDebugEnabled()){
+			logger.debug("executeUpdate {}",this.toString());
 		}
 		res.setQueryType(2);
 		ResultObject r = executeQuery();

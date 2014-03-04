@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.khalifa.APIClientHandler;
@@ -29,7 +32,8 @@ public class TransactionObject {
 	private boolean rollbacked;
 	private ProxyInfo pinfo;
 	private Bootstrap boot;
-
+	private static final Logger logger = LoggerFactory.getLogger(TransactionObject.class);
+	
 	public TransactionObject(Bootstrap boot,ProxyInfo pinfo ) throws IOException  {
 		this.dbname = pinfo.getName();
 		this.pinfo = pinfo;
@@ -49,7 +53,6 @@ public class TransactionObject {
 			}
 			this.channel = connectFuture.channel();
 			this.handler = channel.pipeline().get(APIClientHandler.class);
-			System.out.println("handler"+this.handler);
 			if(this.channel.isActive()){
 				open = true;
 				break;
@@ -130,6 +133,7 @@ public class TransactionObject {
 		query.setDbname(dbname);
 		query.setQueryType(5);
 		query.setCommand(ByteString.copyFrom(command,"UTF-8"));
+		logger.debug("SEND COMMAND {}",command);
 		//Object response = handler.getData(query);
 		Object response = handler.getDataDirect(this.channel,query);
 		if (ProtobufUtil.success(response)) { 
@@ -155,15 +159,9 @@ public class TransactionObject {
 		query.setDbname(dbname);
 		query.setQueryType(5);
 		query.setCommand(ByteString.copyFrom("OUTPUTPARAM","UTF-8"));
-		//Object response = handler.getData(query);
 		Object response = handler.getDataDirect(this.channel,query);
 		if (ProtobufUtil.success(response)) { 
 			 res = (Response) response;
-			if(res.getCode()==200){
-			
-			}else{
-
-			}
 		} 
 		return res;
 	}
@@ -195,8 +193,7 @@ public class TransactionObject {
 		return command("ROLLBACK");
 	}
 	public void close()  throws IOException{
-	//	if(!open || !channel.isConnected()) throw new IOException("closed Session");
-		System.out.println("close");
+		logger.debug("close");
 		open = false;
 		if(this.channel.isActive()){
 			try {

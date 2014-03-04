@@ -13,11 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.khalifa.protocol.QueryProtocol.Query;
+import com.khalifa.protocol.QueryProtocol.Response;
 
 
 public class APIClientHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger( APIClientHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(APIClientHandler.class);
 
     private final BlockingQueue<Object> answer = new LinkedBlockingQueue<Object>();
     public Object getData(Channel channel,Query.Builder query) {
@@ -40,13 +41,17 @@ public class APIClientHandler extends ChannelInboundHandlerAdapter {
     public Object getDataDirect(Channel channel,Query.Builder query) {
     	if(channel.isActive())
     		channel.writeAndFlush(query.build());
-        Object localTimes=null;
+        Object response=null;
 		try {
-			localTimes = answer.poll(10, TimeUnit.SECONDS);
+			response = answer.poll(10, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-        return localTimes;
+		if(logger.isDebugEnabled()){
+			Response res = (Response) response;
+			logger.debug("GET Response {}",res);
+		}
+        return response;
     }
     public void channelRead(ChannelHandlerContext ctx,Object msg) {
     	if(msg!=null){
@@ -55,7 +60,7 @@ public class APIClientHandler extends ChannelInboundHandlerAdapter {
     	}
     }
 	public void channelInactive(ChannelHandlerContext ctx)      throws Exception{
-		System.out.println("channel inactive");
+		logger.debug("channel inactive");
 		ctx.close();
 	}
 
