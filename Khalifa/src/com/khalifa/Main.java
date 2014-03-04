@@ -40,8 +40,8 @@ public class Main {
     	SystemInitializer.initConfigure(args);
     	SystemInitializer.initDataSource();
         try{
-	        server = SystemInitializer.initAPIServer();
-	        if(CommonData.monitorEnable && !CommonData.monitorUseDBProxyPort){
+        	server = SystemInitializer.initAPIServer();
+        	if(CommonData.monitorEnable && !CommonData.monitorUseDBProxyPort){
         		MonitorServer monitor = new MonitorServer(CommonData.monitor_port);
         		Thread t = new Thread(monitor);
         		t.start();

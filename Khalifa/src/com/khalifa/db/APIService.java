@@ -224,7 +224,6 @@ public class APIService {
 		long time = System.currentTimeMillis();
 		List<Object> obj =null;
 		try{
-			sess = (ProxySqlSession) getSession(dbname);
 			MappedStatement ms = sess.getConfiguration().getMappedStatement(SQL);
 			if(ms.getSqlCommandType()==SqlCommandType.SELECT && ms.getStatementType() != StatementType.CALLABLE){ // SELECT일경우 
 				sess.getConnection().setReadOnly(true);

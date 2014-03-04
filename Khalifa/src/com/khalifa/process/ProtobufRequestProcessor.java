@@ -66,8 +66,8 @@ public class ProtobufRequestProcessor  {
 				}else if("END_TRANSACTION".equals(SQL)){
 					SqlSession sess =state.getSession();
 					if(sess!=null){
+						sess.getConnection().close();
 						state.setSession(null);
-						sess.close();
 						ResponseUtil.makeResponse(ctx, 200, "TRANSACTION_END");
 					}else{
 						ResponseUtil.makeResponse(ctx, 201, "NO_TRANSACTION");
@@ -92,8 +92,7 @@ public class ProtobufRequestProcessor  {
 					}
 					return;
 				}else if("OUTPUTPARAM".equals(SQL)){
-					logger.debug("OUTPUTPARAM");
-					
+					logger.debug("OUTPUTPARAM");			
 					Response.Builder res = state.getOutputParam();
 					if(res!=null){
 						res.setCode(200);

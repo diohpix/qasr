@@ -79,7 +79,6 @@ public class HttpSnoopServerHandler extends SimpleChannelInboundHandler<Object> 
     	QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.getUri());
         Map<String, List<String>> params = queryStringDecoder.parameters();
         String url = request.getUri();
-        System.out.println(url);
         HttpMethod method = request.getMethod();
         String buf = null;
         if(body==null){
