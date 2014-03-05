@@ -181,71 +181,71 @@ public final class QueryProtocol {
     com.google.protobuf.ByteString
         getDbnameBytes();
 
-    // required bytes command = 4;
+    // required bytes command = 3;
     /**
-     * <code>required bytes command = 4;</code>
+     * <code>required bytes command = 3;</code>
      */
     boolean hasCommand();
     /**
-     * <code>required bytes command = 4;</code>
+     * <code>required bytes command = 3;</code>
      */
     com.google.protobuf.ByteString getCommand();
 
-    // repeated string param = 5;
+    // repeated string param = 4;
     /**
-     * <code>repeated string param = 5;</code>
+     * <code>repeated string param = 4;</code>
      */
     java.util.List<java.lang.String>
     getParamList();
     /**
-     * <code>repeated string param = 5;</code>
+     * <code>repeated string param = 4;</code>
      */
     int getParamCount();
     /**
-     * <code>repeated string param = 5;</code>
+     * <code>repeated string param = 4;</code>
      */
     java.lang.String getParam(int index);
     /**
-     * <code>repeated string param = 5;</code>
+     * <code>repeated string param = 4;</code>
      */
     com.google.protobuf.ByteString
         getParamBytes(int index);
 
-    // repeated bytes value = 6;
+    // repeated bytes value = 5;
     /**
-     * <code>repeated bytes value = 6;</code>
+     * <code>repeated bytes value = 5;</code>
      */
     java.util.List<com.google.protobuf.ByteString> getValueList();
     /**
-     * <code>repeated bytes value = 6;</code>
+     * <code>repeated bytes value = 5;</code>
      */
     int getValueCount();
     /**
-     * <code>repeated bytes value = 6;</code>
+     * <code>repeated bytes value = 5;</code>
      */
     com.google.protobuf.ByteString getValue(int index);
 
-    // repeated .DataType type = 7;
+    // repeated .DataType type = 6;
     /**
-     * <code>repeated .DataType type = 7;</code>
+     * <code>repeated .DataType type = 6;</code>
      */
     java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList();
     /**
-     * <code>repeated .DataType type = 7;</code>
+     * <code>repeated .DataType type = 6;</code>
      */
     int getTypeCount();
     /**
-     * <code>repeated .DataType type = 7;</code>
+     * <code>repeated .DataType type = 6;</code>
      */
     com.khalifa.protocol.QueryProtocol.DataType getType(int index);
 
-    // optional int32 expire = 8;
+    // optional int32 expire = 7;
     /**
-     * <code>optional int32 expire = 8;</code>
+     * <code>optional int32 expire = 7;</code>
      */
     boolean hasExpire();
     /**
-     * <code>optional int32 expire = 8;</code>
+     * <code>optional int32 expire = 7;</code>
      */
     int getExpire();
   }
@@ -310,12 +310,12 @@ public final class QueryProtocol {
               dbname_ = input.readBytes();
               break;
             }
-            case 34: {
+            case 26: {
               bitField0_ |= 0x00000004;
               command_ = input.readBytes();
               break;
             }
-            case 42: {
+            case 34: {
               if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
                 param_ = new com.google.protobuf.LazyStringArrayList();
                 mutable_bitField0_ |= 0x00000008;
@@ -323,7 +323,7 @@ public final class QueryProtocol {
               param_.add(input.readBytes());
               break;
             }
-            case 50: {
+            case 42: {
               if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
                 value_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
                 mutable_bitField0_ |= 0x00000010;
@@ -331,11 +331,11 @@ public final class QueryProtocol {
               value_.add(input.readBytes());
               break;
             }
-            case 56: {
+            case 48: {
               int rawValue = input.readEnum();
               com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
               if (value == null) {
-                unknownFields.mergeVarintField(7, rawValue);
+                unknownFields.mergeVarintField(6, rawValue);
               } else {
                 if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
                   type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
@@ -345,14 +345,14 @@ public final class QueryProtocol {
               }
               break;
             }
-            case 58: {
+            case 50: {
               int length = input.readRawVarint32();
               int oldLimit = input.pushLimit(length);
               while(input.getBytesUntilLimit() > 0) {
                 int rawValue = input.readEnum();
                 com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
                 if (value == null) {
-                  unknownFields.mergeVarintField(7, rawValue);
+                  unknownFields.mergeVarintField(6, rawValue);
                 } else {
                   if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
                     type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
@@ -364,7 +364,7 @@ public final class QueryProtocol {
               input.popLimit(oldLimit);
               break;
             }
-            case 64: {
+            case 56: {
               bitField0_ |= 0x00000008;
               expire_ = input.readInt32();
               break;
@@ -477,108 +477,108 @@ public final class QueryProtocol {
       }
     }
 
-    // required bytes command = 4;
-    public static final int COMMAND_FIELD_NUMBER = 4;
+    // required bytes command = 3;
+    public static final int COMMAND_FIELD_NUMBER = 3;
     private com.google.protobuf.ByteString command_;
     /**
-     * <code>required bytes command = 4;</code>
+     * <code>required bytes command = 3;</code>
      */
     public boolean hasCommand() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required bytes command = 4;</code>
+     * <code>required bytes command = 3;</code>
      */
     public com.google.protobuf.ByteString getCommand() {
       return command_;
     }
 
-    // repeated string param = 5;
-    public static final int PARAM_FIELD_NUMBER = 5;
+    // repeated string param = 4;
+    public static final int PARAM_FIELD_NUMBER = 4;
     private com.google.protobuf.LazyStringList param_;
     /**
-     * <code>repeated string param = 5;</code>
+     * <code>repeated string param = 4;</code>
      */
     public java.util.List<java.lang.String>
         getParamList() {
       return param_;
     }
     /**
-     * <code>repeated string param = 5;</code>
+     * <code>repeated string param = 4;</code>
      */
     public int getParamCount() {
       return param_.size();
     }
     /**
-     * <code>repeated string param = 5;</code>
+     * <code>repeated string param = 4;</code>
      */
     public java.lang.String getParam(int index) {
       return param_.get(index);
     }
     /**
-     * <code>repeated string param = 5;</code>
+     * <code>repeated string param = 4;</code>
      */
     public com.google.protobuf.ByteString
         getParamBytes(int index) {
       return param_.getByteString(index);
     }
 
-    // repeated bytes value = 6;
-    public static final int VALUE_FIELD_NUMBER = 6;
+    // repeated bytes value = 5;
+    public static final int VALUE_FIELD_NUMBER = 5;
     private java.util.List<com.google.protobuf.ByteString> value_;
     /**
-     * <code>repeated bytes value = 6;</code>
+     * <code>repeated bytes value = 5;</code>
      */
     public java.util.List<com.google.protobuf.ByteString>
         getValueList() {
       return value_;
     }
     /**
-     * <code>repeated bytes value = 6;</code>
+     * <code>repeated bytes value = 5;</code>
      */
     public int getValueCount() {
       return value_.size();
     }
     /**
-     * <code>repeated bytes value = 6;</code>
+     * <code>repeated bytes value = 5;</code>
      */
     public com.google.protobuf.ByteString getValue(int index) {
       return value_.get(index);
     }
 
-    // repeated .DataType type = 7;
-    public static final int TYPE_FIELD_NUMBER = 7;
+    // repeated .DataType type = 6;
+    public static final int TYPE_FIELD_NUMBER = 6;
     private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_;
     /**
-     * <code>repeated .DataType type = 7;</code>
+     * <code>repeated .DataType type = 6;</code>
      */
     public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
       return type_;
     }
     /**
-     * <code>repeated .DataType type = 7;</code>
+     * <code>repeated .DataType type = 6;</code>
      */
     public int getTypeCount() {
       return type_.size();
     }
     /**
-     * <code>repeated .DataType type = 7;</code>
+     * <code>repeated .DataType type = 6;</code>
      */
     public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
       return type_.get(index);
     }
 
-    // optional int32 expire = 8;
-    public static final int EXPIRE_FIELD_NUMBER = 8;
+    // optional int32 expire = 7;
+    public static final int EXPIRE_FIELD_NUMBER = 7;
     private int expire_;
     /**
-     * <code>optional int32 expire = 8;</code>
+     * <code>optional int32 expire = 7;</code>
      */
     public boolean hasExpire() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional int32 expire = 8;</code>
+     * <code>optional int32 expire = 7;</code>
      */
     public int getExpire() {
       return expire_;
@@ -624,19 +624,19 @@ public final class QueryProtocol {
         output.writeBytes(2, getDbnameBytes());
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(4, command_);
+        output.writeBytes(3, command_);
       }
       for (int i = 0; i < param_.size(); i++) {
-        output.writeBytes(5, param_.getByteString(i));
+        output.writeBytes(4, param_.getByteString(i));
       }
       for (int i = 0; i < value_.size(); i++) {
-        output.writeBytes(6, value_.get(i));
+        output.writeBytes(5, value_.get(i));
       }
       for (int i = 0; i < type_.size(); i++) {
-        output.writeEnum(7, type_.get(i).getNumber());
+        output.writeEnum(6, type_.get(i).getNumber());
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeInt32(8, expire_);
+        output.writeInt32(7, expire_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -657,7 +657,7 @@ public final class QueryProtocol {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, command_);
+          .computeBytesSize(3, command_);
       }
       {
         int dataSize = 0;
@@ -688,7 +688,7 @@ public final class QueryProtocol {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(8, expire_);
+          .computeInt32Size(7, expire_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1086,22 +1086,22 @@ public final class QueryProtocol {
         return this;
       }
 
-      // required bytes command = 4;
+      // required bytes command = 3;
       private com.google.protobuf.ByteString command_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>required bytes command = 4;</code>
+       * <code>required bytes command = 3;</code>
        */
       public boolean hasCommand() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required bytes command = 4;</code>
+       * <code>required bytes command = 3;</code>
        */
       public com.google.protobuf.ByteString getCommand() {
         return command_;
       }
       /**
-       * <code>required bytes command = 4;</code>
+       * <code>required bytes command = 3;</code>
        */
       public Builder setCommand(com.google.protobuf.ByteString value) {
         if (value == null) {
@@ -1113,7 +1113,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>required bytes command = 4;</code>
+       * <code>required bytes command = 3;</code>
        */
       public Builder clearCommand() {
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -1122,7 +1122,7 @@ public final class QueryProtocol {
         return this;
       }
 
-      // repeated string param = 5;
+      // repeated string param = 4;
       private com.google.protobuf.LazyStringList param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       private void ensureParamIsMutable() {
         if (!((bitField0_ & 0x00000008) == 0x00000008)) {
@@ -1131,33 +1131,33 @@ public final class QueryProtocol {
          }
       }
       /**
-       * <code>repeated string param = 5;</code>
+       * <code>repeated string param = 4;</code>
        */
       public java.util.List<java.lang.String>
           getParamList() {
         return java.util.Collections.unmodifiableList(param_);
       }
       /**
-       * <code>repeated string param = 5;</code>
+       * <code>repeated string param = 4;</code>
        */
       public int getParamCount() {
         return param_.size();
       }
       /**
-       * <code>repeated string param = 5;</code>
+       * <code>repeated string param = 4;</code>
        */
       public java.lang.String getParam(int index) {
         return param_.get(index);
       }
       /**
-       * <code>repeated string param = 5;</code>
+       * <code>repeated string param = 4;</code>
        */
       public com.google.protobuf.ByteString
           getParamBytes(int index) {
         return param_.getByteString(index);
       }
       /**
-       * <code>repeated string param = 5;</code>
+       * <code>repeated string param = 4;</code>
        */
       public Builder setParam(
           int index, java.lang.String value) {
@@ -1170,7 +1170,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated string param = 5;</code>
+       * <code>repeated string param = 4;</code>
        */
       public Builder addParam(
           java.lang.String value) {
@@ -1183,7 +1183,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated string param = 5;</code>
+       * <code>repeated string param = 4;</code>
        */
       public Builder addAllParam(
           java.lang.Iterable<java.lang.String> values) {
@@ -1193,7 +1193,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated string param = 5;</code>
+       * <code>repeated string param = 4;</code>
        */
       public Builder clearParam() {
         param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
@@ -1202,7 +1202,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated string param = 5;</code>
+       * <code>repeated string param = 4;</code>
        */
       public Builder addParamBytes(
           com.google.protobuf.ByteString value) {
@@ -1215,7 +1215,7 @@ public final class QueryProtocol {
         return this;
       }
 
-      // repeated bytes value = 6;
+      // repeated bytes value = 5;
       private java.util.List<com.google.protobuf.ByteString> value_ = java.util.Collections.emptyList();
       private void ensureValueIsMutable() {
         if (!((bitField0_ & 0x00000010) == 0x00000010)) {
@@ -1224,26 +1224,26 @@ public final class QueryProtocol {
          }
       }
       /**
-       * <code>repeated bytes value = 6;</code>
+       * <code>repeated bytes value = 5;</code>
        */
       public java.util.List<com.google.protobuf.ByteString>
           getValueList() {
         return java.util.Collections.unmodifiableList(value_);
       }
       /**
-       * <code>repeated bytes value = 6;</code>
+       * <code>repeated bytes value = 5;</code>
        */
       public int getValueCount() {
         return value_.size();
       }
       /**
-       * <code>repeated bytes value = 6;</code>
+       * <code>repeated bytes value = 5;</code>
        */
       public com.google.protobuf.ByteString getValue(int index) {
         return value_.get(index);
       }
       /**
-       * <code>repeated bytes value = 6;</code>
+       * <code>repeated bytes value = 5;</code>
        */
       public Builder setValue(
           int index, com.google.protobuf.ByteString value) {
@@ -1256,7 +1256,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated bytes value = 6;</code>
+       * <code>repeated bytes value = 5;</code>
        */
       public Builder addValue(com.google.protobuf.ByteString value) {
         if (value == null) {
@@ -1268,7 +1268,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated bytes value = 6;</code>
+       * <code>repeated bytes value = 5;</code>
        */
       public Builder addAllValue(
           java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
@@ -1278,7 +1278,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated bytes value = 6;</code>
+       * <code>repeated bytes value = 5;</code>
        */
       public Builder clearValue() {
         value_ = java.util.Collections.emptyList();
@@ -1287,7 +1287,7 @@ public final class QueryProtocol {
         return this;
       }
 
-      // repeated .DataType type = 7;
+      // repeated .DataType type = 6;
       private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_ =
         java.util.Collections.emptyList();
       private void ensureTypeIsMutable() {
@@ -1297,25 +1297,25 @@ public final class QueryProtocol {
         }
       }
       /**
-       * <code>repeated .DataType type = 7;</code>
+       * <code>repeated .DataType type = 6;</code>
        */
       public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
         return java.util.Collections.unmodifiableList(type_);
       }
       /**
-       * <code>repeated .DataType type = 7;</code>
+       * <code>repeated .DataType type = 6;</code>
        */
       public int getTypeCount() {
         return type_.size();
       }
       /**
-       * <code>repeated .DataType type = 7;</code>
+       * <code>repeated .DataType type = 6;</code>
        */
       public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
         return type_.get(index);
       }
       /**
-       * <code>repeated .DataType type = 7;</code>
+       * <code>repeated .DataType type = 6;</code>
        */
       public Builder setType(
           int index, com.khalifa.protocol.QueryProtocol.DataType value) {
@@ -1328,7 +1328,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated .DataType type = 7;</code>
+       * <code>repeated .DataType type = 6;</code>
        */
       public Builder addType(com.khalifa.protocol.QueryProtocol.DataType value) {
         if (value == null) {
@@ -1340,7 +1340,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated .DataType type = 7;</code>
+       * <code>repeated .DataType type = 6;</code>
        */
       public Builder addAllType(
           java.lang.Iterable<? extends com.khalifa.protocol.QueryProtocol.DataType> values) {
@@ -1350,7 +1350,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>repeated .DataType type = 7;</code>
+       * <code>repeated .DataType type = 6;</code>
        */
       public Builder clearType() {
         type_ = java.util.Collections.emptyList();
@@ -1359,22 +1359,22 @@ public final class QueryProtocol {
         return this;
       }
 
-      // optional int32 expire = 8;
+      // optional int32 expire = 7;
       private int expire_ ;
       /**
-       * <code>optional int32 expire = 8;</code>
+       * <code>optional int32 expire = 7;</code>
        */
       public boolean hasExpire() {
         return ((bitField0_ & 0x00000040) == 0x00000040);
       }
       /**
-       * <code>optional int32 expire = 8;</code>
+       * <code>optional int32 expire = 7;</code>
        */
       public int getExpire() {
         return expire_;
       }
       /**
-       * <code>optional int32 expire = 8;</code>
+       * <code>optional int32 expire = 7;</code>
        */
       public Builder setExpire(int value) {
         bitField0_ |= 0x00000040;
@@ -1383,7 +1383,7 @@ public final class QueryProtocol {
         return this;
       }
       /**
-       * <code>optional int32 expire = 8;</code>
+       * <code>optional int32 expire = 7;</code>
        */
       public Builder clearExpire() {
         bitField0_ = (bitField0_ & ~0x00000040);
@@ -2336,16 +2336,15 @@ public final class QueryProtocol {
   static {
     java.lang.String[] descriptorData = {
       "\n\023QueryProtocol.proto\"\202\001\n\005Query\022\021\n\tquery" +
-      "Type\030\001 \002(\005\022\016\n\006dbname\030\002 \002(\t\022\017\n\007command\030\004 " +
-      "\002(\014\022\r\n\005param\030\005 \003(\t\022\r\n\005value\030\006 \003(\014\022\027\n\004typ" +
-      "e\030\007 \003(\0162\t.DataType\022\016\n\006expire\030\010 \001(\005\"O\n\010Re" +
+      "Type\030\001 \002(\005\022\016\n\006dbname\030\002 \002(\t\022\017\n\007command\030\003 " +
+      "\002(\014\022\r\n\005param\030\004 \003(\t\022\r\n\005value\030\005 \003(\014\022\027\n\004typ" +
+      "e\030\006 \003(\0162\t.DataType\022\016\n\006expire\030\007 \001(\005\"O\n\010Re" +
       "sponse\022\014\n\004code\030\001 \002(\005\022\016\n\006header\030\002 \003(\t\022\027\n\004" +
       "type\030\003 \003(\0162\t.DataType\022\014\n\004data\030\004 \003(\014*r\n\010D" +
       "ataType\022\n\n\006STRING\020\000\022\t\n\005SHORT\020\001\022\013\n\007INTEGE" +
       "R\020\002\022\010\n\004LONG\020\003\022\t\n\005FLOAT\020\004\022\n\n\006DOUBLE\020\005\022\010\n\004" +
-      "DATE\020\006\022\010\n\004TIME\020\007\022\r\n\tTIMESTAMP\020\010B7\n$com.c" +
-      "j.enm.platform.dbproxy.protocolB\rQueryPr",
-      "otocolH\001"
+      "DATE\020\006\022\010\n\004TIME\020\007\022\r\n\tTIMESTAMP\020\010B\'\n\024com.k" +
+      "halifa.protocolB\rQueryProtocolH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
