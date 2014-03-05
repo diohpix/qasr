@@ -143,10 +143,12 @@ public class APIService {
 		    	}*/
 		  }
 		}
-		actual.add(metaData);
-		actual.add(list);
-		Response.Builder rs = UK.convertObject2Response(actual);
-		state.setOutputParam(rs);
+		if(c>0){
+			actual.add(metaData);
+			actual.add(list);
+			Response.Builder rs = UK.convertObject2Response(actual);
+			state.setOutputParam(rs);
+		}
 	}	
 	public static Object query(String dbname,int type,String SQL,Map<String,Object> where,String _where ,int expireTime,State state) throws Exception{
 		byte[] select = null;
