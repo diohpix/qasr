@@ -29,11 +29,11 @@ option optimize_for = SPEED;
 message Query {
   required int32 queryType = 1;
   required string dbname=2;
-  required bytes command = 4;
-  repeated string param = 5;
-  repeated bytes value = 6;
-  repeated DataType type = 7;
-  optional int32 expire = 8;
+  required bytes command = 3;
+  repeated string param = 4;
+  repeated bytes value = 5;
+  repeated DataType type = 6;
+  optional int32 expire = 7;
 }
 message Response {
   required int32 code = 1;
