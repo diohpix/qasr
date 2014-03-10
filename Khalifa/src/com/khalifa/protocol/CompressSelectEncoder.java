@@ -18,7 +18,8 @@ public class CompressSelectEncoder extends MessageToByteEncoder<ByteBuf> {
     protected void encode( ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
     	int bodyLen = msg.readableBytes();
     	if(bodyLen > 2048){
-    		ctx.pipeline().addAfter("LengthEncoder", "___INRERNAL_GZIP___", new JdkZlibEncoder(ZlibWrapper.GZIP,6));
+//    		ctx.pipeline().addAfter("LengthEncoder", "___INRERNAL_GZIP___", new JdkZlibEncoder(ZlibWrapper.GZIP,6));
+    		ctx.pipeline().addAfter("LengthEncoder", "___INRERNAL_ZLIB___", new JdkZlibEncoder(ZlibWrapper.ZLIB,6));
     		logger.debug("Compress handler add {}",bodyLen);
     	}else{
     		logger.debug("Compress handler not add {}",bodyLen);

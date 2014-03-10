@@ -32,7 +32,9 @@ public class LengthDecoder extends ByteToMessageDecoder {
     		ctx.pipeline().remove("___INRERNAL_GUNZIP___");
     	}
 		if(type==1){
-			ctx.pipeline().addAfter("LengthDecoder","___INRERNAL_GUNZIP___",new JdkZlibDecoder(ZlibWrapper.ZLIB.GZIP));
+			ctx.pipeline().addAfter("LengthDecoder","___INRERNAL_GUNZIP___",new JdkZlibDecoder(ZlibWrapper.GZIP));
+		}else if(type==2){
+			ctx.pipeline().addAfter("LengthDecoder","___INRERNAL_GUNZIP___",new JdkZlibDecoder(ZlibWrapper.ZLIB));
 		}
 		ctx.pipeline().remove(this);
 		ctx.pipeline().addAfter("readTime","LengthDecoder", new LengthDecoder()); 
