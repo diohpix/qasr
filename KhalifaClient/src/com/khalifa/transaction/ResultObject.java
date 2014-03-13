@@ -3,6 +3,7 @@ package com.khalifa.transaction;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,22 +33,48 @@ public class ResultObject {
 	public Map<String, Object> currentRow() {
 		return list.get(curr);
 	}
-
+	public void rename(String key, String newKey) {
+		String _k = byKey.get(key.toLowerCase());
+		Object obj = null;
+		if (_k != null){
+			byKey.remove(key.toLowerCase());
+			obj = currentRow().remove(_k);
+		}else{
+			obj = currentRow().remove(key);
+		}
+		if(obj!=null){
+			currentRow().put(newKey, obj);
+			byKey.put(newKey, newKey.toLowerCase());
+		}
+	}
 	public void putObject(String key, Object value) {
 		currentRow().put(key, value);
+		byKey.put(key, key.toLowerCase());
 	}
 
-	public void removeObject(String key) {
+	public Object removeObject(String key) {
 		String _k = byKey.get(key.toLowerCase());
 		if (_k != null){
 			byKey.remove(key.toLowerCase());
-			currentRow().remove(_k);
+			return currentRow().remove(_k);
 		}else{
-			currentRow().remove(key);
+			return currentRow().remove(key);
 		}
 	}
 	public void clear() {
 		currentRow().clear();
+	}
+	public void clearAfter(String key) {
+		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) currentRow();
+		boolean find=false;
+		for (Map.Entry<String, Object> iterable_element : map.entrySet()) {
+			if(iterable_element.getKey().equals(key)){
+				find=true;
+			}
+			if(find){
+				
+			}
+		}
 	}
 
 	public Object getObject(String key) {
