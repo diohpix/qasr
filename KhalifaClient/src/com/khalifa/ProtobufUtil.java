@@ -5,7 +5,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +47,7 @@ public class ProtobufUtil {
 	    	int loop = datas.size() / header.size();
 	    	int idx=0;
 	    	for(int i =0 ; i < loop;i++){
-	    		Map<String,Object> v = new HashMap<String, Object>();
+	    		Map<String,Object> v = new LinkedHashMap<String, Object>();
 	    		int tidx=0;
 	    		for (String key : header) {
 	    			if(i==0){

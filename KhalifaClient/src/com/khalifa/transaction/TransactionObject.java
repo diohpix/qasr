@@ -7,7 +7,7 @@ import io.netty.channel.ChannelFuture;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +40,9 @@ public class TransactionObject {
 		this.boot = boot;
 		connect();
 	}
-	
+	public String getName(){
+		return this.dbname;
+	}
 	private void connect(){
 		while(true){
 			Proxy px = pinfo.getProxy();
@@ -93,8 +95,8 @@ public class TransactionObject {
 			Response res = (Response) response;
 			if(res.getCode()==200){
 				List<Map<String, Object>> list =null;
-				Map<String, String> getterKeymap =new HashMap<String, String>();
-				Map<Integer, String> getterNummap =new HashMap<Integer,String>();
+				Map<String, String> getterKeymap =new LinkedHashMap<String, String>();
+				Map<Integer, String> getterNummap =new LinkedHashMap<Integer,String>();
 				try {
 					list = ProtobufUtil.parse(res,getterKeymap,getterNummap);
 					result.setList(list);
@@ -191,6 +193,9 @@ public class TransactionObject {
 			return this.rollbacked=true;
 		}
 		return command("ROLLBACK");
+	}
+	public boolean isTransaction(){
+		return this.isTransaction;
 	}
 	public void close()  throws IOException{
 		logger.debug("close");

@@ -46,6 +46,9 @@ public class ResultObject {
 			currentRow().remove(key);
 		}
 	}
+	public void clear() {
+		currentRow().clear();
+	}
 
 	public Object getObject(String key) {
 		return internalObjectByKey(key);

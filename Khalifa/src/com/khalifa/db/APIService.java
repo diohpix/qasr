@@ -227,7 +227,7 @@ public class APIService {
 		List<Object> obj =null;
 		try{
 			MappedStatement ms = sess.getConfiguration().getMappedStatement(SQL);
-			if(ms.getSqlCommandType()==SqlCommandType.SELECT && ms.getStatementType() != StatementType.CALLABLE){ // SELECT일경우 
+			if(ms.getSqlCommandType()==SqlCommandType.SELECT ){ // SELECT일경우 
 				sess.getConnection().setReadOnly(true);
 				obj = sess.selectList(ms, where);
 			}else{
