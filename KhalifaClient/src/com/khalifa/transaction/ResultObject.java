@@ -51,7 +51,9 @@ public class ResultObject {
 		currentRow().put(key, value);
 		byKey.put(key, key.toLowerCase());
 	}
-
+	public void deleteRow() {
+		list.remove(currentRow());
+	}
 	public Object removeObject(String key) {
 		String _k = byKey.get(key.toLowerCase());
 		if (_k != null){
