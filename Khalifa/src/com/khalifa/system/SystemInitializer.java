@@ -78,25 +78,25 @@ public class SystemInitializer {
         	logger.info("Initialize [{}]", name);
         	logger.info(driverClassName);
 
-        	boolean defaultAutoCommit =(boolean) setDBCP(jdbc, "defaultAutoCommit", true) ;
-    	    boolean defaultReadOnly = (boolean) setDBCP(jdbc, "defaultReadOnly", false) ;
+        	boolean defaultAutoCommit =setBoolDBCP(jdbc, "defaultAutoCommit", true) ;
+    	    boolean defaultReadOnly = setBoolDBCP(jdbc, "defaultReadOnly", false) ;
     	    //int defaultTransactionIsolation = PoolableConnectionFactory.
     	    String defaultCatalog = (String) setDBCP(jdbc, "defaultCatalog", null) ;
-    	    int maxActive =(int) setDBCP(jdbc,"maxActive" , GenericObjectPool.DEFAULT_MAX_ACTIVE);
-    	    int maxIdle = (int) setDBCP(jdbc, "maxIdle", GenericObjectPool.DEFAULT_MAX_IDLE);
-    	    int minIdle = (int) setDBCP(jdbc, "minIdle",GenericObjectPool.DEFAULT_MIN_IDLE);
-    	    int initialSize = (int) setDBCP(jdbc, "initialSize",0);
-    	    long maxWait =(long) setDBCP(jdbc,"maxWait", GenericObjectPool.DEFAULT_MAX_WAIT);
-    	    boolean poolPreparedStatements =(boolean) setDBCP(jdbc,"poolPreparedStatements", false);
-    	    int maxOpenPreparedStatements = (int) setDBCP(jdbc,"maxOpenPreparedStatements",GenericKeyedObjectPool.DEFAULT_MAX_TOTAL);
-    	    boolean testOnBorrow =(boolean) setDBCP(jdbc,"testOnBorrow", true);
-    	    boolean testOnReturn = (boolean) setDBCP(jdbc,"testOnReturn",false);
-    	    long timeBetweenEvictionRunsMillis =  (long) setDBCP(jdbc,"timeBetweenEvictionRunsMillis",GenericObjectPool.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS);
-    	    int numTestsPerEvictionRun = (int) setDBCP(jdbc,"numTestsPerEvictionRun",GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN); 
-    	    long minEvictableIdleTimeMillis =  (long) setDBCP(jdbc,"minEvictableIdleTimeMillis",GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS);
-    	    boolean testWhileIdle =(boolean) setDBCP(jdbc,"testWhileIdle", false);
+    	    int maxActive =setIntDBCP(jdbc,"maxActive" , GenericObjectPool.DEFAULT_MAX_ACTIVE);
+    	    int maxIdle = setIntDBCP(jdbc, "maxIdle", GenericObjectPool.DEFAULT_MAX_IDLE);
+    	    int minIdle = setIntDBCP(jdbc, "minIdle",GenericObjectPool.DEFAULT_MIN_IDLE);
+    	    int initialSize = setIntDBCP(jdbc, "initialSize",0);
+    	    long maxWait = setLongDBCP(jdbc,"maxWait", GenericObjectPool.DEFAULT_MAX_WAIT);
+    	    boolean poolPreparedStatements =setBoolDBCP(jdbc,"poolPreparedStatements", false);
+    	    int maxOpenPreparedStatements = setIntDBCP(jdbc,"maxOpenPreparedStatements",GenericKeyedObjectPool.DEFAULT_MAX_TOTAL);
+    	    boolean testOnBorrow =setBoolDBCP(jdbc,"testOnBorrow", true);
+    	    boolean testOnReturn = setBoolDBCP(jdbc,"testOnReturn",false);
+    	    long timeBetweenEvictionRunsMillis =  setLongDBCP(jdbc,"timeBetweenEvictionRunsMillis",GenericObjectPool.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS);
+    	    int numTestsPerEvictionRun = setIntDBCP(jdbc,"numTestsPerEvictionRun",GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN); 
+    	    long minEvictableIdleTimeMillis =   setLongDBCP(jdbc,"minEvictableIdleTimeMillis",GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS);
+    	    boolean testWhileIdle =setBoolDBCP(jdbc,"testWhileIdle", false);
     	    String validationQuery =(String) setDBCP(jdbc, "validationQuery", null);
-    	    int validationQueryTimeout = (int) setDBCP(jdbc, "validationQueryTimeout", -1);
+    	    int validationQueryTimeout = setIntDBCP(jdbc, "validationQueryTimeout", -1);
 
 
         	String mapperMode[] = mapper_mode.split(",");
@@ -175,4 +175,26 @@ public class SystemInitializer {
 			return defaultValue;
 		}
 	}
+	private static int setIntDBCP(HierarchicalConfiguration config,String key,int defaultValue){
+		if(config.containsKey(key)){
+			return config.getInt(key);
+		}else{
+			return defaultValue;
+		}
+	}
+	private static boolean setBoolDBCP(HierarchicalConfiguration config,String key,boolean defaultValue){
+		if(config.containsKey(key)){
+			return config.getBoolean(key);
+		}else{
+			return defaultValue;
+		}
+	}
+	private static long setLongDBCP(HierarchicalConfiguration config,String key,long defaultValue){
+		if(config.containsKey(key)){
+			return config.getLong(key);
+		}else{
+			return defaultValue;
+		}
+	}
+	
 }

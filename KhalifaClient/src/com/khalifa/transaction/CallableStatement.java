@@ -14,12 +14,11 @@ import com.khalifa.ProtobufUtil;
 import com.khalifa.protocol.QueryProtocol.Response;
 
 public class CallableStatement extends Statement {
-	private List<Map<String, Object>> list;
+	private Map<String, Object> output;
 	private Map<String, String> byKey;
 	private Map<Integer, String> byNum;
-	private Response res;
-	private int curr = -1;
-
+	private ResultObject result;
+	
 	public CallableStatement(TransactionObject tx, String command,int statmentType) {
 		super(tx, command,10);
 		// TODO Auto-generated constructor stub
@@ -32,27 +31,34 @@ public class CallableStatement extends Statement {
 	@Override
 	public ResultObject executeQuery() throws IOException,SQLException{
 		ResultObject r = super.executeQuery();
-		res =super.getOutputParam();
+		Response res =super.getOutputParam();
 		if(res!=null){
 			Map<String, String> getterKeymap =new HashMap<String, String>();
 			Map<Integer, String> getterNummap =new HashMap<Integer,String>();
 			try {
-				list = ProtobufUtil.parse(res,getterKeymap,getterNummap);
+				List<Map<String,Object>> _list = ProtobufUtil.parse(res,getterKeymap,getterNummap);
+				if(_list!=null && _list.size()>0){
+					result = new ResultObject();
+					result.setList(_list);
+					if(result.next()){
+					
+					}
+				}
 			} catch (InvalidProtocolBufferException e) {
 				
 			}
-			curr=0;
 			this.setKey(getterKeymap, getterNummap);
 		}
 		return r;
 	}
-
 	public void setKey(Map<String, String> k, Map<Integer, String> n) {
 		this.byKey = k;
 		this.byNum = n;
 	}
 
-	
+	public Map<String,Object> getMap(){
+		return result.currentRow();
+	}
 	public Object getObject(String key) {
 		return internalObjectByKey(key);
 	}
@@ -122,17 +128,14 @@ public class CallableStatement extends Statement {
 	private Object internalObjectByKey(String key) {
 		String _k = byKey.get(key.toLowerCase());
 		if (_k != null)
-			return currentRow().get(_k);
+			return output.get(_k);
 		else
-			return currentRow().get(key);
-	}
-	public Map<String, Object> currentRow() {
-		return list.get(curr);
+			return output.get(key);
 	}
 
 	private Object internalObjectByNum(int num) {
 		String _k = byNum.get(num);
-		return currentRow().get(_k);
+		return output.get(_k);
 	}
 
 	public Object getObject(int key) {
@@ -202,13 +205,8 @@ public class CallableStatement extends Statement {
 		return (Date) a;
 	}
 	public void close(){
-		if(list!=null){
-			list.clear();
-		}
-		if(res !=null){
-			res.getTypeList().clear();
-			res.getHeaderList().clear();
-			res.getDataList().clear();
+		if(output!=null){
+			output.clear();
 		}
 	}
 }

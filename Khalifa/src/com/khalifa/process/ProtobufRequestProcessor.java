@@ -47,7 +47,6 @@ public class ProtobufRequestProcessor  {
 				state.addLog("|");
 				state.addLog(SQL);
 			}
-			
 			if(type==5){ // transaction command
 				if("BEGIN_TRANSACTION".equals(SQL)){
 					SqlSession sess = APIService.getSession(q.getDbname());
@@ -92,7 +91,7 @@ public class ProtobufRequestProcessor  {
 					}
 					return;
 				}else if("OUTPUTPARAM".equals(SQL)){
-					logger.debug("OUTPUTPARAM");			
+					logger.debug("OUTPUTPARAM");
 					Response.Builder res = state.getOutputParam();
 					if(res!=null){
 						res.setCode(200);
