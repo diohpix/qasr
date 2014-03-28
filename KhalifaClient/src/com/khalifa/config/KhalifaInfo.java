@@ -13,9 +13,6 @@ class KhalifaInfo {
 	}
 	public static synchronized ProxyInfo getInfo(String name){
 		ProxyInfo pinfo= info.get(name);
-		if(pinfo ==null){
-			pinfo = info.get("*");
-		}
 		return pinfo;
 		
 	}

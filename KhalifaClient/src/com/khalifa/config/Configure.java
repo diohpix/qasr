@@ -31,8 +31,7 @@ public class Configure {
         List<HierarchicalConfiguration> dbproxies = config.configurationsAt("dbproxy.server");
         for (HierarchicalConfiguration server : dbproxies) {
         	String hs = server.getString("[@name]");
-        	ProxyInfo pinfo = new ProxyInfo();
-    		pinfo.setName(hs);
+        	ProxyInfo pinfo = new ProxyInfo(hs);
     		List<HierarchicalConfiguration> hosts = server.configurationsAt("host");
     		for (HierarchicalConfiguration host : hosts) {
     			int port = host.getInt("[@port]");
@@ -46,7 +45,7 @@ public class Configure {
 		}
         if(log.isDebugEnabled()){
 			log.debug("================================================================");
-			log.debug("ProxyClient - System Configure");
+			log.debug("KhalifaClient - System Configure");
 			Iterator<String> key = config.getKeys();
 			while(key.hasNext()){
 				String k = key.next();

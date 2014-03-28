@@ -34,8 +34,8 @@ public class TransactionObject {
 	private Bootstrap boot;
 	private static final Logger logger = LoggerFactory.getLogger(TransactionObject.class);
 	
-	public TransactionObject(Bootstrap boot,ProxyInfo pinfo ) throws IOException  {
-		this.dbname = pinfo.getName();
+	public TransactionObject(Bootstrap boot,ProxyInfo pinfo ,String aliasName) throws IOException  {
+		this.dbname = aliasName;
 		this.pinfo = pinfo;
 		this.boot = boot;
 		connect();

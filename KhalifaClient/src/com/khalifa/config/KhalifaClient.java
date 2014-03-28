@@ -61,7 +61,7 @@ public class KhalifaClient {
 	    
 	}
 	public static TransactionObject getTransacation(String dbname) throws IOException{
-		return new TransactionObject(bootstrap, KhalifaInfo.getInfo(dbname));
+		return new TransactionObject(bootstrap, KhalifaInfo.getInfo(dbname),dbname);
 	}
 	public static void destroy() throws IOException, InterruptedException{
 		workerGroup.shutdownGracefully();

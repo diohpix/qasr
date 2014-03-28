@@ -8,8 +8,9 @@ public class ProxyInfo {
 	private List<Proxy> list = null;
 	private int idx=0;
 	private int len=0;
-	public ProxyInfo(){
+	public ProxyInfo(String name){
 		list = new ArrayList<Proxy>();
+		this.name = name;
 	}
 	public void addProxy(Proxy proxy){
 		proxy.setLive(true);
@@ -27,9 +28,6 @@ public class ProxyInfo {
 	}
 	public String getName() {
 		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public boolean hasAvailServer(){
 		boolean has=false;
