@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Clob;
 import java.sql.Date;
 import java.sql.Time;
@@ -264,9 +265,9 @@ public class UK {
 					res.addType(DataType.STRING);
 				}else if(type.startsWith("java.lang.Integer")){
 					res.addType(DataType.INTEGER);
-				}else if(type.startsWith("java.lang.Long") || type.startsWith("java.math.BigDecimal")){
+				}else if(type.startsWith("java.lang.Long") ){
 					res.addType(DataType.LONG);
-				}else if(type.startsWith("java.lang.Float")){
+				}else if(type.startsWith("java.lang.Float")|| type.startsWith("java.math.BigDecimal")){
 					res.addType(DataType.FLOAT);
 				}else if(type.startsWith("java.lang.Double")){
 					res.addType(DataType.DOUBLE);
@@ -342,8 +343,9 @@ public class UK {
 							}
 						}
 					}else if(value instanceof java.math.BigDecimal){
-						BigDecimal b = ((BigDecimal)value).setScale(0);
-						res.addData(ByteString.copyFrom(Longs.toByteArray(b.longValue())));
+						BigDecimal b = ((BigDecimal)value).setScale(4,BigDecimal.ROUND_HALF_UP);
+						float f =b.floatValue();
+						res.addData(ByteString.copyFrom(Ints.toByteArray(Float.floatToIntBits(f))));
 					}else{
 						System.out.println(value.getClass().getName());
 						res.addData(ByteString.copyFromUtf8( value.toString()));
