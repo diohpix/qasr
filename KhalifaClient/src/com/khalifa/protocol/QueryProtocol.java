@@ -49,6 +49,10 @@ public final class QueryProtocol {
      * <code>TIMESTAMP = 8;</code>
      */
     TIMESTAMP(8, 8),
+    /**
+     * <code>BOOLEAN = 9;</code>
+     */
+    BOOLEAN(9, 9),
     ;
 
     /**
@@ -87,6 +91,10 @@ public final class QueryProtocol {
      * <code>TIMESTAMP = 8;</code>
      */
     public static final int TIMESTAMP_VALUE = 8;
+    /**
+     * <code>BOOLEAN = 9;</code>
+     */
+    public static final int BOOLEAN_VALUE = 9;
 
 
     public final int getNumber() { return value; }
@@ -102,6 +110,7 @@ public final class QueryProtocol {
         case 6: return DATE;
         case 7: return TIME;
         case 8: return TIMESTAMP;
+        case 9: return BOOLEAN;
         default: return null;
       }
     }
@@ -191,61 +200,38 @@ public final class QueryProtocol {
      */
     com.google.protobuf.ByteString getCommand();
 
-    // repeated string param = 4;
+    // repeated .Query.Data data = 4;
     /**
-     * <code>repeated string param = 4;</code>
+     * <code>repeated .Query.Data data = 4;</code>
      */
-    java.util.List<java.lang.String>
-    getParamList();
+    java.util.List<com.khalifa.protocol.QueryProtocol.Query.Data> 
+        getDataList();
     /**
-     * <code>repeated string param = 4;</code>
+     * <code>repeated .Query.Data data = 4;</code>
      */
-    int getParamCount();
+    com.khalifa.protocol.QueryProtocol.Query.Data getData(int index);
     /**
-     * <code>repeated string param = 4;</code>
+     * <code>repeated .Query.Data data = 4;</code>
      */
-    java.lang.String getParam(int index);
+    int getDataCount();
     /**
-     * <code>repeated string param = 4;</code>
+     * <code>repeated .Query.Data data = 4;</code>
      */
-    com.google.protobuf.ByteString
-        getParamBytes(int index);
+    java.util.List<? extends com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder> 
+        getDataOrBuilderList();
+    /**
+     * <code>repeated .Query.Data data = 4;</code>
+     */
+    com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder getDataOrBuilder(
+        int index);
 
-    // repeated bytes value = 5;
+    // optional int32 expire = 5;
     /**
-     * <code>repeated bytes value = 5;</code>
-     */
-    java.util.List<com.google.protobuf.ByteString> getValueList();
-    /**
-     * <code>repeated bytes value = 5;</code>
-     */
-    int getValueCount();
-    /**
-     * <code>repeated bytes value = 5;</code>
-     */
-    com.google.protobuf.ByteString getValue(int index);
-
-    // repeated .DataType type = 6;
-    /**
-     * <code>repeated .DataType type = 6;</code>
-     */
-    java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList();
-    /**
-     * <code>repeated .DataType type = 6;</code>
-     */
-    int getTypeCount();
-    /**
-     * <code>repeated .DataType type = 6;</code>
-     */
-    com.khalifa.protocol.QueryProtocol.DataType getType(int index);
-
-    // optional int32 expire = 7;
-    /**
-     * <code>optional int32 expire = 7;</code>
+     * <code>optional int32 expire = 5;</code>
      */
     boolean hasExpire();
     /**
-     * <code>optional int32 expire = 7;</code>
+     * <code>optional int32 expire = 5;</code>
      */
     int getExpire();
   }
@@ -317,54 +303,13 @@ public final class QueryProtocol {
             }
             case 34: {
               if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-                param_ = new com.google.protobuf.LazyStringArrayList();
+                data_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.Query.Data>();
                 mutable_bitField0_ |= 0x00000008;
               }
-              param_.add(input.readBytes());
+              data_.add(input.readMessage(com.khalifa.protocol.QueryProtocol.Query.Data.PARSER, extensionRegistry));
               break;
             }
-            case 42: {
-              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-                value_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
-                mutable_bitField0_ |= 0x00000010;
-              }
-              value_.add(input.readBytes());
-              break;
-            }
-            case 48: {
-              int rawValue = input.readEnum();
-              com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
-              if (value == null) {
-                unknownFields.mergeVarintField(6, rawValue);
-              } else {
-                if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
-                  type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
-                  mutable_bitField0_ |= 0x00000020;
-                }
-                type_.add(value);
-              }
-              break;
-            }
-            case 50: {
-              int length = input.readRawVarint32();
-              int oldLimit = input.pushLimit(length);
-              while(input.getBytesUntilLimit() > 0) {
-                int rawValue = input.readEnum();
-                com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
-                if (value == null) {
-                  unknownFields.mergeVarintField(6, rawValue);
-                } else {
-                  if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
-                    type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
-                    mutable_bitField0_ |= 0x00000020;
-                  }
-                  type_.add(value);
-                }
-              }
-              input.popLimit(oldLimit);
-              break;
-            }
-            case 56: {
+            case 40: {
               bitField0_ |= 0x00000008;
               expire_ = input.readInt32();
               break;
@@ -378,13 +323,7 @@ public final class QueryProtocol {
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-          param_ = new com.google.protobuf.UnmodifiableLazyStringList(param_);
-        }
-        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-          value_ = java.util.Collections.unmodifiableList(value_);
-        }
-        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
-          type_ = java.util.Collections.unmodifiableList(type_);
+          data_ = java.util.Collections.unmodifiableList(data_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -415,6 +354,827 @@ public final class QueryProtocol {
     @java.lang.Override
     public com.google.protobuf.Parser<Query> getParserForType() {
       return PARSER;
+    }
+
+    public interface DataOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // repeated string param = 1;
+      /**
+       * <code>repeated string param = 1;</code>
+       */
+      java.util.List<java.lang.String>
+      getParamList();
+      /**
+       * <code>repeated string param = 1;</code>
+       */
+      int getParamCount();
+      /**
+       * <code>repeated string param = 1;</code>
+       */
+      java.lang.String getParam(int index);
+      /**
+       * <code>repeated string param = 1;</code>
+       */
+      com.google.protobuf.ByteString
+          getParamBytes(int index);
+
+      // repeated bytes value = 2;
+      /**
+       * <code>repeated bytes value = 2;</code>
+       */
+      java.util.List<com.google.protobuf.ByteString> getValueList();
+      /**
+       * <code>repeated bytes value = 2;</code>
+       */
+      int getValueCount();
+      /**
+       * <code>repeated bytes value = 2;</code>
+       */
+      com.google.protobuf.ByteString getValue(int index);
+
+      // repeated .DataType type = 3;
+      /**
+       * <code>repeated .DataType type = 3;</code>
+       */
+      java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList();
+      /**
+       * <code>repeated .DataType type = 3;</code>
+       */
+      int getTypeCount();
+      /**
+       * <code>repeated .DataType type = 3;</code>
+       */
+      com.khalifa.protocol.QueryProtocol.DataType getType(int index);
+    }
+    /**
+     * Protobuf type {@code Query.Data}
+     */
+    public static final class Data extends
+        com.google.protobuf.GeneratedMessage
+        implements DataOrBuilder {
+      // Use Data.newBuilder() to construct.
+      private Data(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private Data(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final Data defaultInstance;
+      public static Data getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public Data getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private Data(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 10: {
+                if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                  param_ = new com.google.protobuf.LazyStringArrayList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                param_.add(input.readBytes());
+                break;
+              }
+              case 18: {
+                if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                  value_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                value_.add(input.readBytes());
+                break;
+              }
+              case 24: {
+                int rawValue = input.readEnum();
+                com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
+                if (value == null) {
+                  unknownFields.mergeVarintField(3, rawValue);
+                } else {
+                  if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                    type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
+                    mutable_bitField0_ |= 0x00000004;
+                  }
+                  type_.add(value);
+                }
+                break;
+              }
+              case 26: {
+                int length = input.readRawVarint32();
+                int oldLimit = input.pushLimit(length);
+                while(input.getBytesUntilLimit() > 0) {
+                  int rawValue = input.readEnum();
+                  com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
+                  if (value == null) {
+                    unknownFields.mergeVarintField(3, rawValue);
+                  } else {
+                    if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                      type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
+                      mutable_bitField0_ |= 0x00000004;
+                    }
+                    type_.add(value);
+                  }
+                }
+                input.popLimit(oldLimit);
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+            param_ = new com.google.protobuf.UnmodifiableLazyStringList(param_);
+          }
+          if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            value_ = java.util.Collections.unmodifiableList(value_);
+          }
+          if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+            type_ = java.util.Collections.unmodifiableList(type_);
+          }
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.khalifa.protocol.QueryProtocol.internal_static_Query_Data_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.khalifa.protocol.QueryProtocol.internal_static_Query_Data_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.khalifa.protocol.QueryProtocol.Query.Data.class, com.khalifa.protocol.QueryProtocol.Query.Data.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<Data> PARSER =
+          new com.google.protobuf.AbstractParser<Data>() {
+        public Data parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new Data(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<Data> getParserForType() {
+        return PARSER;
+      }
+
+      // repeated string param = 1;
+      public static final int PARAM_FIELD_NUMBER = 1;
+      private com.google.protobuf.LazyStringList param_;
+      /**
+       * <code>repeated string param = 1;</code>
+       */
+      public java.util.List<java.lang.String>
+          getParamList() {
+        return param_;
+      }
+      /**
+       * <code>repeated string param = 1;</code>
+       */
+      public int getParamCount() {
+        return param_.size();
+      }
+      /**
+       * <code>repeated string param = 1;</code>
+       */
+      public java.lang.String getParam(int index) {
+        return param_.get(index);
+      }
+      /**
+       * <code>repeated string param = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getParamBytes(int index) {
+        return param_.getByteString(index);
+      }
+
+      // repeated bytes value = 2;
+      public static final int VALUE_FIELD_NUMBER = 2;
+      private java.util.List<com.google.protobuf.ByteString> value_;
+      /**
+       * <code>repeated bytes value = 2;</code>
+       */
+      public java.util.List<com.google.protobuf.ByteString>
+          getValueList() {
+        return value_;
+      }
+      /**
+       * <code>repeated bytes value = 2;</code>
+       */
+      public int getValueCount() {
+        return value_.size();
+      }
+      /**
+       * <code>repeated bytes value = 2;</code>
+       */
+      public com.google.protobuf.ByteString getValue(int index) {
+        return value_.get(index);
+      }
+
+      // repeated .DataType type = 3;
+      public static final int TYPE_FIELD_NUMBER = 3;
+      private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_;
+      /**
+       * <code>repeated .DataType type = 3;</code>
+       */
+      public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
+        return type_;
+      }
+      /**
+       * <code>repeated .DataType type = 3;</code>
+       */
+      public int getTypeCount() {
+        return type_.size();
+      }
+      /**
+       * <code>repeated .DataType type = 3;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
+        return type_.get(index);
+      }
+
+      private void initFields() {
+        param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        value_ = java.util.Collections.emptyList();
+        type_ = java.util.Collections.emptyList();
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        for (int i = 0; i < param_.size(); i++) {
+          output.writeBytes(1, param_.getByteString(i));
+        }
+        for (int i = 0; i < value_.size(); i++) {
+          output.writeBytes(2, value_.get(i));
+        }
+        for (int i = 0; i < type_.size(); i++) {
+          output.writeEnum(3, type_.get(i).getNumber());
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        {
+          int dataSize = 0;
+          for (int i = 0; i < param_.size(); i++) {
+            dataSize += com.google.protobuf.CodedOutputStream
+              .computeBytesSizeNoTag(param_.getByteString(i));
+          }
+          size += dataSize;
+          size += 1 * getParamList().size();
+        }
+        {
+          int dataSize = 0;
+          for (int i = 0; i < value_.size(); i++) {
+            dataSize += com.google.protobuf.CodedOutputStream
+              .computeBytesSizeNoTag(value_.get(i));
+          }
+          size += dataSize;
+          size += 1 * getValueList().size();
+        }
+        {
+          int dataSize = 0;
+          for (int i = 0; i < type_.size(); i++) {
+            dataSize += com.google.protobuf.CodedOutputStream
+              .computeEnumSizeNoTag(type_.get(i).getNumber());
+          }
+          size += dataSize;
+          size += 1 * type_.size();
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Query.Data parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.khalifa.protocol.QueryProtocol.Query.Data prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code Query.Data}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.khalifa.protocol.QueryProtocol.internal_static_Query_Data_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.khalifa.protocol.QueryProtocol.internal_static_Query_Data_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.khalifa.protocol.QueryProtocol.Query.Data.class, com.khalifa.protocol.QueryProtocol.Query.Data.Builder.class);
+        }
+
+        // Construct using com.khalifa.protocol.QueryProtocol.Query.Data.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          value_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          type_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.khalifa.protocol.QueryProtocol.internal_static_Query_Data_descriptor;
+        }
+
+        public com.khalifa.protocol.QueryProtocol.Query.Data getDefaultInstanceForType() {
+          return com.khalifa.protocol.QueryProtocol.Query.Data.getDefaultInstance();
+        }
+
+        public com.khalifa.protocol.QueryProtocol.Query.Data build() {
+          com.khalifa.protocol.QueryProtocol.Query.Data result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.khalifa.protocol.QueryProtocol.Query.Data buildPartial() {
+          com.khalifa.protocol.QueryProtocol.Query.Data result = new com.khalifa.protocol.QueryProtocol.Query.Data(this);
+          int from_bitField0_ = bitField0_;
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            param_ = new com.google.protobuf.UnmodifiableLazyStringList(
+                param_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.param_ = param_;
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+            value_ = java.util.Collections.unmodifiableList(value_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.value_ = value_;
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+            type_ = java.util.Collections.unmodifiableList(type_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.type_ = type_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.khalifa.protocol.QueryProtocol.Query.Data) {
+            return mergeFrom((com.khalifa.protocol.QueryProtocol.Query.Data)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.khalifa.protocol.QueryProtocol.Query.Data other) {
+          if (other == com.khalifa.protocol.QueryProtocol.Query.Data.getDefaultInstance()) return this;
+          if (!other.param_.isEmpty()) {
+            if (param_.isEmpty()) {
+              param_ = other.param_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureParamIsMutable();
+              param_.addAll(other.param_);
+            }
+            onChanged();
+          }
+          if (!other.value_.isEmpty()) {
+            if (value_.isEmpty()) {
+              value_ = other.value_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureValueIsMutable();
+              value_.addAll(other.value_);
+            }
+            onChanged();
+          }
+          if (!other.type_.isEmpty()) {
+            if (type_.isEmpty()) {
+              type_ = other.type_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureTypeIsMutable();
+              type_.addAll(other.type_);
+            }
+            onChanged();
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.khalifa.protocol.QueryProtocol.Query.Data parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.khalifa.protocol.QueryProtocol.Query.Data) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // repeated string param = 1;
+        private com.google.protobuf.LazyStringList param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        private void ensureParamIsMutable() {
+          if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+            param_ = new com.google.protobuf.LazyStringArrayList(param_);
+            bitField0_ |= 0x00000001;
+           }
+        }
+        /**
+         * <code>repeated string param = 1;</code>
+         */
+        public java.util.List<java.lang.String>
+            getParamList() {
+          return java.util.Collections.unmodifiableList(param_);
+        }
+        /**
+         * <code>repeated string param = 1;</code>
+         */
+        public int getParamCount() {
+          return param_.size();
+        }
+        /**
+         * <code>repeated string param = 1;</code>
+         */
+        public java.lang.String getParam(int index) {
+          return param_.get(index);
+        }
+        /**
+         * <code>repeated string param = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+            getParamBytes(int index) {
+          return param_.getByteString(index);
+        }
+        /**
+         * <code>repeated string param = 1;</code>
+         */
+        public Builder setParam(
+            int index, java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureParamIsMutable();
+          param_.set(index, value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated string param = 1;</code>
+         */
+        public Builder addParam(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureParamIsMutable();
+          param_.add(value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated string param = 1;</code>
+         */
+        public Builder addAllParam(
+            java.lang.Iterable<java.lang.String> values) {
+          ensureParamIsMutable();
+          super.addAll(values, param_);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated string param = 1;</code>
+         */
+        public Builder clearParam() {
+          param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated string param = 1;</code>
+         */
+        public Builder addParamBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureParamIsMutable();
+          param_.add(value);
+          onChanged();
+          return this;
+        }
+
+        // repeated bytes value = 2;
+        private java.util.List<com.google.protobuf.ByteString> value_ = java.util.Collections.emptyList();
+        private void ensureValueIsMutable() {
+          if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+            value_ = new java.util.ArrayList<com.google.protobuf.ByteString>(value_);
+            bitField0_ |= 0x00000002;
+           }
+        }
+        /**
+         * <code>repeated bytes value = 2;</code>
+         */
+        public java.util.List<com.google.protobuf.ByteString>
+            getValueList() {
+          return java.util.Collections.unmodifiableList(value_);
+        }
+        /**
+         * <code>repeated bytes value = 2;</code>
+         */
+        public int getValueCount() {
+          return value_.size();
+        }
+        /**
+         * <code>repeated bytes value = 2;</code>
+         */
+        public com.google.protobuf.ByteString getValue(int index) {
+          return value_.get(index);
+        }
+        /**
+         * <code>repeated bytes value = 2;</code>
+         */
+        public Builder setValue(
+            int index, com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureValueIsMutable();
+          value_.set(index, value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated bytes value = 2;</code>
+         */
+        public Builder addValue(com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureValueIsMutable();
+          value_.add(value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated bytes value = 2;</code>
+         */
+        public Builder addAllValue(
+            java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
+          ensureValueIsMutable();
+          super.addAll(values, value_);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated bytes value = 2;</code>
+         */
+        public Builder clearValue() {
+          value_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+          return this;
+        }
+
+        // repeated .DataType type = 3;
+        private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_ =
+          java.util.Collections.emptyList();
+        private void ensureTypeIsMutable() {
+          if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+            type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>(type_);
+            bitField0_ |= 0x00000004;
+          }
+        }
+        /**
+         * <code>repeated .DataType type = 3;</code>
+         */
+        public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
+          return java.util.Collections.unmodifiableList(type_);
+        }
+        /**
+         * <code>repeated .DataType type = 3;</code>
+         */
+        public int getTypeCount() {
+          return type_.size();
+        }
+        /**
+         * <code>repeated .DataType type = 3;</code>
+         */
+        public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
+          return type_.get(index);
+        }
+        /**
+         * <code>repeated .DataType type = 3;</code>
+         */
+        public Builder setType(
+            int index, com.khalifa.protocol.QueryProtocol.DataType value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTypeIsMutable();
+          type_.set(index, value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated .DataType type = 3;</code>
+         */
+        public Builder addType(com.khalifa.protocol.QueryProtocol.DataType value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTypeIsMutable();
+          type_.add(value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated .DataType type = 3;</code>
+         */
+        public Builder addAllType(
+            java.lang.Iterable<? extends com.khalifa.protocol.QueryProtocol.DataType> values) {
+          ensureTypeIsMutable();
+          super.addAll(values, type_);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated .DataType type = 3;</code>
+         */
+        public Builder clearType() {
+          type_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:Query.Data)
+      }
+
+      static {
+        defaultInstance = new Data(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:Query.Data)
     }
 
     private int bitField0_;
@@ -493,92 +1253,53 @@ public final class QueryProtocol {
       return command_;
     }
 
-    // repeated string param = 4;
-    public static final int PARAM_FIELD_NUMBER = 4;
-    private com.google.protobuf.LazyStringList param_;
+    // repeated .Query.Data data = 4;
+    public static final int DATA_FIELD_NUMBER = 4;
+    private java.util.List<com.khalifa.protocol.QueryProtocol.Query.Data> data_;
     /**
-     * <code>repeated string param = 4;</code>
+     * <code>repeated .Query.Data data = 4;</code>
      */
-    public java.util.List<java.lang.String>
-        getParamList() {
-      return param_;
+    public java.util.List<com.khalifa.protocol.QueryProtocol.Query.Data> getDataList() {
+      return data_;
     }
     /**
-     * <code>repeated string param = 4;</code>
+     * <code>repeated .Query.Data data = 4;</code>
      */
-    public int getParamCount() {
-      return param_.size();
+    public java.util.List<? extends com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder> 
+        getDataOrBuilderList() {
+      return data_;
     }
     /**
-     * <code>repeated string param = 4;</code>
+     * <code>repeated .Query.Data data = 4;</code>
      */
-    public java.lang.String getParam(int index) {
-      return param_.get(index);
+    public int getDataCount() {
+      return data_.size();
     }
     /**
-     * <code>repeated string param = 4;</code>
+     * <code>repeated .Query.Data data = 4;</code>
      */
-    public com.google.protobuf.ByteString
-        getParamBytes(int index) {
-      return param_.getByteString(index);
-    }
-
-    // repeated bytes value = 5;
-    public static final int VALUE_FIELD_NUMBER = 5;
-    private java.util.List<com.google.protobuf.ByteString> value_;
-    /**
-     * <code>repeated bytes value = 5;</code>
-     */
-    public java.util.List<com.google.protobuf.ByteString>
-        getValueList() {
-      return value_;
+    public com.khalifa.protocol.QueryProtocol.Query.Data getData(int index) {
+      return data_.get(index);
     }
     /**
-     * <code>repeated bytes value = 5;</code>
+     * <code>repeated .Query.Data data = 4;</code>
      */
-    public int getValueCount() {
-      return value_.size();
-    }
-    /**
-     * <code>repeated bytes value = 5;</code>
-     */
-    public com.google.protobuf.ByteString getValue(int index) {
-      return value_.get(index);
+    public com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder getDataOrBuilder(
+        int index) {
+      return data_.get(index);
     }
 
-    // repeated .DataType type = 6;
-    public static final int TYPE_FIELD_NUMBER = 6;
-    private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_;
-    /**
-     * <code>repeated .DataType type = 6;</code>
-     */
-    public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
-      return type_;
-    }
-    /**
-     * <code>repeated .DataType type = 6;</code>
-     */
-    public int getTypeCount() {
-      return type_.size();
-    }
-    /**
-     * <code>repeated .DataType type = 6;</code>
-     */
-    public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
-      return type_.get(index);
-    }
-
-    // optional int32 expire = 7;
-    public static final int EXPIRE_FIELD_NUMBER = 7;
+    // optional int32 expire = 5;
+    public static final int EXPIRE_FIELD_NUMBER = 5;
     private int expire_;
     /**
-     * <code>optional int32 expire = 7;</code>
+     * <code>optional int32 expire = 5;</code>
      */
     public boolean hasExpire() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional int32 expire = 7;</code>
+     * <code>optional int32 expire = 5;</code>
      */
     public int getExpire() {
       return expire_;
@@ -588,9 +1309,7 @@ public final class QueryProtocol {
       queryType_ = 0;
       dbname_ = "";
       command_ = com.google.protobuf.ByteString.EMPTY;
-      param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      value_ = java.util.Collections.emptyList();
-      type_ = java.util.Collections.emptyList();
+      data_ = java.util.Collections.emptyList();
       expire_ = 0;
     }
     private byte memoizedIsInitialized = -1;
@@ -626,17 +1345,11 @@ public final class QueryProtocol {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBytes(3, command_);
       }
-      for (int i = 0; i < param_.size(); i++) {
-        output.writeBytes(4, param_.getByteString(i));
-      }
-      for (int i = 0; i < value_.size(); i++) {
-        output.writeBytes(5, value_.get(i));
-      }
-      for (int i = 0; i < type_.size(); i++) {
-        output.writeEnum(6, type_.get(i).getNumber());
+      for (int i = 0; i < data_.size(); i++) {
+        output.writeMessage(4, data_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeInt32(7, expire_);
+        output.writeInt32(5, expire_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -659,36 +1372,13 @@ public final class QueryProtocol {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(3, command_);
       }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < param_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(param_.getByteString(i));
-        }
-        size += dataSize;
-        size += 1 * getParamList().size();
-      }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < value_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(value_.get(i));
-        }
-        size += dataSize;
-        size += 1 * getValueList().size();
-      }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < type_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeEnumSizeNoTag(type_.get(i).getNumber());
-        }
-        size += dataSize;
-        size += 1 * type_.size();
+      for (int i = 0; i < data_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, data_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(7, expire_);
+          .computeInt32Size(5, expire_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -798,6 +1488,7 @@ public final class QueryProtocol {
       }
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getDataFieldBuilder();
         }
       }
       private static Builder create() {
@@ -812,14 +1503,14 @@ public final class QueryProtocol {
         bitField0_ = (bitField0_ & ~0x00000002);
         command_ = com.google.protobuf.ByteString.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000004);
-        param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000008);
-        value_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
-        type_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        if (dataBuilder_ == null) {
+          data_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        } else {
+          dataBuilder_.clear();
+        }
         expire_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -860,23 +1551,16 @@ public final class QueryProtocol {
           to_bitField0_ |= 0x00000004;
         }
         result.command_ = command_;
-        if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          param_ = new com.google.protobuf.UnmodifiableLazyStringList(
-              param_);
-          bitField0_ = (bitField0_ & ~0x00000008);
+        if (dataBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008)) {
+            data_ = java.util.Collections.unmodifiableList(data_);
+            bitField0_ = (bitField0_ & ~0x00000008);
+          }
+          result.data_ = data_;
+        } else {
+          result.data_ = dataBuilder_.build();
         }
-        result.param_ = param_;
-        if (((bitField0_ & 0x00000010) == 0x00000010)) {
-          value_ = java.util.Collections.unmodifiableList(value_);
-          bitField0_ = (bitField0_ & ~0x00000010);
-        }
-        result.value_ = value_;
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
-          type_ = java.util.Collections.unmodifiableList(type_);
-          bitField0_ = (bitField0_ & ~0x00000020);
-        }
-        result.type_ = type_;
-        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
           to_bitField0_ |= 0x00000008;
         }
         result.expire_ = expire_;
@@ -907,35 +1591,31 @@ public final class QueryProtocol {
         if (other.hasCommand()) {
           setCommand(other.getCommand());
         }
-        if (!other.param_.isEmpty()) {
-          if (param_.isEmpty()) {
-            param_ = other.param_;
-            bitField0_ = (bitField0_ & ~0x00000008);
-          } else {
-            ensureParamIsMutable();
-            param_.addAll(other.param_);
+        if (dataBuilder_ == null) {
+          if (!other.data_.isEmpty()) {
+            if (data_.isEmpty()) {
+              data_ = other.data_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+            } else {
+              ensureDataIsMutable();
+              data_.addAll(other.data_);
+            }
+            onChanged();
           }
-          onChanged();
-        }
-        if (!other.value_.isEmpty()) {
-          if (value_.isEmpty()) {
-            value_ = other.value_;
-            bitField0_ = (bitField0_ & ~0x00000010);
-          } else {
-            ensureValueIsMutable();
-            value_.addAll(other.value_);
+        } else {
+          if (!other.data_.isEmpty()) {
+            if (dataBuilder_.isEmpty()) {
+              dataBuilder_.dispose();
+              dataBuilder_ = null;
+              data_ = other.data_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+              dataBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getDataFieldBuilder() : null;
+            } else {
+              dataBuilder_.addAllMessages(other.data_);
+            }
           }
-          onChanged();
-        }
-        if (!other.type_.isEmpty()) {
-          if (type_.isEmpty()) {
-            type_ = other.type_;
-            bitField0_ = (bitField0_ & ~0x00000020);
-          } else {
-            ensureTypeIsMutable();
-            type_.addAll(other.type_);
-          }
-          onChanged();
         }
         if (other.hasExpire()) {
           setExpire(other.getExpire());
@@ -1122,271 +1802,274 @@ public final class QueryProtocol {
         return this;
       }
 
-      // repeated string param = 4;
-      private com.google.protobuf.LazyStringList param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureParamIsMutable() {
+      // repeated .Query.Data data = 4;
+      private java.util.List<com.khalifa.protocol.QueryProtocol.Query.Data> data_ =
+        java.util.Collections.emptyList();
+      private void ensureDataIsMutable() {
         if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-          param_ = new com.google.protobuf.LazyStringArrayList(param_);
+          data_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.Query.Data>(data_);
           bitField0_ |= 0x00000008;
          }
       }
-      /**
-       * <code>repeated string param = 4;</code>
-       */
-      public java.util.List<java.lang.String>
-          getParamList() {
-        return java.util.Collections.unmodifiableList(param_);
-      }
-      /**
-       * <code>repeated string param = 4;</code>
-       */
-      public int getParamCount() {
-        return param_.size();
-      }
-      /**
-       * <code>repeated string param = 4;</code>
-       */
-      public java.lang.String getParam(int index) {
-        return param_.get(index);
-      }
-      /**
-       * <code>repeated string param = 4;</code>
-       */
-      public com.google.protobuf.ByteString
-          getParamBytes(int index) {
-        return param_.getByteString(index);
-      }
-      /**
-       * <code>repeated string param = 4;</code>
-       */
-      public Builder setParam(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureParamIsMutable();
-        param_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string param = 4;</code>
-       */
-      public Builder addParam(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureParamIsMutable();
-        param_.add(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string param = 4;</code>
-       */
-      public Builder addAllParam(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureParamIsMutable();
-        super.addAll(values, param_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string param = 4;</code>
-       */
-      public Builder clearParam() {
-        param_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000008);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string param = 4;</code>
-       */
-      public Builder addParamBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureParamIsMutable();
-        param_.add(value);
-        onChanged();
-        return this;
-      }
 
-      // repeated bytes value = 5;
-      private java.util.List<com.google.protobuf.ByteString> value_ = java.util.Collections.emptyList();
-      private void ensureValueIsMutable() {
-        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-          value_ = new java.util.ArrayList<com.google.protobuf.ByteString>(value_);
-          bitField0_ |= 0x00000010;
-         }
-      }
-      /**
-       * <code>repeated bytes value = 5;</code>
-       */
-      public java.util.List<com.google.protobuf.ByteString>
-          getValueList() {
-        return java.util.Collections.unmodifiableList(value_);
-      }
-      /**
-       * <code>repeated bytes value = 5;</code>
-       */
-      public int getValueCount() {
-        return value_.size();
-      }
-      /**
-       * <code>repeated bytes value = 5;</code>
-       */
-      public com.google.protobuf.ByteString getValue(int index) {
-        return value_.get(index);
-      }
-      /**
-       * <code>repeated bytes value = 5;</code>
-       */
-      public Builder setValue(
-          int index, com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureValueIsMutable();
-        value_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated bytes value = 5;</code>
-       */
-      public Builder addValue(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureValueIsMutable();
-        value_.add(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated bytes value = 5;</code>
-       */
-      public Builder addAllValue(
-          java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
-        ensureValueIsMutable();
-        super.addAll(values, value_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated bytes value = 5;</code>
-       */
-      public Builder clearValue() {
-        value_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
-        onChanged();
-        return this;
-      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.khalifa.protocol.QueryProtocol.Query.Data, com.khalifa.protocol.QueryProtocol.Query.Data.Builder, com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder> dataBuilder_;
 
-      // repeated .DataType type = 6;
-      private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_ =
-        java.util.Collections.emptyList();
-      private void ensureTypeIsMutable() {
-        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
-          type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>(type_);
-          bitField0_ |= 0x00000020;
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public java.util.List<com.khalifa.protocol.QueryProtocol.Query.Data> getDataList() {
+        if (dataBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(data_);
+        } else {
+          return dataBuilder_.getMessageList();
         }
       }
       /**
-       * <code>repeated .DataType type = 6;</code>
+       * <code>repeated .Query.Data data = 4;</code>
        */
-      public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
-        return java.util.Collections.unmodifiableList(type_);
-      }
-      /**
-       * <code>repeated .DataType type = 6;</code>
-       */
-      public int getTypeCount() {
-        return type_.size();
-      }
-      /**
-       * <code>repeated .DataType type = 6;</code>
-       */
-      public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
-        return type_.get(index);
-      }
-      /**
-       * <code>repeated .DataType type = 6;</code>
-       */
-      public Builder setType(
-          int index, com.khalifa.protocol.QueryProtocol.DataType value) {
-        if (value == null) {
-          throw new NullPointerException();
+      public int getDataCount() {
+        if (dataBuilder_ == null) {
+          return data_.size();
+        } else {
+          return dataBuilder_.getCount();
         }
-        ensureTypeIsMutable();
-        type_.set(index, value);
-        onChanged();
-        return this;
       }
       /**
-       * <code>repeated .DataType type = 6;</code>
+       * <code>repeated .Query.Data data = 4;</code>
        */
-      public Builder addType(com.khalifa.protocol.QueryProtocol.DataType value) {
-        if (value == null) {
-          throw new NullPointerException();
+      public com.khalifa.protocol.QueryProtocol.Query.Data getData(int index) {
+        if (dataBuilder_ == null) {
+          return data_.get(index);
+        } else {
+          return dataBuilder_.getMessage(index);
         }
-        ensureTypeIsMutable();
-        type_.add(value);
-        onChanged();
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public Builder setData(
+          int index, com.khalifa.protocol.QueryProtocol.Query.Data value) {
+        if (dataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDataIsMutable();
+          data_.set(index, value);
+          onChanged();
+        } else {
+          dataBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
-       * <code>repeated .DataType type = 6;</code>
+       * <code>repeated .Query.Data data = 4;</code>
        */
-      public Builder addAllType(
-          java.lang.Iterable<? extends com.khalifa.protocol.QueryProtocol.DataType> values) {
-        ensureTypeIsMutable();
-        super.addAll(values, type_);
-        onChanged();
+      public Builder setData(
+          int index, com.khalifa.protocol.QueryProtocol.Query.Data.Builder builderForValue) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          data_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          dataBuilder_.setMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
-       * <code>repeated .DataType type = 6;</code>
+       * <code>repeated .Query.Data data = 4;</code>
        */
-      public Builder clearType() {
-        type_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
-        onChanged();
+      public Builder addData(com.khalifa.protocol.QueryProtocol.Query.Data value) {
+        if (dataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDataIsMutable();
+          data_.add(value);
+          onChanged();
+        } else {
+          dataBuilder_.addMessage(value);
+        }
         return this;
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public Builder addData(
+          int index, com.khalifa.protocol.QueryProtocol.Query.Data value) {
+        if (dataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDataIsMutable();
+          data_.add(index, value);
+          onChanged();
+        } else {
+          dataBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public Builder addData(
+          com.khalifa.protocol.QueryProtocol.Query.Data.Builder builderForValue) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          data_.add(builderForValue.build());
+          onChanged();
+        } else {
+          dataBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public Builder addData(
+          int index, com.khalifa.protocol.QueryProtocol.Query.Data.Builder builderForValue) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          data_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          dataBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public Builder addAllData(
+          java.lang.Iterable<? extends com.khalifa.protocol.QueryProtocol.Query.Data> values) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          super.addAll(values, data_);
+          onChanged();
+        } else {
+          dataBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public Builder clearData() {
+        if (dataBuilder_ == null) {
+          data_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+          onChanged();
+        } else {
+          dataBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public Builder removeData(int index) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          data_.remove(index);
+          onChanged();
+        } else {
+          dataBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.Query.Data.Builder getDataBuilder(
+          int index) {
+        return getDataFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder getDataOrBuilder(
+          int index) {
+        if (dataBuilder_ == null) {
+          return data_.get(index);  } else {
+          return dataBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public java.util.List<? extends com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder> 
+           getDataOrBuilderList() {
+        if (dataBuilder_ != null) {
+          return dataBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(data_);
+        }
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.Query.Data.Builder addDataBuilder() {
+        return getDataFieldBuilder().addBuilder(
+            com.khalifa.protocol.QueryProtocol.Query.Data.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.Query.Data.Builder addDataBuilder(
+          int index) {
+        return getDataFieldBuilder().addBuilder(
+            index, com.khalifa.protocol.QueryProtocol.Query.Data.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .Query.Data data = 4;</code>
+       */
+      public java.util.List<com.khalifa.protocol.QueryProtocol.Query.Data.Builder> 
+           getDataBuilderList() {
+        return getDataFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.khalifa.protocol.QueryProtocol.Query.Data, com.khalifa.protocol.QueryProtocol.Query.Data.Builder, com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder> 
+          getDataFieldBuilder() {
+        if (dataBuilder_ == null) {
+          dataBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              com.khalifa.protocol.QueryProtocol.Query.Data, com.khalifa.protocol.QueryProtocol.Query.Data.Builder, com.khalifa.protocol.QueryProtocol.Query.DataOrBuilder>(
+                  data_,
+                  ((bitField0_ & 0x00000008) == 0x00000008),
+                  getParentForChildren(),
+                  isClean());
+          data_ = null;
+        }
+        return dataBuilder_;
       }
 
-      // optional int32 expire = 7;
+      // optional int32 expire = 5;
       private int expire_ ;
       /**
-       * <code>optional int32 expire = 7;</code>
+       * <code>optional int32 expire = 5;</code>
        */
       public boolean hasExpire() {
-        return ((bitField0_ & 0x00000040) == 0x00000040);
+        return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       /**
-       * <code>optional int32 expire = 7;</code>
+       * <code>optional int32 expire = 5;</code>
        */
       public int getExpire() {
         return expire_;
       }
       /**
-       * <code>optional int32 expire = 7;</code>
+       * <code>optional int32 expire = 5;</code>
        */
       public Builder setExpire(int value) {
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000010;
         expire_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 expire = 7;</code>
+       * <code>optional int32 expire = 5;</code>
        */
       public Builder clearExpire() {
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000010);
         expire_ = 0;
         onChanged();
         return this;
@@ -1416,53 +2099,30 @@ public final class QueryProtocol {
      */
     int getCode();
 
-    // repeated string header = 2;
+    // repeated .Response.Data data = 2;
     /**
-     * <code>repeated string header = 2;</code>
+     * <code>repeated .Response.Data data = 2;</code>
      */
-    java.util.List<java.lang.String>
-    getHeaderList();
+    java.util.List<com.khalifa.protocol.QueryProtocol.Response.Data> 
+        getDataList();
     /**
-     * <code>repeated string header = 2;</code>
+     * <code>repeated .Response.Data data = 2;</code>
      */
-    int getHeaderCount();
+    com.khalifa.protocol.QueryProtocol.Response.Data getData(int index);
     /**
-     * <code>repeated string header = 2;</code>
-     */
-    java.lang.String getHeader(int index);
-    /**
-     * <code>repeated string header = 2;</code>
-     */
-    com.google.protobuf.ByteString
-        getHeaderBytes(int index);
-
-    // repeated .DataType type = 3;
-    /**
-     * <code>repeated .DataType type = 3;</code>
-     */
-    java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList();
-    /**
-     * <code>repeated .DataType type = 3;</code>
-     */
-    int getTypeCount();
-    /**
-     * <code>repeated .DataType type = 3;</code>
-     */
-    com.khalifa.protocol.QueryProtocol.DataType getType(int index);
-
-    // repeated bytes data = 4;
-    /**
-     * <code>repeated bytes data = 4;</code>
-     */
-    java.util.List<com.google.protobuf.ByteString> getDataList();
-    /**
-     * <code>repeated bytes data = 4;</code>
+     * <code>repeated .Response.Data data = 2;</code>
      */
     int getDataCount();
     /**
-     * <code>repeated bytes data = 4;</code>
+     * <code>repeated .Response.Data data = 2;</code>
      */
-    com.google.protobuf.ByteString getData(int index);
+    java.util.List<? extends com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder> 
+        getDataOrBuilderList();
+    /**
+     * <code>repeated .Response.Data data = 2;</code>
+     */
+    com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder getDataOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code Response}
@@ -1522,51 +2182,10 @@ public final class QueryProtocol {
             }
             case 18: {
               if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                header_ = new com.google.protobuf.LazyStringArrayList();
+                data_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.Response.Data>();
                 mutable_bitField0_ |= 0x00000002;
               }
-              header_.add(input.readBytes());
-              break;
-            }
-            case 24: {
-              int rawValue = input.readEnum();
-              com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
-              if (value == null) {
-                unknownFields.mergeVarintField(3, rawValue);
-              } else {
-                if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                  type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
-                  mutable_bitField0_ |= 0x00000004;
-                }
-                type_.add(value);
-              }
-              break;
-            }
-            case 26: {
-              int length = input.readRawVarint32();
-              int oldLimit = input.pushLimit(length);
-              while(input.getBytesUntilLimit() > 0) {
-                int rawValue = input.readEnum();
-                com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
-                if (value == null) {
-                  unknownFields.mergeVarintField(3, rawValue);
-                } else {
-                  if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                    type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
-                    mutable_bitField0_ |= 0x00000004;
-                  }
-                  type_.add(value);
-                }
-              }
-              input.popLimit(oldLimit);
-              break;
-            }
-            case 34: {
-              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-                data_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
-                mutable_bitField0_ |= 0x00000008;
-              }
-              data_.add(input.readBytes());
+              data_.add(input.readMessage(com.khalifa.protocol.QueryProtocol.Response.Data.PARSER, extensionRegistry));
               break;
             }
           }
@@ -1578,12 +2197,6 @@ public final class QueryProtocol {
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-          header_ = new com.google.protobuf.UnmodifiableLazyStringList(header_);
-        }
-        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-          type_ = java.util.Collections.unmodifiableList(type_);
-        }
-        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
           data_ = java.util.Collections.unmodifiableList(data_);
         }
         this.unknownFields = unknownFields.build();
@@ -1617,6 +2230,827 @@ public final class QueryProtocol {
       return PARSER;
     }
 
+    public interface DataOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // repeated string header = 1;
+      /**
+       * <code>repeated string header = 1;</code>
+       */
+      java.util.List<java.lang.String>
+      getHeaderList();
+      /**
+       * <code>repeated string header = 1;</code>
+       */
+      int getHeaderCount();
+      /**
+       * <code>repeated string header = 1;</code>
+       */
+      java.lang.String getHeader(int index);
+      /**
+       * <code>repeated string header = 1;</code>
+       */
+      com.google.protobuf.ByteString
+          getHeaderBytes(int index);
+
+      // repeated .DataType type = 2;
+      /**
+       * <code>repeated .DataType type = 2;</code>
+       */
+      java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList();
+      /**
+       * <code>repeated .DataType type = 2;</code>
+       */
+      int getTypeCount();
+      /**
+       * <code>repeated .DataType type = 2;</code>
+       */
+      com.khalifa.protocol.QueryProtocol.DataType getType(int index);
+
+      // repeated bytes data = 3;
+      /**
+       * <code>repeated bytes data = 3;</code>
+       */
+      java.util.List<com.google.protobuf.ByteString> getDataList();
+      /**
+       * <code>repeated bytes data = 3;</code>
+       */
+      int getDataCount();
+      /**
+       * <code>repeated bytes data = 3;</code>
+       */
+      com.google.protobuf.ByteString getData(int index);
+    }
+    /**
+     * Protobuf type {@code Response.Data}
+     */
+    public static final class Data extends
+        com.google.protobuf.GeneratedMessage
+        implements DataOrBuilder {
+      // Use Data.newBuilder() to construct.
+      private Data(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private Data(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final Data defaultInstance;
+      public static Data getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public Data getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private Data(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 10: {
+                if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                  header_ = new com.google.protobuf.LazyStringArrayList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                header_.add(input.readBytes());
+                break;
+              }
+              case 16: {
+                int rawValue = input.readEnum();
+                com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
+                if (value == null) {
+                  unknownFields.mergeVarintField(2, rawValue);
+                } else {
+                  if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                    type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
+                    mutable_bitField0_ |= 0x00000002;
+                  }
+                  type_.add(value);
+                }
+                break;
+              }
+              case 18: {
+                int length = input.readRawVarint32();
+                int oldLimit = input.pushLimit(length);
+                while(input.getBytesUntilLimit() > 0) {
+                  int rawValue = input.readEnum();
+                  com.khalifa.protocol.QueryProtocol.DataType value = com.khalifa.protocol.QueryProtocol.DataType.valueOf(rawValue);
+                  if (value == null) {
+                    unknownFields.mergeVarintField(2, rawValue);
+                  } else {
+                    if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                      type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>();
+                      mutable_bitField0_ |= 0x00000002;
+                    }
+                    type_.add(value);
+                  }
+                }
+                input.popLimit(oldLimit);
+                break;
+              }
+              case 26: {
+                if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                  data_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
+                  mutable_bitField0_ |= 0x00000004;
+                }
+                data_.add(input.readBytes());
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+            header_ = new com.google.protobuf.UnmodifiableLazyStringList(header_);
+          }
+          if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            type_ = java.util.Collections.unmodifiableList(type_);
+          }
+          if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+            data_ = java.util.Collections.unmodifiableList(data_);
+          }
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.khalifa.protocol.QueryProtocol.internal_static_Response_Data_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.khalifa.protocol.QueryProtocol.internal_static_Response_Data_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.khalifa.protocol.QueryProtocol.Response.Data.class, com.khalifa.protocol.QueryProtocol.Response.Data.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<Data> PARSER =
+          new com.google.protobuf.AbstractParser<Data>() {
+        public Data parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new Data(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<Data> getParserForType() {
+        return PARSER;
+      }
+
+      // repeated string header = 1;
+      public static final int HEADER_FIELD_NUMBER = 1;
+      private com.google.protobuf.LazyStringList header_;
+      /**
+       * <code>repeated string header = 1;</code>
+       */
+      public java.util.List<java.lang.String>
+          getHeaderList() {
+        return header_;
+      }
+      /**
+       * <code>repeated string header = 1;</code>
+       */
+      public int getHeaderCount() {
+        return header_.size();
+      }
+      /**
+       * <code>repeated string header = 1;</code>
+       */
+      public java.lang.String getHeader(int index) {
+        return header_.get(index);
+      }
+      /**
+       * <code>repeated string header = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getHeaderBytes(int index) {
+        return header_.getByteString(index);
+      }
+
+      // repeated .DataType type = 2;
+      public static final int TYPE_FIELD_NUMBER = 2;
+      private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_;
+      /**
+       * <code>repeated .DataType type = 2;</code>
+       */
+      public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
+        return type_;
+      }
+      /**
+       * <code>repeated .DataType type = 2;</code>
+       */
+      public int getTypeCount() {
+        return type_.size();
+      }
+      /**
+       * <code>repeated .DataType type = 2;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
+        return type_.get(index);
+      }
+
+      // repeated bytes data = 3;
+      public static final int DATA_FIELD_NUMBER = 3;
+      private java.util.List<com.google.protobuf.ByteString> data_;
+      /**
+       * <code>repeated bytes data = 3;</code>
+       */
+      public java.util.List<com.google.protobuf.ByteString>
+          getDataList() {
+        return data_;
+      }
+      /**
+       * <code>repeated bytes data = 3;</code>
+       */
+      public int getDataCount() {
+        return data_.size();
+      }
+      /**
+       * <code>repeated bytes data = 3;</code>
+       */
+      public com.google.protobuf.ByteString getData(int index) {
+        return data_.get(index);
+      }
+
+      private void initFields() {
+        header_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        type_ = java.util.Collections.emptyList();
+        data_ = java.util.Collections.emptyList();
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        for (int i = 0; i < header_.size(); i++) {
+          output.writeBytes(1, header_.getByteString(i));
+        }
+        for (int i = 0; i < type_.size(); i++) {
+          output.writeEnum(2, type_.get(i).getNumber());
+        }
+        for (int i = 0; i < data_.size(); i++) {
+          output.writeBytes(3, data_.get(i));
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        {
+          int dataSize = 0;
+          for (int i = 0; i < header_.size(); i++) {
+            dataSize += com.google.protobuf.CodedOutputStream
+              .computeBytesSizeNoTag(header_.getByteString(i));
+          }
+          size += dataSize;
+          size += 1 * getHeaderList().size();
+        }
+        {
+          int dataSize = 0;
+          for (int i = 0; i < type_.size(); i++) {
+            dataSize += com.google.protobuf.CodedOutputStream
+              .computeEnumSizeNoTag(type_.get(i).getNumber());
+          }
+          size += dataSize;
+          size += 1 * type_.size();
+        }
+        {
+          int dataSize = 0;
+          for (int i = 0; i < data_.size(); i++) {
+            dataSize += com.google.protobuf.CodedOutputStream
+              .computeBytesSizeNoTag(data_.get(i));
+          }
+          size += dataSize;
+          size += 1 * getDataList().size();
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.khalifa.protocol.QueryProtocol.Response.Data parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.khalifa.protocol.QueryProtocol.Response.Data prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code Response.Data}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.khalifa.protocol.QueryProtocol.internal_static_Response_Data_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.khalifa.protocol.QueryProtocol.internal_static_Response_Data_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.khalifa.protocol.QueryProtocol.Response.Data.class, com.khalifa.protocol.QueryProtocol.Response.Data.Builder.class);
+        }
+
+        // Construct using com.khalifa.protocol.QueryProtocol.Response.Data.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          header_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          type_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          data_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.khalifa.protocol.QueryProtocol.internal_static_Response_Data_descriptor;
+        }
+
+        public com.khalifa.protocol.QueryProtocol.Response.Data getDefaultInstanceForType() {
+          return com.khalifa.protocol.QueryProtocol.Response.Data.getDefaultInstance();
+        }
+
+        public com.khalifa.protocol.QueryProtocol.Response.Data build() {
+          com.khalifa.protocol.QueryProtocol.Response.Data result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.khalifa.protocol.QueryProtocol.Response.Data buildPartial() {
+          com.khalifa.protocol.QueryProtocol.Response.Data result = new com.khalifa.protocol.QueryProtocol.Response.Data(this);
+          int from_bitField0_ = bitField0_;
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            header_ = new com.google.protobuf.UnmodifiableLazyStringList(
+                header_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.header_ = header_;
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+            type_ = java.util.Collections.unmodifiableList(type_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.type_ = type_;
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+            data_ = java.util.Collections.unmodifiableList(data_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.data_ = data_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.khalifa.protocol.QueryProtocol.Response.Data) {
+            return mergeFrom((com.khalifa.protocol.QueryProtocol.Response.Data)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.khalifa.protocol.QueryProtocol.Response.Data other) {
+          if (other == com.khalifa.protocol.QueryProtocol.Response.Data.getDefaultInstance()) return this;
+          if (!other.header_.isEmpty()) {
+            if (header_.isEmpty()) {
+              header_ = other.header_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureHeaderIsMutable();
+              header_.addAll(other.header_);
+            }
+            onChanged();
+          }
+          if (!other.type_.isEmpty()) {
+            if (type_.isEmpty()) {
+              type_ = other.type_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureTypeIsMutable();
+              type_.addAll(other.type_);
+            }
+            onChanged();
+          }
+          if (!other.data_.isEmpty()) {
+            if (data_.isEmpty()) {
+              data_ = other.data_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureDataIsMutable();
+              data_.addAll(other.data_);
+            }
+            onChanged();
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.khalifa.protocol.QueryProtocol.Response.Data parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.khalifa.protocol.QueryProtocol.Response.Data) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // repeated string header = 1;
+        private com.google.protobuf.LazyStringList header_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        private void ensureHeaderIsMutable() {
+          if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+            header_ = new com.google.protobuf.LazyStringArrayList(header_);
+            bitField0_ |= 0x00000001;
+           }
+        }
+        /**
+         * <code>repeated string header = 1;</code>
+         */
+        public java.util.List<java.lang.String>
+            getHeaderList() {
+          return java.util.Collections.unmodifiableList(header_);
+        }
+        /**
+         * <code>repeated string header = 1;</code>
+         */
+        public int getHeaderCount() {
+          return header_.size();
+        }
+        /**
+         * <code>repeated string header = 1;</code>
+         */
+        public java.lang.String getHeader(int index) {
+          return header_.get(index);
+        }
+        /**
+         * <code>repeated string header = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+            getHeaderBytes(int index) {
+          return header_.getByteString(index);
+        }
+        /**
+         * <code>repeated string header = 1;</code>
+         */
+        public Builder setHeader(
+            int index, java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureHeaderIsMutable();
+          header_.set(index, value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated string header = 1;</code>
+         */
+        public Builder addHeader(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureHeaderIsMutable();
+          header_.add(value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated string header = 1;</code>
+         */
+        public Builder addAllHeader(
+            java.lang.Iterable<java.lang.String> values) {
+          ensureHeaderIsMutable();
+          super.addAll(values, header_);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated string header = 1;</code>
+         */
+        public Builder clearHeader() {
+          header_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated string header = 1;</code>
+         */
+        public Builder addHeaderBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureHeaderIsMutable();
+          header_.add(value);
+          onChanged();
+          return this;
+        }
+
+        // repeated .DataType type = 2;
+        private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_ =
+          java.util.Collections.emptyList();
+        private void ensureTypeIsMutable() {
+          if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+            type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>(type_);
+            bitField0_ |= 0x00000002;
+          }
+        }
+        /**
+         * <code>repeated .DataType type = 2;</code>
+         */
+        public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
+          return java.util.Collections.unmodifiableList(type_);
+        }
+        /**
+         * <code>repeated .DataType type = 2;</code>
+         */
+        public int getTypeCount() {
+          return type_.size();
+        }
+        /**
+         * <code>repeated .DataType type = 2;</code>
+         */
+        public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
+          return type_.get(index);
+        }
+        /**
+         * <code>repeated .DataType type = 2;</code>
+         */
+        public Builder setType(
+            int index, com.khalifa.protocol.QueryProtocol.DataType value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTypeIsMutable();
+          type_.set(index, value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated .DataType type = 2;</code>
+         */
+        public Builder addType(com.khalifa.protocol.QueryProtocol.DataType value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTypeIsMutable();
+          type_.add(value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated .DataType type = 2;</code>
+         */
+        public Builder addAllType(
+            java.lang.Iterable<? extends com.khalifa.protocol.QueryProtocol.DataType> values) {
+          ensureTypeIsMutable();
+          super.addAll(values, type_);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated .DataType type = 2;</code>
+         */
+        public Builder clearType() {
+          type_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+          return this;
+        }
+
+        // repeated bytes data = 3;
+        private java.util.List<com.google.protobuf.ByteString> data_ = java.util.Collections.emptyList();
+        private void ensureDataIsMutable() {
+          if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+            data_ = new java.util.ArrayList<com.google.protobuf.ByteString>(data_);
+            bitField0_ |= 0x00000004;
+           }
+        }
+        /**
+         * <code>repeated bytes data = 3;</code>
+         */
+        public java.util.List<com.google.protobuf.ByteString>
+            getDataList() {
+          return java.util.Collections.unmodifiableList(data_);
+        }
+        /**
+         * <code>repeated bytes data = 3;</code>
+         */
+        public int getDataCount() {
+          return data_.size();
+        }
+        /**
+         * <code>repeated bytes data = 3;</code>
+         */
+        public com.google.protobuf.ByteString getData(int index) {
+          return data_.get(index);
+        }
+        /**
+         * <code>repeated bytes data = 3;</code>
+         */
+        public Builder setData(
+            int index, com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureDataIsMutable();
+          data_.set(index, value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated bytes data = 3;</code>
+         */
+        public Builder addData(com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureDataIsMutable();
+          data_.add(value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated bytes data = 3;</code>
+         */
+        public Builder addAllData(
+            java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
+          ensureDataIsMutable();
+          super.addAll(values, data_);
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>repeated bytes data = 3;</code>
+         */
+        public Builder clearData() {
+          data_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:Response.Data)
+      }
+
+      static {
+        defaultInstance = new Data(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:Response.Data)
+    }
+
     private int bitField0_;
     // required int32 code = 1;
     public static final int CODE_FIELD_NUMBER = 1;
@@ -1634,85 +3068,44 @@ public final class QueryProtocol {
       return code_;
     }
 
-    // repeated string header = 2;
-    public static final int HEADER_FIELD_NUMBER = 2;
-    private com.google.protobuf.LazyStringList header_;
+    // repeated .Response.Data data = 2;
+    public static final int DATA_FIELD_NUMBER = 2;
+    private java.util.List<com.khalifa.protocol.QueryProtocol.Response.Data> data_;
     /**
-     * <code>repeated string header = 2;</code>
+     * <code>repeated .Response.Data data = 2;</code>
      */
-    public java.util.List<java.lang.String>
-        getHeaderList() {
-      return header_;
-    }
-    /**
-     * <code>repeated string header = 2;</code>
-     */
-    public int getHeaderCount() {
-      return header_.size();
-    }
-    /**
-     * <code>repeated string header = 2;</code>
-     */
-    public java.lang.String getHeader(int index) {
-      return header_.get(index);
-    }
-    /**
-     * <code>repeated string header = 2;</code>
-     */
-    public com.google.protobuf.ByteString
-        getHeaderBytes(int index) {
-      return header_.getByteString(index);
-    }
-
-    // repeated .DataType type = 3;
-    public static final int TYPE_FIELD_NUMBER = 3;
-    private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_;
-    /**
-     * <code>repeated .DataType type = 3;</code>
-     */
-    public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
-      return type_;
-    }
-    /**
-     * <code>repeated .DataType type = 3;</code>
-     */
-    public int getTypeCount() {
-      return type_.size();
-    }
-    /**
-     * <code>repeated .DataType type = 3;</code>
-     */
-    public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
-      return type_.get(index);
-    }
-
-    // repeated bytes data = 4;
-    public static final int DATA_FIELD_NUMBER = 4;
-    private java.util.List<com.google.protobuf.ByteString> data_;
-    /**
-     * <code>repeated bytes data = 4;</code>
-     */
-    public java.util.List<com.google.protobuf.ByteString>
-        getDataList() {
+    public java.util.List<com.khalifa.protocol.QueryProtocol.Response.Data> getDataList() {
       return data_;
     }
     /**
-     * <code>repeated bytes data = 4;</code>
+     * <code>repeated .Response.Data data = 2;</code>
+     */
+    public java.util.List<? extends com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder> 
+        getDataOrBuilderList() {
+      return data_;
+    }
+    /**
+     * <code>repeated .Response.Data data = 2;</code>
      */
     public int getDataCount() {
       return data_.size();
     }
     /**
-     * <code>repeated bytes data = 4;</code>
+     * <code>repeated .Response.Data data = 2;</code>
      */
-    public com.google.protobuf.ByteString getData(int index) {
+    public com.khalifa.protocol.QueryProtocol.Response.Data getData(int index) {
+      return data_.get(index);
+    }
+    /**
+     * <code>repeated .Response.Data data = 2;</code>
+     */
+    public com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder getDataOrBuilder(
+        int index) {
       return data_.get(index);
     }
 
     private void initFields() {
       code_ = 0;
-      header_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      type_ = java.util.Collections.emptyList();
       data_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
@@ -1734,14 +3127,8 @@ public final class QueryProtocol {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt32(1, code_);
       }
-      for (int i = 0; i < header_.size(); i++) {
-        output.writeBytes(2, header_.getByteString(i));
-      }
-      for (int i = 0; i < type_.size(); i++) {
-        output.writeEnum(3, type_.get(i).getNumber());
-      }
       for (int i = 0; i < data_.size(); i++) {
-        output.writeBytes(4, data_.get(i));
+        output.writeMessage(2, data_.get(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -1756,32 +3143,9 @@ public final class QueryProtocol {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, code_);
       }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < header_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(header_.getByteString(i));
-        }
-        size += dataSize;
-        size += 1 * getHeaderList().size();
-      }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < type_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeEnumSizeNoTag(type_.get(i).getNumber());
-        }
-        size += dataSize;
-        size += 1 * type_.size();
-      }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < data_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(data_.get(i));
-        }
-        size += dataSize;
-        size += 1 * getDataList().size();
+      for (int i = 0; i < data_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, data_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1891,6 +3255,7 @@ public final class QueryProtocol {
       }
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getDataFieldBuilder();
         }
       }
       private static Builder create() {
@@ -1901,12 +3266,12 @@ public final class QueryProtocol {
         super.clear();
         code_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        header_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000002);
-        type_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
-        data_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000008);
+        if (dataBuilder_ == null) {
+          data_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          dataBuilder_.clear();
+        }
         return this;
       }
 
@@ -1939,22 +3304,15 @@ public final class QueryProtocol {
           to_bitField0_ |= 0x00000001;
         }
         result.code_ = code_;
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          header_ = new com.google.protobuf.UnmodifiableLazyStringList(
-              header_);
-          bitField0_ = (bitField0_ & ~0x00000002);
+        if (dataBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+            data_ = java.util.Collections.unmodifiableList(data_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.data_ = data_;
+        } else {
+          result.data_ = dataBuilder_.build();
         }
-        result.header_ = header_;
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          type_ = java.util.Collections.unmodifiableList(type_);
-          bitField0_ = (bitField0_ & ~0x00000004);
-        }
-        result.type_ = type_;
-        if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          data_ = java.util.Collections.unmodifiableList(data_);
-          bitField0_ = (bitField0_ & ~0x00000008);
-        }
-        result.data_ = data_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1974,35 +3332,31 @@ public final class QueryProtocol {
         if (other.hasCode()) {
           setCode(other.getCode());
         }
-        if (!other.header_.isEmpty()) {
-          if (header_.isEmpty()) {
-            header_ = other.header_;
-            bitField0_ = (bitField0_ & ~0x00000002);
-          } else {
-            ensureHeaderIsMutable();
-            header_.addAll(other.header_);
+        if (dataBuilder_ == null) {
+          if (!other.data_.isEmpty()) {
+            if (data_.isEmpty()) {
+              data_ = other.data_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureDataIsMutable();
+              data_.addAll(other.data_);
+            }
+            onChanged();
           }
-          onChanged();
-        }
-        if (!other.type_.isEmpty()) {
-          if (type_.isEmpty()) {
-            type_ = other.type_;
-            bitField0_ = (bitField0_ & ~0x00000004);
-          } else {
-            ensureTypeIsMutable();
-            type_.addAll(other.type_);
+        } else {
+          if (!other.data_.isEmpty()) {
+            if (dataBuilder_.isEmpty()) {
+              dataBuilder_.dispose();
+              dataBuilder_ = null;
+              data_ = other.data_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              dataBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getDataFieldBuilder() : null;
+            } else {
+              dataBuilder_.addAllMessages(other.data_);
+            }
           }
-          onChanged();
-        }
-        if (!other.data_.isEmpty()) {
-          if (data_.isEmpty()) {
-            data_ = other.data_;
-            bitField0_ = (bitField0_ & ~0x00000008);
-          } else {
-            ensureDataIsMutable();
-            data_.addAll(other.data_);
-          }
-          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -2068,241 +3422,244 @@ public final class QueryProtocol {
         return this;
       }
 
-      // repeated string header = 2;
-      private com.google.protobuf.LazyStringList header_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureHeaderIsMutable() {
+      // repeated .Response.Data data = 2;
+      private java.util.List<com.khalifa.protocol.QueryProtocol.Response.Data> data_ =
+        java.util.Collections.emptyList();
+      private void ensureDataIsMutable() {
         if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          header_ = new com.google.protobuf.LazyStringArrayList(header_);
+          data_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.Response.Data>(data_);
           bitField0_ |= 0x00000002;
          }
       }
-      /**
-       * <code>repeated string header = 2;</code>
-       */
-      public java.util.List<java.lang.String>
-          getHeaderList() {
-        return java.util.Collections.unmodifiableList(header_);
-      }
-      /**
-       * <code>repeated string header = 2;</code>
-       */
-      public int getHeaderCount() {
-        return header_.size();
-      }
-      /**
-       * <code>repeated string header = 2;</code>
-       */
-      public java.lang.String getHeader(int index) {
-        return header_.get(index);
-      }
-      /**
-       * <code>repeated string header = 2;</code>
-       */
-      public com.google.protobuf.ByteString
-          getHeaderBytes(int index) {
-        return header_.getByteString(index);
-      }
-      /**
-       * <code>repeated string header = 2;</code>
-       */
-      public Builder setHeader(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureHeaderIsMutable();
-        header_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string header = 2;</code>
-       */
-      public Builder addHeader(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureHeaderIsMutable();
-        header_.add(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string header = 2;</code>
-       */
-      public Builder addAllHeader(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureHeaderIsMutable();
-        super.addAll(values, header_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string header = 2;</code>
-       */
-      public Builder clearHeader() {
-        header_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000002);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string header = 2;</code>
-       */
-      public Builder addHeaderBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureHeaderIsMutable();
-        header_.add(value);
-        onChanged();
-        return this;
-      }
 
-      // repeated .DataType type = 3;
-      private java.util.List<com.khalifa.protocol.QueryProtocol.DataType> type_ =
-        java.util.Collections.emptyList();
-      private void ensureTypeIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-          type_ = new java.util.ArrayList<com.khalifa.protocol.QueryProtocol.DataType>(type_);
-          bitField0_ |= 0x00000004;
-        }
-      }
-      /**
-       * <code>repeated .DataType type = 3;</code>
-       */
-      public java.util.List<com.khalifa.protocol.QueryProtocol.DataType> getTypeList() {
-        return java.util.Collections.unmodifiableList(type_);
-      }
-      /**
-       * <code>repeated .DataType type = 3;</code>
-       */
-      public int getTypeCount() {
-        return type_.size();
-      }
-      /**
-       * <code>repeated .DataType type = 3;</code>
-       */
-      public com.khalifa.protocol.QueryProtocol.DataType getType(int index) {
-        return type_.get(index);
-      }
-      /**
-       * <code>repeated .DataType type = 3;</code>
-       */
-      public Builder setType(
-          int index, com.khalifa.protocol.QueryProtocol.DataType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureTypeIsMutable();
-        type_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated .DataType type = 3;</code>
-       */
-      public Builder addType(com.khalifa.protocol.QueryProtocol.DataType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureTypeIsMutable();
-        type_.add(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated .DataType type = 3;</code>
-       */
-      public Builder addAllType(
-          java.lang.Iterable<? extends com.khalifa.protocol.QueryProtocol.DataType> values) {
-        ensureTypeIsMutable();
-        super.addAll(values, type_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated .DataType type = 3;</code>
-       */
-      public Builder clearType() {
-        type_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
-        onChanged();
-        return this;
-      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.khalifa.protocol.QueryProtocol.Response.Data, com.khalifa.protocol.QueryProtocol.Response.Data.Builder, com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder> dataBuilder_;
 
-      // repeated bytes data = 4;
-      private java.util.List<com.google.protobuf.ByteString> data_ = java.util.Collections.emptyList();
-      private void ensureDataIsMutable() {
-        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-          data_ = new java.util.ArrayList<com.google.protobuf.ByteString>(data_);
-          bitField0_ |= 0x00000008;
-         }
-      }
       /**
-       * <code>repeated bytes data = 4;</code>
+       * <code>repeated .Response.Data data = 2;</code>
        */
-      public java.util.List<com.google.protobuf.ByteString>
-          getDataList() {
-        return java.util.Collections.unmodifiableList(data_);
+      public java.util.List<com.khalifa.protocol.QueryProtocol.Response.Data> getDataList() {
+        if (dataBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(data_);
+        } else {
+          return dataBuilder_.getMessageList();
+        }
       }
       /**
-       * <code>repeated bytes data = 4;</code>
+       * <code>repeated .Response.Data data = 2;</code>
        */
       public int getDataCount() {
-        return data_.size();
+        if (dataBuilder_ == null) {
+          return data_.size();
+        } else {
+          return dataBuilder_.getCount();
+        }
       }
       /**
-       * <code>repeated bytes data = 4;</code>
+       * <code>repeated .Response.Data data = 2;</code>
        */
-      public com.google.protobuf.ByteString getData(int index) {
-        return data_.get(index);
+      public com.khalifa.protocol.QueryProtocol.Response.Data getData(int index) {
+        if (dataBuilder_ == null) {
+          return data_.get(index);
+        } else {
+          return dataBuilder_.getMessage(index);
+        }
       }
       /**
-       * <code>repeated bytes data = 4;</code>
+       * <code>repeated .Response.Data data = 2;</code>
        */
       public Builder setData(
-          int index, com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureDataIsMutable();
-        data_.set(index, value);
-        onChanged();
+          int index, com.khalifa.protocol.QueryProtocol.Response.Data value) {
+        if (dataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDataIsMutable();
+          data_.set(index, value);
+          onChanged();
+        } else {
+          dataBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
-       * <code>repeated bytes data = 4;</code>
+       * <code>repeated .Response.Data data = 2;</code>
        */
-      public Builder addData(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureDataIsMutable();
-        data_.add(value);
-        onChanged();
+      public Builder setData(
+          int index, com.khalifa.protocol.QueryProtocol.Response.Data.Builder builderForValue) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          data_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          dataBuilder_.setMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
-       * <code>repeated bytes data = 4;</code>
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public Builder addData(com.khalifa.protocol.QueryProtocol.Response.Data value) {
+        if (dataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDataIsMutable();
+          data_.add(value);
+          onChanged();
+        } else {
+          dataBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public Builder addData(
+          int index, com.khalifa.protocol.QueryProtocol.Response.Data value) {
+        if (dataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDataIsMutable();
+          data_.add(index, value);
+          onChanged();
+        } else {
+          dataBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public Builder addData(
+          com.khalifa.protocol.QueryProtocol.Response.Data.Builder builderForValue) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          data_.add(builderForValue.build());
+          onChanged();
+        } else {
+          dataBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public Builder addData(
+          int index, com.khalifa.protocol.QueryProtocol.Response.Data.Builder builderForValue) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          data_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          dataBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
        */
       public Builder addAllData(
-          java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
-        ensureDataIsMutable();
-        super.addAll(values, data_);
-        onChanged();
+          java.lang.Iterable<? extends com.khalifa.protocol.QueryProtocol.Response.Data> values) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          super.addAll(values, data_);
+          onChanged();
+        } else {
+          dataBuilder_.addAllMessages(values);
+        }
         return this;
       }
       /**
-       * <code>repeated bytes data = 4;</code>
+       * <code>repeated .Response.Data data = 2;</code>
        */
       public Builder clearData() {
-        data_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000008);
-        onChanged();
+        if (dataBuilder_ == null) {
+          data_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          dataBuilder_.clear();
+        }
         return this;
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public Builder removeData(int index) {
+        if (dataBuilder_ == null) {
+          ensureDataIsMutable();
+          data_.remove(index);
+          onChanged();
+        } else {
+          dataBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.Response.Data.Builder getDataBuilder(
+          int index) {
+        return getDataFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder getDataOrBuilder(
+          int index) {
+        if (dataBuilder_ == null) {
+          return data_.get(index);  } else {
+          return dataBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public java.util.List<? extends com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder> 
+           getDataOrBuilderList() {
+        if (dataBuilder_ != null) {
+          return dataBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(data_);
+        }
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.Response.Data.Builder addDataBuilder() {
+        return getDataFieldBuilder().addBuilder(
+            com.khalifa.protocol.QueryProtocol.Response.Data.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public com.khalifa.protocol.QueryProtocol.Response.Data.Builder addDataBuilder(
+          int index) {
+        return getDataFieldBuilder().addBuilder(
+            index, com.khalifa.protocol.QueryProtocol.Response.Data.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .Response.Data data = 2;</code>
+       */
+      public java.util.List<com.khalifa.protocol.QueryProtocol.Response.Data.Builder> 
+           getDataBuilderList() {
+        return getDataFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.khalifa.protocol.QueryProtocol.Response.Data, com.khalifa.protocol.QueryProtocol.Response.Data.Builder, com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder> 
+          getDataFieldBuilder() {
+        if (dataBuilder_ == null) {
+          dataBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              com.khalifa.protocol.QueryProtocol.Response.Data, com.khalifa.protocol.QueryProtocol.Response.Data.Builder, com.khalifa.protocol.QueryProtocol.Response.DataOrBuilder>(
+                  data_,
+                  ((bitField0_ & 0x00000002) == 0x00000002),
+                  getParentForChildren(),
+                  isClean());
+          data_ = null;
+        }
+        return dataBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:Response)
@@ -2322,10 +3679,20 @@ public final class QueryProtocol {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_Query_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_Query_Data_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_Query_Data_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_Response_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_Response_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_Response_Data_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_Response_Data_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2335,16 +3702,18 @@ public final class QueryProtocol {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\023QueryProtocol.proto\"\202\001\n\005Query\022\021\n\tquery" +
+      "\n\023QueryProtocol.proto\"\245\001\n\005Query\022\021\n\tquery" +
       "Type\030\001 \002(\005\022\016\n\006dbname\030\002 \002(\t\022\017\n\007command\030\003 " +
-      "\002(\014\022\r\n\005param\030\004 \003(\t\022\r\n\005value\030\005 \003(\014\022\027\n\004typ" +
-      "e\030\006 \003(\0162\t.DataType\022\016\n\006expire\030\007 \001(\005\"O\n\010Re" +
-      "sponse\022\014\n\004code\030\001 \002(\005\022\016\n\006header\030\002 \003(\t\022\027\n\004" +
-      "type\030\003 \003(\0162\t.DataType\022\014\n\004data\030\004 \003(\014*r\n\010D" +
-      "ataType\022\n\n\006STRING\020\000\022\t\n\005SHORT\020\001\022\013\n\007INTEGE" +
-      "R\020\002\022\010\n\004LONG\020\003\022\t\n\005FLOAT\020\004\022\n\n\006DOUBLE\020\005\022\010\n\004" +
-      "DATE\020\006\022\010\n\004TIME\020\007\022\r\n\tTIMESTAMP\020\010B\'\n\024com.k" +
-      "halifa.protocolB\rQueryProtocolH\001"
+      "\002(\014\022\031\n\004data\030\004 \003(\0132\013.Query.Data\022\016\n\006expire" +
+      "\030\005 \001(\005\032=\n\004Data\022\r\n\005param\030\001 \003(\t\022\r\n\005value\030\002" +
+      " \003(\014\022\027\n\004type\030\003 \003(\0162\t.DataType\"u\n\010Respons" +
+      "e\022\014\n\004code\030\001 \002(\005\022\034\n\004data\030\002 \003(\0132\016.Response" +
+      ".Data\032=\n\004Data\022\016\n\006header\030\001 \003(\t\022\027\n\004type\030\002 " +
+      "\003(\0162\t.DataType\022\014\n\004data\030\003 \003(\014*\177\n\010DataType" +
+      "\022\n\n\006STRING\020\000\022\t\n\005SHORT\020\001\022\013\n\007INTEGER\020\002\022\010\n\004" +
+      "LONG\020\003\022\t\n\005FLOAT\020\004\022\n\n\006DOUBLE\020\005\022\010\n\004DATE\020\006\022",
+      "\010\n\004TIME\020\007\022\r\n\tTIMESTAMP\020\010\022\013\n\007BOOLEAN\020\tB\'\n" +
+      "\024com.khalifa.protocolB\rQueryProtocolH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -2356,13 +3725,25 @@ public final class QueryProtocol {
           internal_static_Query_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Query_descriptor,
-              new java.lang.String[] { "QueryType", "Dbname", "Command", "Param", "Value", "Type", "Expire", });
+              new java.lang.String[] { "QueryType", "Dbname", "Command", "Data", "Expire", });
+          internal_static_Query_Data_descriptor =
+            internal_static_Query_descriptor.getNestedTypes().get(0);
+          internal_static_Query_Data_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_Query_Data_descriptor,
+              new java.lang.String[] { "Param", "Value", "Type", });
           internal_static_Response_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_Response_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Response_descriptor,
-              new java.lang.String[] { "Code", "Header", "Type", "Data", });
+              new java.lang.String[] { "Code", "Data", });
+          internal_static_Response_Data_descriptor =
+            internal_static_Response_descriptor.getNestedTypes().get(0);
+          internal_static_Response_Data_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_Response_Data_descriptor,
+              new java.lang.String[] { "Header", "Type", "Data", });
           return null;
         }
       };

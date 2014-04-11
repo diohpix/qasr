@@ -32,10 +32,12 @@ public class TransactionObject {
 	private boolean rollbacked;
 	private ProxyInfo pinfo;
 	private Bootstrap boot;
+	private int currentResult=0;
+	private Response res;
 	private static final Logger logger = LoggerFactory.getLogger(TransactionObject.class);
 	
-	public TransactionObject(Bootstrap boot,ProxyInfo pinfo ,String aliasName) throws IOException  {
-		this.dbname = aliasName;
+	public TransactionObject(Bootstrap boot,ProxyInfo pinfo,String aliasName ) throws IOException  {
+		this.dbname =aliasName;// pinfo.getName();
 		this.pinfo = pinfo;
 		this.boot = boot;
 		connect();
@@ -79,6 +81,30 @@ public class TransactionObject {
 	void setDistributed(boolean v){
 		this.isDistributed = v;
 	}
+	boolean hasMoreResult(){
+		currentResult++;
+		if(currentResult < res.getDataCount() ){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	ResultObject moreResult()	throws  IOException, SQLException {
+		ResultObject result = new ResultObject();
+		List<Map<String, Object>> list =null;
+		Map<String, String> getterKeymap =new LinkedHashMap<String, String>();
+		Map<Integer, String> getterNummap =new LinkedHashMap<Integer,String>();
+		try {
+			list = ProtobufUtil.parse(currentResult,res,getterKeymap,getterNummap);
+			result.setList(list);
+			result.setCode(res.getCode());
+			result.setKey(getterKeymap, getterNummap);
+		} catch (InvalidProtocolBufferException e) {
+			result.setError(e.getCause()!=null ? e.getCause().getMessage() : e.getMessage());
+			result.setCode(500);
+		}
+		return result;
+	}
 	ResultObject executeQuery(Query.Builder query)	throws  IOException, SQLException {
 		if(!open || !channel.isActive()) throw new IOException("closed Session");
 		query.setDbname(dbname);
@@ -92,13 +118,13 @@ public class TransactionObject {
 		ResultObject result = new ResultObject();
 		Object response = handler.getDataDirect(this.channel,query);
 		if (ProtobufUtil.success(response)) { // dbproxy 가 전송한 데이터가 protobuf객체일경우 성공임
-			Response res = (Response) response;
+			res = (Response) response;
 			if(res.getCode()==200){
 				List<Map<String, Object>> list =null;
 				Map<String, String> getterKeymap =new LinkedHashMap<String, String>();
 				Map<Integer, String> getterNummap =new LinkedHashMap<Integer,String>();
 				try {
-					list = ProtobufUtil.parse(res,getterKeymap,getterNummap);
+					list = ProtobufUtil.parse(currentResult,res,getterKeymap,getterNummap);
 					result.setList(list);
 					result.setCode(res.getCode());
 				} catch (InvalidProtocolBufferException e) {
@@ -107,12 +133,13 @@ public class TransactionObject {
 				}
 				result.setKey(getterKeymap, getterNummap);
 			}else{
+				this.open = false;
 				int errType = res.getCode();
 				result.setCode(errType);
-				result.setError(res.getData(0).toStringUtf8());
+				result.setError(res.getData(currentResult).getData(0).toStringUtf8());
 				if(errType==600){
 					if(res.getDataCount() ==4){
-						SQLException sqle = new SQLException(res.getData(1).toStringUtf8(),res.getData(2).toStringUtf8(),Integer.valueOf(res.getData(3).toStringUtf8()));
+						SQLException sqle = new SQLException(res.getData(currentResult).getData(1).toStringUtf8(),res.getData(currentResult).getData(2).toStringUtf8(),Integer.valueOf(res.getData(currentResult).getData(3).toStringUtf8()));
 						throw sqle;
 					}else{
 						throw new RuntimeException(result.getError());
@@ -143,7 +170,7 @@ public class TransactionObject {
 			if(res.getCode()==200){
 				List<Map<String, Object>> list =null;
 				try {
-					list = ProtobufUtil.parse(res,null,null);
+					list = ProtobufUtil.parse(0,res,null,null);
 					rtn = true;
 				} catch (InvalidProtocolBufferException e) {
 			
@@ -198,13 +225,13 @@ public class TransactionObject {
 		return this.isTransaction;
 	}
 	public void close()  throws IOException{
-		logger.debug("close");
-		open = false;
+		logger.debug("close "+open);
 		if(this.channel.isActive()){
 			try {
 				this.channel.close().sync();
 			} catch (InterruptedException e) {
 			}
 		}
+		open = false;
 	}
 }

@@ -21,13 +21,18 @@ import com.khalifa.protocol.QueryProtocol.Query;
 import com.khalifa.protocol.QueryProtocol.Response;
 
 public class Statement {
-	private static final Logger logger = LoggerFactory.getLogger(Statement.class);
+	private static final Logger logger = LoggerFactory.getLogger(Statement.class); 
 	private static byte [] zlen = new byte[]{-1};
-	private Query.Builder res =null;
+	private static byte [] TRUE = new byte[]{1};
+	private static byte [] FALSE = new byte[]{0};
+	
+	private Query.Data.Builder res =null;
+	private Query.Builder query =null;
 	private int expireTime;
 	private int statmentType;
 	private long __insert__id__=-1;
 	private TransactionObject tx = null;
+	private long lastID[] = null;
 	public String toString(){
 		int pcount = res.getParamCount();
 		StringBuilder sb = new StringBuilder();
@@ -36,45 +41,72 @@ public class Statement {
 		}
 		return sb.toString();
 	}
-	
+	/**
+	 * SELECT 쿼리 expire 타임 
+	 * @return
+	 */
 	public int getExpireTime() {
 		return expireTime;
 	}
+	/**
+	 * SELECT 한 결과를 캐시유지 기간 
+	 * @param expireTime
+	 */
 	public void setExpireTime(int expireTime) {
 		this.expireTime = expireTime;
-		res.setExpire(expireTime);
+		query.setExpire(expireTime);
 	}
-	public Statement(TransactionObject tx,String command) {
+	/**
+	 * ResultObject 가 더 있는지 확인 
+	 * @return
+	 */
+	public boolean getMoreResult(){
+		return tx.hasMoreResult();
+	}
+	/**
+	 * 다음 ResultObject 가져옴 
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public ResultObject getMoreResultObject() throws IOException, SQLException{
+		return tx.moreResult();
+	}
+	Statement(TransactionObject tx,String command) {
 		this.tx = tx;
-		  res = Query.newBuilder();
+		  query = Query.newBuilder();
+		  res = Query.Data.newBuilder();
 		  this.statmentType = 0;
 		  try {
-			res.setCommand(ByteString.copyFrom(command,"UTF-8"));
+			query.setCommand(ByteString.copyFrom(command,"UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 	}
-	public Statement(TransactionObject tx,String command,int statmentType) {
+	Statement(TransactionObject tx,String command,int statmentType) {
 		this.tx = tx;
-		  res = Query.newBuilder();
+		  query = Query.newBuilder();
+		  res = Query.Data.newBuilder();
 		  this.statmentType = statmentType;
 		  try {
-			res.setCommand(ByteString.copyFrom(command,"UTF-8"));
+			query.setCommand(ByteString.copyFrom(command,"UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void clearParameter(){
-		ByteString command = res.getCommand();
-		int queryType = res.getQueryType();
-		res.clear();
-		res.setCommand(command);
-		res.setQueryType(queryType);
+		ByteString command = query.getCommand();
+		int queryType = query.getQueryType();
+		query.clear();
+		query.setCommand(command);
+		query.setQueryType(queryType);
 		expireTime=0;
 	}
 	public void close(){
-		res.clear();
+		query.clearData();
+		query.clear();
+		lastID=null;
 	}
 	public void setString(String key,String value){
 		res.addParam(key);
@@ -89,6 +121,15 @@ public class Statement {
 		res.addParam(key);
 		res.addValue(ByteString.copyFrom(Shorts.toByteArray(value)));
 		res.addType(DataType.SHORT);
+	}
+	public void setBoolean(String key ,boolean value){
+		res.addParam(key);
+		if(value){
+			res.addValue(ByteString.copyFrom(TRUE));
+		}else{
+			res.addValue(ByteString.copyFrom(FALSE));
+		}
+		res.addType(DataType.BOOLEAN);
 	}
 	public void setInt(String key,int value){
 		res.addParam(key);
@@ -183,7 +224,7 @@ public class Statement {
 		setTimestamp(key, Timestamp.valueOf(value));
 	}
 	
-	public Response getOutputParam() throws IOException{
+	Response getOutputParam() throws IOException{
 		return tx.outputParam();
 	}
 	public ResultObject executeQuery() throws IOException,SQLException{
@@ -192,11 +233,14 @@ public class Statement {
 		//	return null;
 		}
 		if(statmentType==10){
-			res.setQueryType(10);
+			query.setQueryType(10);
 		}else{
-			res.setQueryType(1);
+			query.setQueryType(1);
 		}
-		return tx.executeQuery( res);
+		if(query.getDataCount()==0){
+			query.addData(res);
+		}
+		return tx.executeQuery(query);
 	}
 	public long getLastInsertId(){
 		return __insert__id__;
@@ -205,11 +249,43 @@ public class Statement {
 		if(logger.isDebugEnabled()){
 			logger.debug("executeUpdate {}",this.toString());
 		}
-		res.setQueryType(2);
+		query.setQueryType(2);
+		if(query.getDataCount()==0){
+			query.addData(res);
+		}
 		ResultObject r = executeQuery();
 		if(r.getList().get(0).get("__insert__id__")!=null){
 				__insert__id__ = ((Long)(r.getList().get(0).get("__insert__id__"))).longValue();
 		}
 		return ((Integer)(r.getList().get(0).get("__count__"))).intValue();
+	}
+	public long[] getBatchLastID(){
+		return lastID;
+	}
+	public int[] executeBatch() throws IOException,SQLException{
+		if(logger.isDebugEnabled()){
+			logger.debug("executeUpdate {}",this.toString());
+		}
+		query.setQueryType(2);
+		ResultObject r = executeQuery();
+		int count = r.getList().size();
+		int rtn[] = new int[count];
+		int rcount = 0;
+		while(r.next()){
+			int rc  = r.getInt("__count__");
+			rtn[rcount]=rc;
+			if(r.getString("__insert__id__")!=null){
+				if(lastID ==null){
+					lastID = new long[count];
+				}
+				lastID[rcount] = r.getLong("__insert__id__");
+			}
+			rcount++;
+		}
+		return rtn;
+	}
+	public void addBatch(){
+		query.addData(res);
+		res = Query.Data.newBuilder();
 	}
 }

@@ -18,7 +18,7 @@ public class CallableStatement extends Statement {
 	private Map<String, String> byKey;
 	private Map<Integer, String> byNum;
 	private ResultObject result;
-	
+	private int currentResult=0;
 	public CallableStatement(TransactionObject tx, String command,int statmentType) {
 		super(tx, command,10);
 		// TODO Auto-generated constructor stub
@@ -36,7 +36,7 @@ public class CallableStatement extends Statement {
 			Map<String, String> getterKeymap =new HashMap<String, String>();
 			Map<Integer, String> getterNummap =new HashMap<Integer,String>();
 			try {
-				List<Map<String,Object>> _list = ProtobufUtil.parse(res,getterKeymap,getterNummap);
+				List<Map<String,Object>> _list = ProtobufUtil.parse(currentResult,res,getterKeymap,getterNummap);
 				if(_list!=null && _list.size()>0){
 					result = new ResultObject();
 					result.setList(_list);
