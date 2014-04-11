@@ -115,6 +115,7 @@ public class SystemInitializer {
             	ds.setInitialSize(initialSize);
             	ds.setMaxWait(maxWait);
             	ds.setMaxOpenPreparedStatements(maxOpenPreparedStatements);
+            	//ds.setDefaultTransactionIsolation(java.sql.Connection.TRANSACTION_READ_UNCOMMITTED);
             	ds.setTestOnBorrow(testOnBorrow);
             	ds.setTestOnReturn(testOnReturn);
             	ds.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);

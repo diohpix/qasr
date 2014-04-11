@@ -9,11 +9,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ParameterMode;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import com.khalifa.process.State;
 import com.khalifa.protocol.QueryProtocol.Response;
 import com.khalifa.util.CommonData;
 import com.khalifa.util.Configure;
+import com.khalifa.util.ResponseUtil;
 import com.khalifa.util.UK;
 
 
@@ -42,18 +45,25 @@ public class APIService {
 		SqlSessionFactory factory =  CommonData.getSQLFactory(dbname);
 		return  factory.openSession();	
 	}
+	public static SqlSession getBatchSession(String dbname) throws Exception{
+		SqlSessionFactory factory =  CommonData.getSQLFactory(dbname);
+		return  factory.openSession(ExecutorType.BATCH);	
+	}
 	public static Object transactionQuery(ProxySqlSession sess, String SQL,Map<String,Object> where,State state) throws Exception{
 		Response.Builder res =null;
 		long time = System.currentTimeMillis();
+		List<List<Object>> objs =null;
 		List<Object> obj =null;
 		MappedStatement ms = sess.getConfiguration().getMappedStatement(SQL);
 			if(ms.getSqlCommandType() == SqlCommandType.SELECT){ // SELECT일경우
-				obj = sess.selectList(ms, where);
+				objs = sess.selectList(ms, where);
 				sess.clearCache();
 			}else{
+				objs = new ArrayList<List<Object>>();
 				obj = new ArrayList<Object>();
 				List<Map<String, Object>> l = cudProcess(sess, SQL, where, obj,	ms);
 				obj.add(l);
+				objs.add(obj);
 			}
 			if(ms.getStatementType() == StatementType.CALLABLE){
 				outputParamProcess(where, state, ms);
@@ -63,18 +73,110 @@ public class APIService {
 		if(elap > slow_query_time){
 			slowqueryLogger.info("{} [ {} ] : time : {}", SQL, where, (elap));
 		}
-		res = UK.convertObject2Response(obj);
+		res = Response.newBuilder();
+		for (List<Object> object : objs) {
+			Response.Data.Builder data = UK.convertObject2Response(object);
+			res.addData(data);
+		}
 		res.setCode(200);
 		return res;
 	}
+	public static Object batchQuery(ProxySqlSession sess, String SQL,List<Map<String,Object>> param,State state,boolean tx) {
+		Response.Builder res = Response.newBuilder();
+		try{
+			long time = System.currentTimeMillis();
+			res = Response.newBuilder();
+			MappedStatement ms = sess.getConfiguration().getMappedStatement(SQL);
+			Object [] meta = null;
+			List<Object> obj =new ArrayList<Object>();
+			if(ms.getSqlCommandType() == SqlCommandType.INSERT){
+				meta = new Object[2];
+			}else{
+				meta = new Object[1];
+			}
+			Map<String, String> metaData = new HashMap<String,String>();
+			metaData.put("columnLabel","__count__");
+			metaData.put("columnName","__count__");
+			metaData.put("columnType","java.lang.Integer");
+			meta[0]=metaData;
+			if(ms.getSqlCommandType() == SqlCommandType.INSERT){
+				Map<String, String> insData = new HashMap<String,String>();
+				insData.put("columnLabel","__insert__id__");
+				insData.put("columnName","__insert__id__");
+				insData.put("columnType","java.lang.Long");
+				meta[1]=insData;
+			}
+			obj.add(meta);
+			List<Map<String,Object>> line = new ArrayList<Map<String,Object>>();
+			for (Map<String,Object> object : param) {
+				if(ms.getSqlCommandType() == SqlCommandType.INSERT){ // insert
+					sess.insert(SQL, object);
+				}else if(ms.getSqlCommandType() == SqlCommandType.UPDATE){ // update 
+					sess.update(SQL, object);
+				}else if(ms.getSqlCommandType() == SqlCommandType.DELETE){ // delete
+					sess.delete(SQL, object);
+				}
+			}
+			List<BatchResult> result = sess.flushStatements();
+			String genkey =null;
+			if(ms.getSqlCommandType() == SqlCommandType.INSERT){ // insert
+				if(ms.getKeyProperties()!=null){
+					genkey =ms.getKeyProperties()[0];
+				}
+			}
+			for (BatchResult batchResult : result) {
+				int [] update  = batchResult.getUpdateCounts();
+				int count=0;
+				for (int i : update) {
+					Map<String, Object> data = new HashMap<String,Object>();
+					data.put("__count__", i);
+					if(genkey!=null){
+						List<Object> pm = batchResult.getParameterObjects();
+						Map<String,Object> qq =(Map<String,Object>) pm.get(count++);
+						if(qq.containsKey(genkey)){
+							data.put("__insert__id__", qq.get(genkey));
+						}
+					}
+					line.add(data);		
+				}
+			}
+			long elap = System.currentTimeMillis()-time;
+			if(elap > slow_query_time){
+				slowqueryLogger.info("{} [ {} ] : time : {}", SQL, "_BATCH_JOB_", (elap));
+			}
+			obj.add(line);
+			Response.Data.Builder d = UK.convertObject2Response(obj);
+			res.addData(d);
+			res.setCode(200);
+			if(!tx){ // if this batch job is a partial of transaction . do not commit; 
+				sess.commit();
+			}
+		}catch(Exception e){
+			if(!tx){
+				if(sess!=null){
+					sess.rollback();
+				}
+			}
+			throw e;
+		}finally{
+			if(!tx){
+				if(sess!=null){
+					sess.close();
+				}
+			}
+		}
+		return res;
+	}
+
 	private static List<Map<String, Object>> cudProcess(ProxySqlSession sess,String SQL, Map<String, Object> where, List<Object> obj,MappedStatement ms) throws SQLException {
 		int rtn = 0;
 		sess.getConnection().setReadOnly(false);
 		long lastSeq=0;
+		String genkey =null;
 		if(ms.getSqlCommandType() == SqlCommandType.INSERT){ // insert
 			rtn = sess.insert(ms, where);
 			if(ms.getKeyProperties()!=null){
-				String genkey =ms.getKeyProperties()[0];
+				genkey =ms.getKeyProperties()[0];
 				if(where.get(genkey)!=null){
 					lastSeq = ((Long)where.get(genkey)).longValue();
 				}
@@ -105,20 +207,34 @@ public class APIService {
 		}
 		obj.add(meta);
 		List<Map<String,Object>> l = new  ArrayList<Map<String,Object>>();
-		Map<String, Object> data = new HashMap<String,Object>();
-		data.put("__count__", Integer.valueOf(rtn));
-		if(ms.getSqlCommandType() == SqlCommandType.INSERT){
-			data.put("__insert__id__", lastSeq);
+		if(sess.getExcutorType()== ExecutorType.BATCH){ // transaction 일 경우다 .
+			List<BatchResult> result = sess.flushStatements();
+			for (BatchResult batchResult : result) {
+				int [] update  = batchResult.getUpdateCounts();
+				Map<String, Object> data = new HashMap<String,Object>();
+				if(where.get(genkey)!=null){
+					lastSeq = ((Long)where.get(genkey)).longValue();
+					data.put("__insert__id__", lastSeq);
+				}
+				for (int i : update) {
+					data.put("__count__", i);
+					l.add(data);
+				}
+			}
+		}else{
+			Map<String, Object> data = new HashMap<String,Object>();
+			data.put("__count__", rtn);
+			if(ms.getSqlCommandType() == SqlCommandType.INSERT){
+				data.put("__insert__id__", lastSeq);
+			}
+			l.add(data);
 		}
-		l.add(data);
 		return l;
 	}
-	private static void outputParamProcess(Map<String, Object> where,
-			State state, MappedStatement ms) {
+	private static void outputParamProcess(Map<String, Object> where,State state, MappedStatement ms) {
 		final List<ParameterMapping> parameterMappings = ms.getBoundSql(where).getParameterMappings();
 		List<Object> actual = new ArrayList<Object>();
 		Object[] metaData = new Object[1];
-		
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		int c=0;
 		for (int i = 0; i < parameterMappings.size(); i++) {
@@ -135,19 +251,16 @@ public class APIService {
 				Map<String, Object> col = new HashMap<String, Object>();
 				col.put(columnName, where.get(columnName));
 				list.add(col);
-			  /*if (ResultSet.class.equals(parameterMapping.getJavaType())) {
-		      		//handleRefCursorOutputParameter((ResultSet) cs.getObject(i + 1), parameterMapping, metaParam);
-		    	} else {
-		      final TypeHandler<?> typeHandler = parameterMapping.getTypeHandler();
-		      		//metaParam.setValue(parameterMapping.getProperty(), typeHandler.getResult(cs, i + 1));
-		    	}*/
 		  }
 		}
 		if(c>0){
 			actual.add(metaData);
 			actual.add(list);
-			Response.Builder rs = UK.convertObject2Response(actual);
-			state.setOutputParam(rs);
+			Response.Data.Builder rs = UK.convertObject2Response(actual);
+			Response.Builder b = Response.newBuilder();
+			b.setCode(200);
+			b.addData(rs);
+			state.setOutputParam(b);
 		}
 	}	
 	public static Object query(String dbname,int type,String SQL,Map<String,Object> where,String _where ,int expireTime,State state) throws Exception{
@@ -166,6 +279,7 @@ public class APIService {
 			if(select !=null) return select;
 		}
 		long time = System.currentTimeMillis();
+		List<List<Object>> objs =null;
 		List<Object> obj =null;
 		ProxySqlSession sess =null;
 		try{
@@ -173,19 +287,20 @@ public class APIService {
 			MappedStatement ms = sess.getConfiguration().getMappedStatement(SQL);
 			if(ms.getSqlCommandType()==SqlCommandType.SELECT){ // SELECT일경우 
 				sess.getConnection().setReadOnly(true);
-				obj = sess.selectList(ms, where);
+				objs = sess.selectList(ms, where);
 			}else{
+				objs = new ArrayList<List<Object>>();
 				obj = new ArrayList<Object>();
 				List<Map<String, Object>> l = cudProcess(sess,SQL, where, obj,	 ms);
 				sess.commit();
 				obj.add(l);
+				objs.add(obj);
 			}
 			if(ms.getStatementType() == StatementType.CALLABLE){
 				outputParamProcess(where, state, ms);
 			}
 			sess.close();
 		}catch(Exception e){
-			e.printStackTrace();
 			if(type>1){
 				sess.rollback();
 			}
@@ -199,8 +314,9 @@ public class APIService {
 		if(elap > slow_query_time){
 			slowqueryLogger.info("{} [ {} ] : time : {}", SQL, where, (elap));
 		}
-		res = UK.convertObject2Response(obj);
+		res = Response.newBuilder();
 		res.setCode(200);
+		ResponseUtil.addList2Response(res, objs);
         if(type==1){
     		if( res.getDataCount() > 0){
 				addRedisCache(_where, expireTime,select, res,CACHE_KEY);
@@ -224,12 +340,12 @@ public class APIService {
 			if(select !=null) return select;
 		}
 		long time = System.currentTimeMillis();
-		List<Object> obj =null;
+		List<List<Object>> objs =null;
 		try{
 			MappedStatement ms = sess.getConfiguration().getMappedStatement(SQL);
 			if(ms.getSqlCommandType()==SqlCommandType.SELECT ){ // SELECT일경우 
 				sess.getConnection().setReadOnly(true);
-				obj = sess.selectList(ms, where);
+				objs = sess.selectList(ms, where);
 			}else{
 				throw new Exception( "only select statment is allowed and callablestatment not allowed");
 			}
@@ -242,8 +358,9 @@ public class APIService {
 		if(elap > slow_query_time){
 			slowqueryLogger.info("{} [ {} ] : time : {}", SQL, where, (elap));
 		}
-		res = UK.convertObject2Response(obj);
+		res = Response.newBuilder();
 		res.setCode(200);
+		ResponseUtil.addList2Response(res, objs);
         if(type==1){
     		if( res.getDataCount() > 0){
 				addRedisCache(_where, expireTime, select, res,CACHE_KEY);
@@ -307,8 +424,10 @@ public class APIService {
 		        }
 			}
 		}catch(Exception e){
-			e.printStackTrace();
 			logger.error(Throwables.getStackTraceAsString(e));
+			if(pool!=null){
+				JedisConnection.setCheckJEDIS();
+			}
 		}finally{
 			if(pool!=null && jedis!=null){
 				pool.returnResource(jedis);

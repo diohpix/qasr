@@ -3,6 +3,8 @@ package com.khalifa.process;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
@@ -49,7 +51,7 @@ public class ProtobufRequestProcessor  {
 			}
 			if(type==5){ // transaction command
 				if("BEGIN_TRANSACTION".equals(SQL)){
-					SqlSession sess = APIService.getSession(q.getDbname());
+					SqlSession sess = APIService.getBatchSession(q.getDbname());
 					sess.getConnection().setAutoCommit(false);
 					sess.clearCache();
 					state.setSession(sess);
@@ -100,15 +102,35 @@ public class ProtobufRequestProcessor  {
 					return;
 				}
 			}
-			Map<String,Object> _where = UK.getWhere(q);
+			List<Query.Data> queryList = q.getDataList();
 			Object list = null;
-			int _exp = q.hasExpire() ? q.getExpire() : expire;
-			if(state.getSession()!=null && !state.isReadTransaction()) { // transaction
-				list = APIService.transactionQuery((ProxySqlSession)state.getSession(), SQL, _where,state);
-			}else if(state.getSession()!=null && state.isReadTransaction()) { // read only transaction
-				list = APIService.readOnlyQuery((ProxySqlSession)state.getSession(),q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);
-			}else{ // normal SQL
-				list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);
+			if(queryList.size()==1){
+				Map<String,Object> _where = UK.getWhere(queryList.get(0));
+				int _exp = q.hasExpire() ? q.getExpire() : expire;
+				if(state.getSession()!=null && !state.isReadTransaction()) { // transaction
+					list = APIService.transactionQuery((ProxySqlSession)state.getSession(), SQL, _where,state);
+				}else if(state.getSession()!=null && state.isReadTransaction()) { // read only transaction
+					list = APIService.readOnlyQuery((ProxySqlSession)state.getSession(),q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);
+				}else{ // normal SQL
+					list = APIService.query(q.getDbname(),type,SQL, _where,UK.getWhereString(_where),_exp,state);
+				}
+			}else{ // batch process
+				boolean tx=false;
+				List<Map<String,Object>> mlist = new ArrayList<Map<String,Object>>(queryList.size());
+				for (Query.Data data : queryList) {
+					Map<String,Object> _where = UK.getWhere(data);
+					mlist.add(_where);
+				}
+				ProxySqlSession sess = null;
+				if(state.getSession()==null){
+					sess = (ProxySqlSession) APIService.getBatchSession(q.getDbname());
+					sess.getConnection().setAutoCommit(false);
+				}else{
+					sess = (ProxySqlSession) state.getSession();
+					sess.getConnection().setAutoCommit(false);
+					tx=true;
+				}
+				list = APIService.batchQuery(sess, SQL,mlist, state,tx);
 			}
 			Response r = null;
 			if(list instanceof byte[]){
@@ -130,6 +152,7 @@ public class ProtobufRequestProcessor  {
 				});	
 	        }*/
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw e;
 			//event.getChannel().close();	//TODO 이걸 끊어야해 말아야해
 				

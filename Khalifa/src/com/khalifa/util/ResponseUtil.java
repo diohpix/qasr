@@ -45,12 +45,20 @@ public class ResponseUtil {
 
 	public static void makeResponse(ChannelHandlerContext ctx,int code,String msg){
 		Response.Builder res = Response.newBuilder();
+		Response.Data.Builder data = Response.Data.newBuilder();
 		res.setCode(200);
-		res.addHeader("msg");
-		res.addType(DataType.STRING);
-		res.addData(ByteString.copyFromUtf8(msg));
+		data.addHeader("msg");
+		data.addType(DataType.STRING);
+		data.addData(ByteString.copyFromUtf8(msg));
+		res.addData(data);
 		ctx.writeAndFlush(res.build());
 		res.clear();
-		logger.debug(msg);
+		logger.debug(res.toString());
+	}
+	public static void addList2Response(Response.Builder res,List<List<Object>> list){
+		for (List<Object> object : list) {
+			Response.Data.Builder data = UK.convertObject2Response(object);
+			res.addData(data);
+		}
 	}
 }

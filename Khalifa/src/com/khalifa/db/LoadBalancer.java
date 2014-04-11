@@ -1,5 +1,6 @@
 package com.khalifa.db;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,9 +24,10 @@ public class LoadBalancer {
 	public List<ReloadableSqlSesseionFactoryBean> getSessionList(){
 		return this.connList;
 	}
-	public synchronized SqlSessionFactory getSession(){
+	public synchronized SqlSessionFactory getSession() throws ConnectException{
 		SqlSessionFactory sf=null;
 		int c = seq;
+		int retry=0;
 		while(true){
 			if(seq == len){
 				seq=0;
@@ -40,10 +42,13 @@ public class LoadBalancer {
 				ss.getConnection().setReadOnly(true);
 				break;
 			}catch(Exception e){
-				e.printStackTrace();
+				retry++;
 			}finally{
 				if(ss!=null){
 					ss.close();
+				}
+				if(retry==10){
+					throw new ConnectException("DataBase is down!");
 				}
 			}
 		}

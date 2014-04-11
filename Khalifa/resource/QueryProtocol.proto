@@ -30,16 +30,22 @@ message Query {
   required int32 queryType = 1;
   required string dbname=2;
   required bytes command = 3;
-  repeated string param = 4;
-  repeated bytes value = 5;
-  repeated DataType type = 6;
-  optional int32 expire = 7;
+  repeated Data data = 4;
+  optional int32 expire = 5;
+  message Data{
+  	repeated string param = 1;
+  	repeated bytes value = 2;
+  	repeated DataType type = 3;
+  }
 }
 message Response {
-  required int32 code = 1;
-  repeated string header = 2;
-  repeated DataType type=3;
-  repeated bytes data = 4;
+  	required int32 code = 1;
+  	repeated Data data = 2;
+  	message Data {
+  		repeated string header = 1;
+  		repeated DataType type=2;
+  		repeated bytes data = 3;
+	}
 }
  enum DataType {
     STRING = 0;
@@ -51,4 +57,5 @@ message Response {
     DATE = 6;
     TIME = 7;
     TIMESTAMP =8;
+    BOOLEAN = 9;
   }

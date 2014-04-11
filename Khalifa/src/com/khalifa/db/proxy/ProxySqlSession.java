@@ -16,28 +16,39 @@ import org.apache.ibatis.executor.result.DefaultMapResultHandler;
 import org.apache.ibatis.executor.result.DefaultResultContext;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 public class ProxySqlSession implements SqlSession {
 
-	private Configuration configuration;
+	  private Configuration configuration;
 	  private Executor executor;
-
+	  private ExecutorType exeType;
+	  private boolean autoCommit;
 	  private boolean dirty;
-
-	  @Deprecated
-	  public ProxySqlSession(Configuration configuration, Executor executor, boolean autoCommit) {
-	    this(configuration, executor);
-	  }
-
-	  public ProxySqlSession(Configuration configuration, Executor executor) {
+	  
+	  public ProxySqlSession(Configuration configuration, Executor executor, boolean autoCommit,ExecutorType execType) {
 	    this.configuration = configuration;
 	    this.executor = executor;
 	    this.dirty = false;
+	    this.autoCommit = autoCommit;
+	    this.exeType = execType;
+	  }
+	  public ProxySqlSession(Configuration configuration, Executor executor, boolean autoCommit) {
+		    this.configuration = configuration;
+		    this.executor = executor;
+		    this.dirty = false;
+		    this.autoCommit = autoCommit;
 	  }
 
+	  public ProxySqlSession(Configuration configuration, Executor executor) {
+	    this(configuration, executor, false);
+	  }
+	  public ExecutorType getExcutorType(){
+		  return this.exeType;
+	  }
 	  public <T> T selectOne(String statement) {
 	    return this.<T>selectOne(statement, null);
 	  }
@@ -262,7 +273,7 @@ public class ProxySqlSession implements SqlSession {
 	  }
 
 	  private boolean isCommitOrRollbackRequired(boolean force) {
-	    return dirty || force;
+	    return (!autoCommit && dirty) || force;
 	  }
 
 	  private Object wrapCollection(final Object object) {

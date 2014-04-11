@@ -11,6 +11,7 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
 import java.util.List;
@@ -64,6 +65,7 @@ public class ProtocolSelector extends ByteToMessageDecoder {
 
     private void switchToProtobuf(ChannelHandlerContext ctx) {
         ChannelPipeline p = ctx.pipeline();
+        p.addLast(new ReadTimeoutHandler(CommonData.readtimeout)); // TODO
         p.addLast("LengthEncoder", lengthEncoder); //encoder
         p.addLast( compsel); //encoder
         p.addLast( protobufVar32); //encoder 

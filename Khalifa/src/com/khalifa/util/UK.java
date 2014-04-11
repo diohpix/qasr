@@ -30,6 +30,9 @@ import com.khalifa.protocol.QueryProtocol.Response;
 
 public class UK {
 	private static byte [] zlen = new byte[]{-1};
+	private static byte [] TRUE = new byte[]{1};
+	private static byte [] FALSE = new byte[]{0};
+	
 	public static byte[] compress(byte[] data) throws IOException {  
 		   Deflater deflater = new Deflater();  
 		   deflater.setInput(data);  
@@ -73,7 +76,7 @@ public class UK {
 		}
 		return sb.toString();
 	}
-	public static  Map<String,Object> getWhere(Query q){
+	public static  Map<String,Object> getWhere(Query.Data q){
 		Map<String,Object> where= null;
 		if(q.getParamCount()>0){
 			List<String> keys = q.getParamList();
@@ -159,6 +162,19 @@ public class UK {
 		        		sb.append(",").append(l2);
 		        	}
 					break;
+				case BOOLEAN:
+					byte[] b = value.get(idx).toByteArray();
+					Boolean v = null;
+					if(b[0]==1){
+						v= Boolean.TRUE;
+					}else{
+						v= Boolean.FALSE;
+					}
+					where.put(param,v);
+					if(ckExist){
+		        		sb.append(",").append(v);
+		        	}
+					break;
 				case TIMESTAMP:
 					long l3= Longs.fromByteArray(value.get(idx).toByteArray());
 					where.put(param,new Timestamp(l3));
@@ -182,79 +198,9 @@ public class UK {
 		}
 		return where;
 	}
-	@Deprecated
-	public static List<Map<String, Object>> convertByte2Object(byte [] buf) throws InvalidProtocolBufferException{ // redis 에서 온 byte 배열 
-		Response  res = Response.parseFrom(buf);
-		List<String> header = res.getHeaderList();
-		List<ByteString> datas = res.getDataList();
-		List<Map<String,Object>> rtn = new ArrayList<Map<String,Object>>();
-		int loop = datas.size() / header.size();
-		int idx=0;
-		for(int i =0 ; i < loop;i++){ // JDBC에서 넘어온값 
-			Map<String,Object> v = new HashMap<String, Object>();
-			int tidx=0;
-			for (String key : header) {
-	        	DataType type = res.getType(tidx++);
-	        	if(datas.get(idx)==ByteString.EMPTY){
-	        		v.put(key,null);
-	        		idx++;
-	        		continue;
-	        	}
-	        	switch (type) {
-				case STRING:
-	        		byte [] vv = datas.get(idx).toByteArray();
-	        		if(vv.length==1 && vv[0] ==-1){
-	        			v.put(key,"");
-	        		}else{
-	        			try {
-							v.put(key,new String(vv,"UTF-8"));
-						} catch (UnsupportedEncodingException e) {
-							e.printStackTrace();
-						}
-	        		}
-					break;
-				case SHORT:
-	        		v.put(key,Shorts.fromByteArray(datas.get(idx).toByteArray()));	
-					break;
-				case INTEGER:
-	        		v.put(key,Ints.fromByteArray(datas.get(idx).toByteArray()));
-					break;
-				case LONG:
-	        		v.put(key, Longs.fromByteArray(datas.get(idx).toByteArray()));
-					break;
-				case FLOAT:
-	        		int intbit = Ints.fromByteArray(datas.get(idx).toByteArray());
-	        		v.put(key,Float.intBitsToFloat(intbit));
-					break;
-				case DOUBLE:
-	        		long longbit = Longs.fromByteArray(datas.get(idx).toByteArray());
-	        		v.put(key,Double.longBitsToDouble(longbit));
-					break;
-				case DATE:
-	        		Date date =	new Date(Longs.fromByteArray(datas.get(idx).toByteArray()));
-		        	v.put(key,date);
-					break;
-				case TIME:
-	        		Time time =	new Time(Longs.fromByteArray(datas.get(idx).toByteArray()));
-		        	v.put(key,time);
-					break;
-				case TIMESTAMP:
-	        		Timestamp timestamp =	new Timestamp(Longs.fromByteArray(datas.get(idx).toByteArray()));
-		        	v.put(key,timestamp);
-					break;
-				default:
-	        		v.put(key,datas.get(idx).toStringUtf8());
-					break;
-				}
-	        	idx++;
-			}
-	    	rtn.add(v);
 	
-		}
-		return rtn;
-	}
-	public static Response.Builder convertObject2Response(List<Object> list){
-		Response.Builder res = Response.newBuilder();
+	public static Response.Data.Builder convertObject2Response(List<Object> list){
+		Response.Data.Builder res = Response.Data.newBuilder();
 		if(list.size()>0){ // JDBC 에서 온 값 
 			Object[] metaData = (Object[]) list.remove(0);
 			for(int i = 0 ; i < metaData.length;i++){
@@ -279,6 +225,8 @@ public class UK {
 					res.addType(DataType.DATE);
 				}else if(type.startsWith("java.lang.Short")){
 					res.addType(DataType.SHORT);
+				}else if(type.startsWith("java.lang.Boolean")){
+					res.addType(DataType.BOOLEAN);
 				}else{
 					res.addType(DataType.STRING);
 				}
@@ -341,6 +289,12 @@ public class UK {
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
+						}
+					}else if(value instanceof java.lang.Boolean){
+						if((Boolean)value){
+							res.addData(ByteString.copyFrom(TRUE));
+						}else{
+							res.addData(ByteString.copyFrom(FALSE));
 						}
 					}else if(value instanceof java.math.BigDecimal){
 						BigDecimal b = ((BigDecimal)value).setScale(4,BigDecimal.ROUND_HALF_UP);

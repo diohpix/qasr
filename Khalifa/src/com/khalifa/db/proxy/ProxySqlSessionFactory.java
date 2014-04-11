@@ -19,7 +19,7 @@ import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
 
 public class ProxySqlSessionFactory implements SqlSessionFactory {
 
-	private final Configuration configuration;
+	  private final Configuration configuration;
 
 	  public ProxySqlSessionFactory(Configuration configuration) {
 	    this.configuration = configuration;
@@ -67,8 +67,8 @@ public class ProxySqlSessionFactory implements SqlSessionFactory {
 	      final Environment environment = configuration.getEnvironment();
 	      final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
 	      tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
-	      final Executor executor = configuration.newExecutor(tx, execType, autoCommit);
-	      return new ProxySqlSession(configuration, executor);
+	      final Executor executor = configuration.newExecutor(tx, execType);
+	      return new ProxySqlSession(configuration, executor, autoCommit,execType);
 	    } catch (Exception e) {
 	      closeTransaction(tx); // may have fetched a connection so lets call close()
 	      throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
@@ -79,11 +79,19 @@ public class ProxySqlSessionFactory implements SqlSessionFactory {
 
 	  private SqlSession openSessionFromConnection(ExecutorType execType, Connection connection) {
 	    try {
+	      boolean autoCommit;
+	      try {
+	        autoCommit = connection.getAutoCommit();
+	      } catch (SQLException e) {
+	        // Failover to true, as most poor drivers
+	        // or databases won't support transactions
+	        autoCommit = true;
+	      }      
 	      final Environment environment = configuration.getEnvironment();
 	      final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
 	      final Transaction tx = transactionFactory.newTransaction(connection);
-	      final Executor executor = configuration.newExecutor(tx, execType, connection.getAutoCommit());
-	      return new ProxySqlSession(configuration, executor);
+	      final Executor executor = configuration.newExecutor(tx, execType);
+	      return new ProxySqlSession(configuration, executor, autoCommit,execType);
 	    } catch (Exception e) {
 	      throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
 	    } finally {
@@ -107,4 +115,5 @@ public class ProxySqlSessionFactory implements SqlSessionFactory {
 	      }
 	    }
 	  }
+
 }

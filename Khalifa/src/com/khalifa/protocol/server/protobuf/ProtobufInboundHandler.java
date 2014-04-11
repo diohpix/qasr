@@ -25,13 +25,11 @@ import com.khalifa.protocol.QueryProtocol.Response;
 import com.khalifa.util.CommonData;
 
 public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
-private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHandler.class);
 	
 	public void channelRead(ChannelHandlerContext ctx,Object msg) throws Exception {
     	try{
-    		if(logger.isDebugEnabled()){
-    			logger.debug("channelRead "+(Query)msg);
-    		}
+    		logger.debug("channelRead "+(Query)msg);
     		ProtobufRequestProcessor rp = new ProtobufRequestProcessor(ctx,(Query)msg );
     		rp.run();
     	}catch(Exception e){
@@ -41,7 +39,8 @@ private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHand
     	}
     }
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-		// State 객체없으면 쓸때없는 접속으로 강제종료 
+		// State 객체없으면 쓸때없는 접속으로 강제종료
+		super.channelReadComplete(ctx);
 		logger.debug("channelReadComplete");
     	State state = ctx.channel().attr(CommonData.STATE).get();
 		if(state==null){
@@ -63,7 +62,8 @@ private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHand
 		logger.debug("channel Unregister");
 		super.channelUnregistered(ctx);
 	}
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) {
+	@Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
     	String msg=Throwables.getStackTraceAsString(e);
     	logger.debug("exception "+msg);
     	State  state =ctx.channel().attr(CommonData.STATE).get();
@@ -93,41 +93,46 @@ private static final Logger logger = LoggerFactory.getLogger(ProtobufInboundHand
 		}
 		if(ctx.channel().isActive()){
 			Response.Builder res = Response.newBuilder();
+			Response.Data.Builder data = Response.Data.newBuilder();
 			if(e instanceof PersistenceException && e.getCause() instanceof SQLException){
 				PersistenceException p = (PersistenceException)e;
 				SQLException sqle = (SQLException)p.getCause();
 				try {
 					res.setCode(600);
-					res.addHeader("error");
-					res.addType(DataType.STRING);
-					res.addData(ByteString.copyFromUtf8(msg));
+					data.addHeader("error");
+					data.addType(DataType.STRING);
+					data.addData(ByteString.copyFromUtf8(msg));
 					
-					res.addHeader("message");
-					res.addType(DataType.STRING);
-					res.addData(ByteString.copyFrom(sqle.getMessage(),"UTF-8"));
+					data.addHeader("message");
+					data.addType(DataType.STRING);
+					data.addData(ByteString.copyFrom(sqle.getMessage(),"UTF-8"));
 					
-					res.addHeader("sqlstate");
-					res.addType(DataType.STRING);
-					res.addData(ByteString.copyFrom(sqle.getSQLState(),"UTF-8"));
+					data.addHeader("sqlstate");
+					data.addType(DataType.STRING);
+					data.addData(ByteString.copyFrom(sqle.getSQLState(),"UTF-8"));
 
-					res.addHeader("errorCode");
-					res.addType(DataType.STRING);
-					res.addData(ByteString.copyFrom(""+sqle.getErrorCode(),"UTF-8"));
+					data.addHeader("errorCode");
+					data.addType(DataType.STRING);
+					data.addData(ByteString.copyFrom(""+sqle.getErrorCode(),"UTF-8"));
+					res.addData(data);
 				} catch (UnsupportedEncodingException e1) {
 					e1.printStackTrace();
 				}
 			}else{
 				res.setCode(500);
-				res.addHeader("error");
-				res.addType(DataType.STRING);
+				data.addHeader("error");
+				data.addType(DataType.STRING);
 				if(msg==null) msg="ERROR";
-				res.addData(ByteString.copyFromUtf8(msg));
+				data.addData(ByteString.copyFromUtf8(msg));
+				res.addData(data);
 			}
-			ctx.writeAndFlush(res.build()).addListener(ChannelFutureListener.CLOSE);
+			//ORG : ctx.writeAndFlush(res.build()).addListener(ChannelFutureListener.CLOSE); 
+			ctx.writeAndFlush(res.build()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 			res.clear();
 		}
         logger.debug("Unexpected exception from downstream.", e.getCause());
-        ctx.channel().attr(CommonData.STATE).set(null);
-        ctx.close();
+        //ORG : ctx.channel().attr(CommonData.STATE).set(null);
+        //ORG : ctx.close();
+        System.out.println(ctx.channel().isRegistered());
     }
 }

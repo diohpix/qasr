@@ -23,68 +23,70 @@ public class ResultSetInterceptor implements Interceptor {
 
 	@SuppressWarnings("finally")
 	@Override
-	public Object intercept(Invocation invocation) throws Throwable  {
-		List<Object> actual = new ArrayList<Object>();
-		Statement statement =null;
-		ResultSet rs =null;
+	public Object intercept(Invocation invocation) throws Throwable {
+		Statement statement = null;
+		ResultSet rs = null;
+		List<Object> result = new ArrayList<Object>();
 		try {
 			Object[] args = invocation.getArgs();
 			statement = (Statement) args[0];
-			rs = statement.getResultSet();
-			ResultSetMetaData rsmd = null;
-			int columnCount = 0;
-			if (rs != null) {
-				rsmd = rs.getMetaData();
-				columnCount = rsmd.getColumnCount();
-				Object[] metaData = new Object[columnCount];
-				for (int i = 1; i <= columnCount; i++) {
-					Map<String, String> columnMeta = new LinkedHashMap<String,String>();
-					String columnName = rsmd.getColumnName(i);
-					String columnLabel = rsmd.getColumnLabel(i);
-					if("".equals(columnName)){
-						columnName="column"+i;
-						columnLabel = columnName;
+			while (true) {
+				rs = statement.getResultSet();
+				if(rs==null) break;
+				ResultSetMetaData rsmd = null;
+				List<Object> actual = new ArrayList<Object>();
+				int columnCount = 0;
+				if (rs != null) {
+					rsmd = rs.getMetaData();
+					columnCount = rsmd.getColumnCount();
+					Object[] metaData = new Object[columnCount];
+					for (int i = 1; i <= columnCount; i++) {
+						Map<String, String> columnMeta = new LinkedHashMap<String, String>();
+						String columnName = rsmd.getColumnName(i);
+						String columnLabel = rsmd.getColumnLabel(i);
+						if ("".equals(columnName)) {
+							columnName = "column" + i;
+							columnLabel = columnName;
+						}
+						String javatype = rsmd.getColumnClassName(i);
+						columnMeta.put("columnName", columnName);
+						columnMeta.put("columnLabel", columnLabel);
+						columnMeta.put("columnType", javatype);
+						metaData[i - 1] = columnMeta;
 					}
-					String javatype = rsmd.getColumnClassName(i);
-					columnMeta.put("columnName", columnName);
-					columnMeta.put("columnLabel", columnLabel);
-					columnMeta.put("columnType", javatype);
-					metaData[i - 1] = columnMeta;
+					actual.add(metaData);
 				}
-				actual.add(metaData);
-			}
-			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-			while (rs.next()) {
-				Map<String, Object> col = new HashMap<String, Object>();
-				for (int i = 1; i <= columnCount; i++) {
-					String label = rsmd.getColumnLabel(i);
-					if("".equals(label)){
-						label = "column"+i;
+				List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+				while (rs.next()) {
+					Map<String, Object> col = new LinkedHashMap<String, Object>();
+					for (int i = 1; i <= columnCount; i++) {
+						String label = rsmd.getColumnLabel(i);
+						if ("".equals(label)) {
+							label = "column" + i;
+						}
+						col.put(label, rs.getObject(i));
 					}
-					col.put(label, rs.getObject(i));
+					list.add(col);
 				}
-				list.add(col);
+				rs.close();
+				actual.add(list);
+				result.add(actual);
+				if (!statement.getMoreResults()) {
+					break;
+				}
 			}
-			actual.add(list);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw e;
-		} finally{
-			if(rs !=null){
+		} finally {
+			if (rs != null) {
 				try {
 					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
-			/*System.out.println(statement);
-			if(statement !=null){
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}*/
-			return actual;
+			return result;
 		}
 	}
 
