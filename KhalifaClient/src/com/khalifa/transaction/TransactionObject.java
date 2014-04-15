@@ -138,7 +138,7 @@ public class TransactionObject {
 				result.setCode(errType);
 				result.setError(res.getData(currentResult).getData(0).toStringUtf8());
 				if(errType==600){
-					if(res.getDataCount() ==4){
+					if(res.getData(currentResult).getDataCount() ==4){
 						SQLException sqle = new SQLException(res.getData(currentResult).getData(1).toStringUtf8(),res.getData(currentResult).getData(2).toStringUtf8(),Integer.valueOf(res.getData(currentResult).getData(3).toStringUtf8()));
 						throw sqle;
 					}else{
