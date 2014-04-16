@@ -1,6 +1,11 @@
-halifa is a  standalone mybatis server 
+khalifa
 ===
-1. handles multi databases
-2. use redis as resultset cache
-3. protocol is google protobuf 
-4. network library is netty 4.0
+1. mybatis standalone server
+2. handles multi databases (mysql,oracle,mssql...)
+3. redis as resultset cache
+4. protobuf is used as  protocol
+5. netty is used as network framework
+6. transaction support
+7. multiple resultset support
+8. batch  support
+9. khalifaClient is a client library
