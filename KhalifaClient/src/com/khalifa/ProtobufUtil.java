@@ -91,6 +91,7 @@ public class ProtobufUtil {
 	        		int intbit = Ints.fromByteArray(datas.get(idx).toByteArray());
 	        		v.put(key,Float.intBitsToFloat(intbit));
 					break;
+				case BIGDECIMAL:
 				case DOUBLE:
 	        		long longbit = Longs.fromByteArray(datas.get(idx).toByteArray());
 	        		v.put(key,Double.longBitsToDouble(longbit));

@@ -53,6 +53,10 @@ public final class QueryProtocol {
      * <code>BOOLEAN = 9;</code>
      */
     BOOLEAN(9, 9),
+    /**
+     * <code>BIGDECIMAL = 10;</code>
+     */
+    BIGDECIMAL(10, 10),
     ;
 
     /**
@@ -95,6 +99,10 @@ public final class QueryProtocol {
      * <code>BOOLEAN = 9;</code>
      */
     public static final int BOOLEAN_VALUE = 9;
+    /**
+     * <code>BIGDECIMAL = 10;</code>
+     */
+    public static final int BIGDECIMAL_VALUE = 10;
 
 
     public final int getNumber() { return value; }
@@ -111,6 +119,7 @@ public final class QueryProtocol {
         case 7: return TIME;
         case 8: return TIMESTAMP;
         case 9: return BOOLEAN;
+        case 10: return BIGDECIMAL;
         default: return null;
       }
     }
@@ -3709,11 +3718,12 @@ public final class QueryProtocol {
       " \003(\014\022\027\n\004type\030\003 \003(\0162\t.DataType\"u\n\010Respons" +
       "e\022\014\n\004code\030\001 \002(\005\022\034\n\004data\030\002 \003(\0132\016.Response" +
       ".Data\032=\n\004Data\022\016\n\006header\030\001 \003(\t\022\027\n\004type\030\002 " +
-      "\003(\0162\t.DataType\022\014\n\004data\030\003 \003(\014*\177\n\010DataType" +
-      "\022\n\n\006STRING\020\000\022\t\n\005SHORT\020\001\022\013\n\007INTEGER\020\002\022\010\n\004" +
-      "LONG\020\003\022\t\n\005FLOAT\020\004\022\n\n\006DOUBLE\020\005\022\010\n\004DATE\020\006\022",
-      "\010\n\004TIME\020\007\022\r\n\tTIMESTAMP\020\010\022\013\n\007BOOLEAN\020\tB\'\n" +
-      "\024com.khalifa.protocolB\rQueryProtocolH\001"
+      "\003(\0162\t.DataType\022\014\n\004data\030\003 \003(\014*\217\001\n\010DataTyp" +
+      "e\022\n\n\006STRING\020\000\022\t\n\005SHORT\020\001\022\013\n\007INTEGER\020\002\022\010\n" +
+      "\004LONG\020\003\022\t\n\005FLOAT\020\004\022\n\n\006DOUBLE\020\005\022\010\n\004DATE\020\006",
+      "\022\010\n\004TIME\020\007\022\r\n\tTIMESTAMP\020\010\022\013\n\007BOOLEAN\020\t\022\016" +
+      "\n\nBIGDECIMAL\020\nB\'\n\024com.khalifa.protocolB\r" +
+      "QueryProtocolH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

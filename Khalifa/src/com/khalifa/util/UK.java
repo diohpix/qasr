@@ -213,8 +213,10 @@ public class UK {
 					res.addType(DataType.INTEGER);
 				}else if(type.startsWith("java.lang.Long") ){
 					res.addType(DataType.LONG);
-				}else if(type.startsWith("java.lang.Float")|| type.startsWith("java.math.BigDecimal")){
+				}else if(type.startsWith("java.lang.Float")){
 					res.addType(DataType.FLOAT);
+				}else if(type.startsWith("java.math.BigDecimal")){
+					res.addType(DataType.BIGDECIMAL);
 				}else if(type.startsWith("java.lang.Double")){
 					res.addType(DataType.DOUBLE);
 				}else if(type.startsWith("java.sql.Timestamp")){
@@ -298,8 +300,7 @@ public class UK {
 						}
 					}else if(value instanceof java.math.BigDecimal){
 						BigDecimal b = ((BigDecimal)value).setScale(4,BigDecimal.ROUND_HALF_UP);
-						float f =b.floatValue();
-						res.addData(ByteString.copyFrom(Ints.toByteArray(Float.floatToIntBits(f))));
+						res.addData(ByteString.copyFrom(Longs.toByteArray(Double.doubleToLongBits(b.doubleValue()))));
 					}else{
 						System.out.println(value.getClass().getName());
 						res.addData(ByteString.copyFromUtf8( value.toString()));

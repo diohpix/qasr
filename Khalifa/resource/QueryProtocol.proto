@@ -58,4 +58,5 @@ message Response {
     TIME = 7;
     TIMESTAMP =8;
     BOOLEAN = 9;
+    BIGDECIMAL=10;
   }
