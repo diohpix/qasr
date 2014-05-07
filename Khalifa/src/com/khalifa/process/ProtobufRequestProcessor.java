@@ -98,6 +98,8 @@ public class ProtobufRequestProcessor  {
 					if(res!=null){
 						res.setCode(200);
 						ChannelFuture f = ctx.writeAndFlush(res.build());
+					}else{
+						ResponseUtil.makeResponse(ctx, 201, "NO_OUTPUTPARAM");
 					}
 					return;
 				}
