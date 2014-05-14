@@ -102,6 +102,7 @@ public class Statement {
 		query.setCommand(command);
 		query.setQueryType(queryType);
 		expireTime=0;
+		res.clear();
 	}
 	public void close(){
 		query.clearData();
