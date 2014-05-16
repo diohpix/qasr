@@ -52,7 +52,12 @@ public class ProtobufRequestProcessor  {
 			if(type==5){ // transaction command
 				if("BEGIN_TRANSACTION".equals(SQL)){
 					SqlSession sess = APIService.getBatchSession(q.getDbname());
-					sess.getConnection().setAutoCommit(false);
+					try{
+						sess.getConnection().setAutoCommit(false);
+					}catch(Exception e){
+						sess.close();
+						throw e;
+					}
 					sess.clearCache();
 					state.setSession(sess);
 					ResponseUtil.makeResponse(ctx, 200, "TRANSACTION_START");
