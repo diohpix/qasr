@@ -3,12 +3,15 @@ package com.khalifa.protocol.server.protobuf;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.DecoderException;
 import io.netty.handler.timeout.ReadTimeoutException;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.ReferenceCountUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.ClosedChannelException;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
@@ -44,7 +47,8 @@ public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
 		logger.debug("channelReadComplete");
     	State state = ctx.channel().attr(CommonData.STATE).get();
 		if(state==null){
-			ctx.close();
+			ctx.pipeline().addLast( new ReadTimeoutHandler(500,TimeUnit.MILLISECONDS));
+			//ctx.close();
 		}else{
 			logger.debug(state.toString());
 		}
@@ -76,20 +80,23 @@ public class ProtobufInboundHandler extends ChannelInboundHandlerAdapter {
         }else{
         	logger.warn("Unexpected exception from downstream. {}",e.getCause());	
         }
-		if(state.getSession()!=null){ // 에러발생시 sql세션종료및 disconnect
-			SqlSession s =state.getSession();
-			try {
-				s.getConnection().rollback();
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			} finally{
-				s.close();
-			}
-			logger.warn("ROLLBACK");
-		}
-		if(state!=null){
+    	if(state!=null){
+    		if(state.getSession()!=null){ // 에러발생시 sql세션종료및 disconnect
+    			SqlSession s =state.getSession();
+    			try {
+    				s.getConnection().rollback();
+    			} catch (Exception e1) {
+    				e1.printStackTrace();
+    			} finally{
+    				s.close();
+    			}
+    			logger.warn("ROLLBACK");
+    		}
 			CommonData.exceptionLogger.info(state.getLog().toString()+"\n"+msg);
 			state.clear();
+		}
+		if(e instanceof DecoderException){
+			ctx.close();
 		}
 		if(ctx.channel().isActive()){
 			Response.Builder res = Response.newBuilder();
