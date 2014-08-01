@@ -22,7 +22,7 @@ import org.apache.ibatis.scripting.xmltags.TextSqlNode;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 
 import com.khalifa.db.LoadBalancer;
 import com.khalifa.db.ReloadableSqlSesseionFactoryBean;
@@ -72,7 +72,7 @@ public class Monitor {
 					data.put("name", name);
 					data.put("active",ds.getNumActive());
 					data.put("idle", ds.getNumIdle());
-					data.put("max", ds.getMaxActive());
+					data.put("max", ds.getMaxTotal());
 					data.put("url",ds.getUrl());
 					data.put("username",ds.getUsername());
 					data.put("password",ds.getPassword());

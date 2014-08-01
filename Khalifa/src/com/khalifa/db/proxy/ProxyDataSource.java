@@ -3,7 +3,9 @@ package com.khalifa.db.proxy;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
+
+import ch.qos.logback.core.joran.spi.DefaultClass;
 
 public class ProxyDataSource extends BasicDataSource {
 
@@ -12,10 +14,11 @@ public class ProxyDataSource extends BasicDataSource {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Deprecated
 	public void reset(){
 		try {
 			close();
-			closed=false;
+//			closed=false;
 			createDataSource();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
