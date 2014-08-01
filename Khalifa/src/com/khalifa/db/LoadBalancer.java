@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 
 public class LoadBalancer {
 	private List<ReloadableSqlSesseionFactoryBean> connList;
@@ -42,6 +43,9 @@ public class LoadBalancer {
 				ss.getConnection().setReadOnly(true);
 				break;
 			}catch(Exception e){
+				if(e instanceof CannotGetJdbcConnectionException){
+					break;
+				}
 				retry++;
 			}finally{
 				if(ss!=null){
