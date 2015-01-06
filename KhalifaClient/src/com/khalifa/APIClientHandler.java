@@ -73,6 +73,8 @@ public class APIClientHandler extends ChannelInboundHandlerAdapter {
 		if(ctx.channel().isActive()){
 			ctx.close();
 		}
-        }catch(Exception ee){}
+        }catch(Exception ee){
+        	ee.printStackTrace();
+        }
     }
 }
