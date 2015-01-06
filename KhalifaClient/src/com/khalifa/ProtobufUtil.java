@@ -41,7 +41,7 @@ public class ProtobufUtil {
 	 * @throws InvalidProtocolBufferException
 	 */
 	public static List<Map<String, Object>> parse(int pos,Response res,Map<String,String> getterKeyList, Map<Integer,String> getterNumList) throws InvalidProtocolBufferException{
-		System.out.println(res.toString());
+		//System.out.println(res.toString());
 		List<String> header = res.getData(pos).getHeaderList();
     	List<ByteString> datas = res.getData(pos).getDataList();
     	List<Map<String,Object>> rtn = new ArrayList<Map<String,Object>>();
