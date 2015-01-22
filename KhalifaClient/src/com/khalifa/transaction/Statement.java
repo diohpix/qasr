@@ -182,8 +182,8 @@ public class Statement {
 		    String key = entry.getKey();
 		    Object value = entry.getValue();
 		    res.addParam(key);
-		    if(value instanceof String){
-				if("".equals(value.toString())){
+		    if(value instanceof String || value == null){
+				if(  value == null || "".equals(value.toString()) ){
 					res.addValue(ByteString.copyFrom(zlen));
 				}else{
 					res.addValue(ByteString.copyFromUtf8(value.toString()));
